@@ -240,77 +240,59 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
-//// InitDeleteUser web endpoint.
-//func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
-//var req tp.GetUserReq
-//var res tp.GetUserRes
+// InitDeleteUser web endpoint.
+func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
+	s, err := ep.getSlug(r)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), GetUserErrID, err)
+		return
+	}
 
-//// Identifier
-//id, err := s.getIdentifier(r)
-//if err != nil {
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
+	// Use registerd service to get the user from repo.
+	user, err := ep.Service.GetUser(s)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), GetUserErrID, err)
+		return
+	}
 
-//req = tp.GetUserReq{id}
+	// Wrap response
+	userForm := user.ToForm()
+	wr := ep.WrapRes(w, r, &userForm, nil)
+	wr.SetAction(userDeleteAction(&userForm))
 
-//// Service
-//err = s.service.GetUser(req, &res)
-//if err != nil {
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
+	// Template
+	ts, err := ep.TemplateFor(userRes, kbs.InitDelTmpl)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), DeleteUserErrID, err)
+		return
+	}
 
-//// Set additional values
-//res.Action = s.userDeleteAction(res)
+	// Write response
+	err = ts.Execute(w, wr)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), DeleteUserErrID, err)
+		return
+	}
+}
 
-//// Wrap response
-//wr := s.OKRes(w, r, res, "")
+// DeleteUser web endpoint.
+func (ep *Endpoint) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	s, err := ep.getSlug(r)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), DeleteUserErrID, err)
+		return
+	}
 
-//// Template
-//ts, err := s.TemplateFor(userRes, kbs.InitDelTmpl)
-//if err != nil {
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
+	// Service
+	err = ep.Service.DeleteUser(s)
+	if err != nil {
+		ep.errorRedirect(w, r, UserPath(), DeleteUserErrID, err)
+		return
+	}
 
-//// Write response
-//err = ts.Execute(w, wr)
-//if err != nil {
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
-//}
-
-//// DeleteUser web endpoint.
-//func (ep *Endpoint) DeleteUser(w http.ResponseWriter, r *http.Request) {
-//var req tp.DeleteUserReq
-//var res tp.DeleteUserRes
-
-//ctx := r.Context()
-//slug, ok := ctx.Value(UserCtxKey).(string)
-//if !ok {
-//err := errors.New("no slug provided")
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
-
-//req = tp.DeleteUserReq{
-//tp.Identifier{
-//Slug: slug,
-//},
-//}
-
-//// Service
-//err := s.service.DeleteUser(req, &res)
-//if err != nil {
-//s.errorRedirect(w, r, UserPath(), GetUserErrID, err)
-//return
-//}
-
-//m := s.localize(r, UserDeletedInfoID)
-//s.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
-//}
+	m := ep.localize(r, UserDeletedInfoID)
+	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
+}
 
 //func (ep *Endpoint) InitSignUpUser(w http.ResponseWriter, r *http.Request) {
 //// Req & Res

@@ -23,8 +23,8 @@ func (app *App) addWebUserRouter(parent chi.Router) chi.Router {
 			uarid.Get("/edit", app.WebEP.EditUser)
 			uarid.Patch("/", app.WebEP.UpdateUser)
 			uarid.Put("/", app.WebEP.UpdateUser)
-			//uarid.Post("/init-delete", app.WebEP.InitDeleteUser)
-			//uarid.Delete("/", app.WebEP.DeleteUser)
+			uarid.Post("/init-delete", app.WebEP.InitDeleteUser)
+			uarid.Delete("/", app.WebEP.DeleteUser)
 			//uarid.Route("/{token}", func(uartkn chi.Router) {
 			//uartkn.Use(confCtx)
 			//uartkn.Get("/confirm", app.WebEP.ConfirmUser)

@@ -124,28 +124,20 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 	return v.Errors, nil
 }
 
-//func (s *Service) DeleteUser(req tp.DeleteUserReq, res *tp.DeleteUserRes) error {
-//repo, err := s.UserRepo
-//if repo == nil {
-//return noUserRepoErr
-//}
+func (s *Service) DeleteUser(slug string) error {
+	repo := s.UserRepo
+	if repo == nil {
+		return noUserRepoErr
+	}
 
-//err = repo.DeleteBySlug(req.Slug)
-//if err != nil {
-//res.FromModel(deleteUserErr, err)
-//return err
-//}
+	err := repo.DeleteBySlug(slug)
+	if err != nil {
+		return err
+	}
 
-//err = repo.Commit()
-//if err != nil {
-//res.FromModel(deleteUserErr, err)
-//return err
-//}
-
-//// Output
-//res.FromModel(okResultInfo, nil)
-//return nil
-//}
+	// Output
+	return nil
+}
 
 //func (s *Service) SignUpUser(req tp.SignUpUserReq, res *tp.SignUpUserRes) error {
 //// Model
