@@ -60,28 +60,19 @@ func (s *Service) GetUser(slug string) (user model.User, err error) {
 	return user, nil
 }
 
-//func (s *Service) GetUserByUsernamei(username string) (user model.User, err error) {
-//repo, err := s.UserRepo
-//if repo == nil {
-//return noUserRepoErr
-//}
+func (s *Service) GetUserByUsernamei(username string) (user model.User, err error) {
+	repo := s.UserRepo
+	if err != nil {
+		return user, err
+	}
 
-//u, err = repo.GetByUsername(u.Username.String)
-//if err != nil {
-//res.FromModel(nil, getUserErr, err)
-//return err
-//}
+	user, err = repo.GetByUsername(username)
+	if err != nil {
+		return user, err
+	}
 
-//err = repo.Commit()
-//if err != nil {
-//res.FromModel(nil, getUserErr, err)
-//return err
-//}
-
-//// Output
-//res.FromModel(&u, okResultInfo, nil)
-//return nil
-//}
+	return user, nil
+}
 
 func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, error) {
 	repo := s.UserRepo
