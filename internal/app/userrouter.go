@@ -13,10 +13,10 @@ func (app *App) addWebUserRouter(parent chi.Router) chi.Router {
 		uar.Get("/", app.WebEP.IndexUsers)
 		uar.Get("/new", app.WebEP.NewUser)
 		uar.Post("/", app.WebEP.CreateUser)
-		//uar.Get("/signup", app.WebEP.InitSignUpUser)
-		//uar.Post("/signup", app.WebEP.SignUpUser)
-		//uar.Get("/signin", app.WebEP.InitSignInUser)
-		//uar.Post("/signin", app.WebEP.SignInUser)
+		uar.Get("/signup", app.WebEP.InitSignUpUser)
+		uar.Post("/signup", app.WebEP.SignUpUser)
+		uar.Get("/signin", app.WebEP.InitSignInUser)
+		uar.Post("/signin", app.WebEP.SignInUser)
 		uar.Route("/{slug}", func(uarid chi.Router) {
 			uarid.Use(userCtx)
 			uarid.Get("/", app.WebEP.ShowUser)
@@ -25,11 +25,11 @@ func (app *App) addWebUserRouter(parent chi.Router) chi.Router {
 			uarid.Put("/", app.WebEP.UpdateUser)
 			uarid.Post("/init-delete", app.WebEP.InitDeleteUser)
 			uarid.Delete("/", app.WebEP.DeleteUser)
-			//uarid.Route("/{token}", func(uartkn chi.Router) {
-			//uartkn.Use(confCtx)
-			//uartkn.Get("/confirm", app.WebEP.ConfirmUser)
+			uarid.Route("/{token}", func(uartkn chi.Router) {
+				uartkn.Use(confCtx)
+				uartkn.Get("/confirm", app.WebEP.ConfirmUser)
+			})
 		})
-		//})
 	})
 }
 

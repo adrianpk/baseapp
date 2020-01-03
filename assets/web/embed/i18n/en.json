@@ -20,6 +20,7 @@
 "update_user_err_msg": "Cannot update user",
 "delete_user_err_msg": "Cannot delete user ",
 "input_values_err_msg": "Verify entered values",
+"sign_in_err_msg": "Sign in error",
 
 "credentials_err_msg": "Verify username and password",
 
@@ -31,7 +32,6 @@
 "not_allowed_err_msg": "Not in allowed list",
 "not_email_err_msg": "Not an email address",
 "conf_match_err_msg": "Does not match with confirmation",
-
 
 "sample_message": "Sample message",
 "sample_count_message": {

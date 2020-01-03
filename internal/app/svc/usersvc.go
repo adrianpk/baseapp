@@ -1,20 +1,19 @@
 package svc
 
 import (
-	"errors"
-
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
-var (
-	noUserRepoErr = errors.New("no user repo")
+const (
+	UserConfirmationErrMsg = "user_confirmation_err_msg"
+	UserSignInErrMsg       = "user_signin_err_msg"
 )
 
 func (s *Service) IndexUsers() (users []model.User, err error) {
 	repo := s.UserRepo
 	if repo == nil {
-		return users, noUserRepoErr
+		return users, NoRepoErr
 	}
 
 	return repo.GetAll()
@@ -35,7 +34,7 @@ func (s *Service) CreateUser(user *model.User) (kbs.ValErrorSet, error) {
 	// Repo
 	repo := s.UserRepo
 	if repo == nil {
-		return nil, noUserRepoErr
+		return nil, NoRepoErr
 	}
 
 	err = repo.Create(user)
@@ -87,7 +86,7 @@ func (s *Service) GetUser(slug string) (user model.User, err error) {
 func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, error) {
 	repo := s.UserRepo
 	if repo == nil {
-		return nil, noUserRepoErr
+		return nil, NoRepoErr
 	}
 
 	// Get user
@@ -127,7 +126,7 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 func (s *Service) DeleteUser(slug string) error {
 	repo := s.UserRepo
 	if repo == nil {
-		return noUserRepoErr
+		return NoRepoErr
 	}
 
 	err := repo.DeleteBySlug(slug)
@@ -139,107 +138,71 @@ func (s *Service) DeleteUser(slug string) error {
 	return nil
 }
 
-//func (s *Service) SignUpUser(req tp.SignUpUserReq, res *tp.SignUpUserRes) error {
-//// Model
-//u := req.ToModel()
+func (s *Service) SignUpUser(user *model.User) (kbs.ValErrorSet, error) {
+	// Validation
+	v := NewUserValidator(user)
 
-//// Validation
-//v := NewUserValidator(u)
+	err := v.ValidateForSignUp()
+	if err != nil {
+		return v.Errors, err
+	}
 
-//err := v.ValidateForSignUp()
-//if err != nil {
-//res.FromModel(&u, validationErr, err)
-//}
+	// Generate confirmation token
+	user.GenConfirmationToken()
 
-//// Generate confirmation token
-//u.GenConfirmationToken()
+	// Repo
+	repo := s.UserRepo
+	if repo == nil {
+		return nil, NoRepoErr
+	}
 
-//repo, err := s.UserRepo
-//if repo == nil {
-//return noUserRepoErr
-//}
+	err = repo.Create(user)
+	if err != nil {
+		return nil, err
+	}
 
-//err = repo.Create(&u)
-//if err != nil {
-//res.FromModel(&u, cannotProcErr, err)
-//return err
-//}
+	// Mail confirmation
+	s.sendConfirmationEmail(user)
 
-//err = repo.Commit()
-//if err != nil {
-//res.FromModel(&u, createUserErr, err)
-//return err
-//}
+	// Output
+	return nil, nil
+}
 
-//// Mail confirmation
-//s.sendConfirmationEmail(&u)
+func (s *Service) ConfirmUser(slug, token string) error {
+	repo := s.UserRepo
+	if repo == nil {
+		return NoRepoErr
+	}
 
-//// Output
-//res.FromModel(&u, okResultInfo, nil)
-//return nil
-//}
+	user, err := repo.GetBySlugAndToken(slug, token)
+	if err != nil {
+		return NewErr(UserConfirmationErrMsg, err)
+	}
 
-//func (s *Service) ConfirmUser(req tp.GetUserReq, res *tp.GetUserRes) error {
-//// Model
-//u := req.ToModel()
+	if user.IsConfirmed.Bool {
+		return AlreadyConfirmedErr
+	}
 
-//repo, err := s.UserRepo
-//if repo == nil {
-//return noUserRepoErr
-//}
+	err = repo.ConfirmUser(user.Slug.String, user.ConfirmationToken.String)
+	if err != nil {
+		return NewErr(UserConfirmationErrMsg, err)
+	}
 
-//s.Log.Debug("Values", "slug", u.Slug.String, "token", u.ConfirmationToken.String)
+	// Output
+	return nil
+}
 
-//u, err = repo.GetBySlugAndToken(u.Slug.String, u.ConfirmationToken.String)
-//if err != nil {
-//res.FromModel(&u, confirmationErr, err)
-//return err
-//}
+func (s *Service) SignInUser(username, password string) (user model.User, err error) {
+	repo := s.UserRepo
+	if repo == nil {
+		return user, NoRepoErr
+	}
 
-//if u.IsConfirmed.Bool {
-//res.FromModel(&u, alreadyConfirmedErr, err)
-//return errors.New("already confirmed")
-//}
+	user, err = repo.SignIn(username, password)
+	if err != nil {
+		return user, CredentialsErr
+	}
 
-//u, err = repo.ConfirmUser(u.Slug.String, u.ConfirmationToken.String)
-//if err != nil {
-//res.FromModel(&u, confirmationErr, err)
-//return err
-//}
-
-//err = repo.Commit()
-//if err != nil {
-//res.FromModel(&u, confirmationErr, err)
-//return err
-//}
-
-//// Output
-//res.FromModel(&u, okResultInfo, nil)
-//return nil
-//}
-
-//func (s *Service) SignInUser(req tp.SignInUserReq, res *tp.SignInUserRes) error {
-//// Model
-//u := req.ToModel()
-
-//repo, err := s.UserRepo
-//if repo == nil {
-//return noUserRepoErr
-//}
-
-//u, err = repo.SignIn(u.Username.String, u.Password)
-//if err != nil {
-//res.FromModel(&u, signinErr, err)
-//return err
-//}
-
-//err = repo.Commit()
-//if err != nil {
-//res.FromModel(&u, signinErr, err)
-//return err
-//}
-
-//// Output
-//res.FromModel(&u, okResultInfo, nil)
-//return nil
-//}
+	// Output
+	return user, nil
+}

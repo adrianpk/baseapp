@@ -3,8 +3,8 @@ package svc
 import (
 	"fmt"
 
-	"gitlab.com/kabestan/repo/baseapp/internal/model"
 	kbs "gitlab.com/kabestan/backend/kabestan"
+	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
 func (s *Service) MakeConfirmationEmail(u *model.User) kbs.Email {
@@ -17,13 +17,13 @@ func (s *Service) MakeConfirmationEmail(u *model.User) kbs.Email {
 
 	site := cfg.ValOrDef("site.url", "localhost")
 	path := cfg.ValOrDef("user.confirmation.path", "users/%s/verify/%s")
-	confPath := fmt.Sprintf(path, u.Slug, u.ConfirmationToken)
+	confPath := fmt.Sprintf(path, u.Slug.String, u.ConfirmationToken.String)
 	link := fmt.Sprintf("https://%s/%s", site, confPath)
 
 	body := "<p>Hi %s, follow this link to confirm your account: <br/><br/>"
 	body = body + "<a href=\"%s\">%s</a><br/<br/>"
 	body = body + "Thanks!"
-	body = fmt.Sprintf(body, u.Username, link, link)
+	body = fmt.Sprintf(body, u.Username.String, link, link)
 
 	m := kbs.MakeEmail(name, from, to, "", "", subject, body)
 
@@ -42,13 +42,13 @@ func (s *Service) makeConfirmationEmail(u *model.User) kbs.Email {
 
 	site := cfg.ValOrDef("site.url", "localhost")
 	path := cfg.ValOrDef("user.confirmation.path", "users/%s/verify/%s")
-	confPath := fmt.Sprintf(path, u.Slug, u.ConfirmationToken)
+	confPath := fmt.Sprintf(path, u.Slug.String, u.ConfirmationToken.String)
 	link := fmt.Sprintf("https://%s/%s", site, confPath)
 
 	body := "<p>Hi %s, follow this link to confirm your account: <br/><br/>"
 	body = body + "<a href=\"%s\">%s</a><br/<br/>"
 	body = body + "Thanks!"
-	body = fmt.Sprintf(body, u.Username, link, link)
+	body = fmt.Sprintf(body, u.Username.String, link, link)
 
 	m := kbs.MakeEmail(name, from, to, "", "", subject, body)
 
