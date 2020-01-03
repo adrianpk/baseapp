@@ -27,7 +27,7 @@ const (
 	ConfMatchErrMsg  = "conf_match_err_msg"
 )
 
-func NewEndpoint(cfg *kbs.Config, log *kbs.Logger, name string) (*Endpoint, error) {
+func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error) {
 	//registerGobTypes()
 
 	wep, err := kbs.MakeWebEndpoint(cfg, log, pathFxs)

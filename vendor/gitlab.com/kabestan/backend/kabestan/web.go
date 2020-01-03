@@ -26,7 +26,7 @@ import (
 type (
 	WebEndpoint struct {
 		Cfg        *Config
-		Log        *Logger
+		Log        Logger
 		templates  TemplateSet
 		templateFx template.FuncMap
 		store      *sessions.CookieStore
@@ -140,7 +140,7 @@ const (
 	I18NorCtxKey ContextKey = "i18n"
 )
 
-func MakeWebEndpoint(cfg *Config, log *Logger, templateFx template.FuncMap) (*WebEndpoint, error) {
+func MakeWebEndpoint(cfg *Config, log Logger, templateFx template.FuncMap) (*WebEndpoint, error) {
 	registerGobTypes()
 
 	ep := WebEndpoint{

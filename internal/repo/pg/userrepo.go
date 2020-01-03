@@ -15,13 +15,13 @@ import (
 type (
 	UserRepo struct {
 		Cfg  *kbs.Config
-		Log  *kbs.Logger
+		Log  kbs.Logger
 		Name string
 		DB   *sqlx.DB
 	}
 )
 
-func NewUserRepo(cfg *kbs.Config, log *kbs.Logger, name string, db *sqlx.DB) *UserRepo {
+func NewUserRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *UserRepo {
 	return &UserRepo{
 		Cfg:  cfg,
 		Log:  log,

@@ -80,7 +80,7 @@ func main() {
 	log.Error(err, fmt.Sprintf("%s service stoped", appName))
 }
 
-func exit(log *kbs.Logger, err error) {
+func exit(log kbs.Logger, err error) {
 	log.Error(err)
 	os.Exit(1)
 }

@@ -24,7 +24,7 @@ func (app *App) NewWebRouter() *kbs.Router {
 	return rt
 }
 
-func (app *App) makeWebHomeRouter(cfg *kbs.Config, log *kbs.Logger) *kbs.Router {
+func (app *App) makeWebHomeRouter(cfg *kbs.Config, log kbs.Logger) *kbs.Router {
 	rt := kbs.NewRouter(cfg, log, "web-home-router")
 	app.addWebHomeRoutes(rt)
 	return rt

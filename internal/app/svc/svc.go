@@ -13,7 +13,7 @@ type (
 	}
 )
 
-func NewService(cfg *kbs.Config, log *kbs.Logger, name string) *Service {
+func NewService(cfg *kbs.Config, log kbs.Logger, name string) *Service {
 	return &Service{
 		Service: kbs.NewService(cfg, log, name),
 	}

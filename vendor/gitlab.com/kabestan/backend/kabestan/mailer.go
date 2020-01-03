@@ -56,7 +56,7 @@ const (
 )
 
 // NewSESMailer creates and returns a new SES Mailer.
-func NewSESMailer(cfg *Config, log *Logger, name string) (*SESMailer, error) {
+func NewSESMailer(cfg *Config, log Logger, name string) (*SESMailer, error) {
 	if name == "" {
 		name = fmt.Sprintf("ses-mailer-%s", nameSufix())
 	}
@@ -146,7 +146,7 @@ func newSESEmail(from, to, cc, bcc, subject, body, charset string) *ses.SendEmai
 	return email
 }
 
-func newSESMailer(cfg *Config, log *Logger, name string) (*SESMailer, error) {
+func newSESMailer(cfg *Config, log Logger, name string) (*SESMailer, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(region)},
 	)

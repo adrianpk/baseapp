@@ -20,7 +20,7 @@ type (
 )
 
 // NewMigrator creates and returns a new migrator.
-func NewMigrator(cfg *kbs.Config, log *kbs.Logger, name string, db *sqlx.DB) (*Migrator, error) {
+func NewMigrator(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) (*Migrator, error) {
 	log.Info("New migrator", "name", name)
 
 	m := &Migrator{

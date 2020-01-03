@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func NewPostgresConn(cfg *Config, log *Logger) (*sqlx.DB, error) {
+func NewPostgresConn(cfg *Config, log Logger) (*sqlx.DB, error) {
 	pm := pgManager{
 		Worker: NewWorker(cfg, log, "pg-db-manager"),
 	}
