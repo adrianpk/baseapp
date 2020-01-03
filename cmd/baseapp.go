@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/app"
 	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/mig"
 	repo "gitlab.com/kabestan/repo/baseapp/internal/repo/pg"
-	kbs "gitlab.com/kabestan/backend/kabestan"
 )
 
 type contextKey string

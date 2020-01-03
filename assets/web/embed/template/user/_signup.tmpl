@@ -1,4 +1,4 @@
-{{define "signup"}} {{$user := .Data.User}} {{$action := .Data.Action}} {{$errors := .Data.Errors}} {{$loc := .Loc}} {{$csrf := .CSRF}}
+{{define "signup"}} {{$user := .Data}} {{$action := .Action}} {{$errors := .Errors}} {{$loc := .Loc}} {{$csrf := .CSRF}}
     <div class="w-2/3 mx-auto">
 
           <form class="bg-white shadow-md px-8 py-4 mb-4 rounded" accept-charset="UTF-8" action="{{$action.Target}}" method="POST">
