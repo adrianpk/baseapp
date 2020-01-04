@@ -10,24 +10,21 @@ import (
 
 func (app *App) addWebAuthRouter(parent chi.Router) chi.Router {
 	return parent.Route("/auth", func(uar chi.Router) {
-		uar.Use(app.WebEP.ReqAuth)
 		uar.Get("/signup", app.WebEP.InitSignUpUser)
 		uar.Post("/signup", app.WebEP.SignUpUser)
 		uar.Get("/signin", app.WebEP.InitSignInUser)
 		uar.Post("/signin", app.WebEP.SignInUser)
+		//uar.Post("/signout", app.WebEP.SignOutUser)
 	})
 }
 
+// Thes handlers require authorization
 func (app *App) addWebUserRouter(parent chi.Router) chi.Router {
 	return parent.Route("/users", func(uar chi.Router) {
 		uar.Use(app.WebEP.ReqAuth)
 		uar.Get("/", app.WebEP.IndexUsers)
 		uar.Get("/new", app.WebEP.NewUser)
 		uar.Post("/", app.WebEP.CreateUser)
-		//uar.Get("/signup", app.WebEP.InitSignUpUser)
-		//uar.Post("/signup", app.WebEP.SignUpUser)
-		//uar.Get("/signin", app.WebEP.InitSignInUser)
-		//uar.Post("/signin", app.WebEP.SignInUser)
 		uar.Route("/{slug}", func(uarid chi.Router) {
 			uarid.Use(userCtx)
 			uarid.Get("/", app.WebEP.ShowUser)

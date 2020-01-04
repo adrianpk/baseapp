@@ -29,6 +29,10 @@ const (
 	ConfMatchErrMsg  = "conf_match_err_msg"
 )
 
+const (
+	signedInCookieKey = "signed-in-slug"
+)
+
 func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error) {
 	//registerGobTypes()
 
@@ -49,21 +53,31 @@ func registerGobTypes() {
 	// gob.Register(CustomType3{})
 }
 
-func (ep *Endpoint) IsAuthenticated(r *http.Request) bool {
-	return true // FIX: implement a real auth check
+func (ep *Endpoint) SignedInCookieKey() string {
+	return signedInCookieKey
 }
 
 // Middlewares
 // ReqAuth require user authentication middleware.
 func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		if !ep.IsAuthenticated(r) {
-			http.Redirect(w, r, "/users/login", 302)
+		s, ok := ep.IsAuthenticated(r)
+		if !ok {
+			ep.Log.Debug("User not authenticated")
+			http.Redirect(w, r, AuthPathSignIn(), 302)
 			return
 		}
+
 		w.Header().Add("Cache-Control", "no-store")
+
+		ep.Log.Debug("User authenticated", "slug", s)
+
 		next.ServeHTTP(w, r)
 	}
 
 	return http.HandlerFunc(fn)
+}
+
+func (ep *Endpoint) IsAuthenticated(r *http.Request) (slug string, ok bool) {
+	return ep.ReadCookieVal(r, ep.SignedInCookieKey())
 }
