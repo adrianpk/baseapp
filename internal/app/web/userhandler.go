@@ -411,8 +411,8 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Register user slug in session.
-	ep.SetCookieVal(w, r, "user", user.Slug.String)
-	ep.Log.Info("User signed in", "user", user.Username.String)
+	ep.SetCookieVal(w, r, ep.SignedInCookieKey(), user.Slug.String)
+	ep.Log.Debug("User signed in", "user", user.Username.String)
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
