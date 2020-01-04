@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	kbs "gitlab.com/kabestan/backend/kabestan"
 	"github.com/markbates/pkger"
+	kbs "gitlab.com/kabestan/backend/kabestan"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -20,6 +20,7 @@ var (
 
 func (app *App) NewWebRouter() *kbs.Router {
 	rt := app.makeWebHomeRouter(app.Cfg, app.Log)
+	app.addWebAuthRouter(rt)
 	app.addWebUserRouter(rt)
 	return rt
 }

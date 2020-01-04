@@ -18,6 +18,7 @@ import (
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/schema"
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/pkger"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -29,9 +30,11 @@ type (
 		Log        Logger
 		templates  TemplateSet
 		templateFx template.FuncMap
-		store      *sessions.CookieStore
-		storeKey   string
-		i18n       *i18n.Bundle
+		//session    *sessions.Session
+		store          *sessions.CookieStore
+		storeKey       string
+		secCookieStore *securecookie.SecureCookie
+		i18n           *i18n.Bundle
 		// More
 		Service ServiceIF
 		Mailer  Mailer
@@ -133,7 +136,9 @@ var (
 )
 
 const (
-	FlashStoreKey = "flash"
+	FlashStoreKey   = "flash"
+	SessionKey      = "session"
+	SecureCookieKey = "sec-cookie"
 )
 
 const (
@@ -150,7 +155,10 @@ func MakeWebEndpoint(cfg *Config, log Logger, templateFx template.FuncMap) (*Web
 	}
 
 	// Cookie store
-	ep.makeCookieStore()
+	ep.newCookieStore()
+
+	// Secure Cookie store
+	ep.newSecCookieStore()
 
 	// Load
 	ts, err := ep.loadTemplates()
@@ -179,6 +187,10 @@ func (ep *WebEndpoint) Templates() TemplateSet {
 func (ep *WebEndpoint) TemplatesFx() template.FuncMap {
 	return ep.templateFx
 }
+
+//func (ep *WebEndpoint) Session() *sessions.Session {
+//return ep.session
+//}
 
 func (ep *WebEndpoint) Store() *sessions.CookieStore {
 	return ep.store
@@ -410,12 +422,36 @@ func formatRequest(r *http.Request) string {
 }
 
 // Sessions
-func (ep *WebEndpoint) makeCookieStore() {
+func (ep *WebEndpoint) newSecCookieStore() {
+	// Set secure cookie hash
+	h := ep.Cfg.ValOrDef("web.seccookie.hash", "")
+	if h == "" {
+		h = ep.genRandomString(32)
+		ep.Log.Debug("New secure cookie hash", "value", h)
+		csEnVar := fmt.Sprintf("%s_SECCOOKIE_HASH", "KBS")
+		ep.Log.Info("Set a custom secure cookie hash using a 32 char string stored as an envar", "envvar", csEnVar)
+	}
+
+	// Set secure cookie block
+	b := ep.Cfg.ValOrDef("web.seccookie.block", "")
+	if b == "" {
+		b = ep.genRandomString(16)
+		ep.Log.Debug("New secure cookie block", "value", b)
+		csEnVar := fmt.Sprintf("%s_SECCOOKIE_BLOCK", "KBS")
+		ep.Log.Info("Set a custom secure cookie block using a 16 char string stored as an envar", "envvar", csEnVar)
+	}
+
+	var hashKey = []byte(h)
+	var blockKey = []byte(b)
+	ep.secCookieStore = securecookie.New(hashKey, blockKey)
+}
+
+func (ep *WebEndpoint) newCookieStore() {
 	k := ep.Cfg.ValOrDef("web.cookiestore.key", "")
 	if k == "" {
 		k = ep.genAES256Key()
 		ep.Log.Debug("New cookie store random key", "value", k)
-		csEnVar := fmt.Sprintf("%s_COOKIESTORE_KEY", "GRN")
+		csEnVar := fmt.Sprintf("%s_COOKIESTORE_KEY", "KBS")
 		ep.Log.Info("Set a custom cookie store key using a 32 char string stored as an envar", "envvar", csEnVar)
 	}
 
@@ -426,9 +462,12 @@ func (ep *WebEndpoint) makeCookieStore() {
 }
 
 func (ep *WebEndpoint) genAES256Key() string {
+	return ep.genRandomString(32)
+}
+
+func (ep *WebEndpoint) genRandomString(length int) string {
 	const allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	const (
-		lenght    = 32
 		indexBits = 6                // 6 bits to represent a letter index
 		indexMask = 1<<indexBits - 1 // All 1-bits, as many as letterIdxBits
 		indexMax  = 63 / indexBits   // # of letter indices fitting in 63 bits
@@ -436,7 +475,7 @@ func (ep *WebEndpoint) genAES256Key() string {
 	src := rand.NewSource(time.Now().UnixNano())
 	sb := strings.Builder{}
 	sb.Grow(32)
-	for i, cache, remain := lenght-1, src.Int63(), indexMax; i >= 0; {
+	for i, cache, remain := length-1, src.Int63(), indexMax; i >= 0; {
 		if remain == 0 {
 			cache, remain = src.Int63(), indexMax
 		}
@@ -452,7 +491,7 @@ func (ep *WebEndpoint) genAES256Key() string {
 }
 
 func (ep *WebEndpoint) GetSession(r *http.Request, name ...string) *sessions.Session {
-	session := "session"
+	session := SessionKey
 	if len(name) > 0 {
 		session = name[0]
 	}
@@ -461,6 +500,31 @@ func (ep *WebEndpoint) GetSession(r *http.Request, name ...string) *sessions.Ses
 		ep.Log.Warn("Cannot get sesssion from store", "reqID", "n/a")
 	}
 	return s
+}
+
+func (ep *WebEndpoint) SetCookieVal(w http.ResponseWriter, r *http.Request, key, value string) {
+	c, err := r.Cookie(SecureCookieKey)
+	if err == nil {
+		vals := make(map[string]string)
+
+		// Decode the cookie content
+		err = ep.secCookieStore.Decode(SecureCookieKey, c.Value, &vals)
+		if err == nil {
+			// Update cookie value
+			vals[key] = value
+
+			// Encode values again
+			e, err := ep.secCookieStore.Encode(SecureCookieKey, vals)
+			if err == nil {
+				cookie := &http.Cookie{
+					Name:  SecureCookieKey,
+					Value: e,
+					Path:  "/",
+				}
+				http.SetCookie(w, cookie)
+			}
+		}
+	}
 }
 
 // Templates

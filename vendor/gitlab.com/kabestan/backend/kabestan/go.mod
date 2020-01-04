@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/gorilla/csrf v1.6.2
 	github.com/gorilla/schema v1.1.0
+	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.3.0

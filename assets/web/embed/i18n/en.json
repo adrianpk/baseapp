@@ -9,10 +9,9 @@
 "user_created_info_msg": "User created",
 "user_updated_info_msg": "User updated",
 "user_deleted_info_msg": "User deleted",
-
 "signed_up_info_msg": "Signed up completed",
 "confirmed_info_msg": "User email account confirmed",
-"logged_in_info_msg": "Successfully logged in",
+"signed_in_info_msg": "Successfully signed in",
 
 "get_all_users_err_msg": "Cannot get user list'",
 "create_user_err_msg": "Cannot create user",
@@ -21,9 +20,7 @@
 "delete_user_err_msg": "Cannot delete user ",
 "input_values_err_msg": "Verify entered values",
 "sign_in_err_msg": "Sign in error",
-
 "credentials_err_msg": "Verify username and password",
-
 "cannot_proc_err_msg": "It is not possible to process the request at this time",
 
 "required_err_msg": "Required",
