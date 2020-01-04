@@ -3,6 +3,8 @@ package web
 import (
 	//"encoding/gob"
 
+	"net/http"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
 )
@@ -27,7 +29,7 @@ const (
 	ConfMatchErrMsg  = "conf_match_err_msg"
 )
 
-func NewEndpoint(cfg *kbs.Config, log *kbs.Logger, name string) (*Endpoint, error) {
+func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error) {
 	//registerGobTypes()
 
 	wep, err := kbs.MakeWebEndpoint(cfg, log, pathFxs)
@@ -45,4 +47,23 @@ func registerGobTypes() {
 	// gob.Register(CustomType1{})
 	// gob.Register(CustomType2{})
 	// gob.Register(CustomType3{})
+}
+
+func (ep *Endpoint) IsAuthenticated(r *http.Request) bool {
+	return true // FIX: implement a real auth check
+}
+
+// Middlewares
+// ReqAuth require user authentication middleware.
+func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		if !ep.IsAuthenticated(r) {
+			http.Redirect(w, r, "/users/login", 302)
+			return
+		}
+		w.Header().Add("Cache-Control", "no-store")
+		next.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
 }

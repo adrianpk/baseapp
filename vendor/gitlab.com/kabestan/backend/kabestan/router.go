@@ -18,14 +18,14 @@ import (
 type (
 	Router struct {
 		Cfg  *Config
-		Log  *Logger
+		Log  Logger
 		Name string
 		chi.Router
 		i18nBundle *i18n.Bundle
 	}
 )
 
-func NewRouter(cfg *Config, log *Logger, name string) *Router {
+func NewRouter(cfg *Config, log Logger, name string) *Router {
 	name = genName(name, "router")
 
 	rt := Router{

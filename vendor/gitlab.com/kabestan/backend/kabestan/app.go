@@ -7,7 +7,7 @@ import (
 type (
 	App struct {
 		Cfg      *Config
-		Log      *Logger
+		Log      Logger
 		cancel   context.CancelFunc
 		Name     string
 		Revision string
@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func NewApp(cfg *Config, log *Logger, name string) *App {
+func NewApp(cfg *Config, log Logger, name string) *App {
 	name = genName(name, "app")
 
 	return &App{

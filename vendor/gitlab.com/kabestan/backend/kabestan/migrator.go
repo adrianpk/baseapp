@@ -92,7 +92,7 @@ const (
 )
 
 // NewMigrator.
-func NewMigrator(cfg *Config, log *Logger, name string, db *sqlx.DB) *Migrator {
+func NewMigrator(cfg *Config, log Logger, name string, db *sqlx.DB) *Migrator {
 	m := &Migrator{
 		Worker: NewWorker(cfg, log, name),
 		DB:     db,

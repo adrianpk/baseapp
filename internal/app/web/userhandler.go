@@ -308,7 +308,7 @@ func (ep *Endpoint) InitSignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.SignUpTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -316,7 +316,7 @@ func (ep *Endpoint) InitSignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -327,7 +327,7 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err := ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -344,21 +344,21 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
-		ep.rerenderUserForm(w, r, user.ToForm(), ves, kbs.NewTmpl, userCreateAction())
+		ep.rerenderUserForm(w, r, user.ToForm(), ves, kbs.NewTmpl, userSignUpAction())
 		return
 	}
 
 	// Then take care of other kind of possible errors
 	// that service can generate.
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), SignUpUserErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), SignUpUserErrMsg, err)
 		return
 	}
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
 	m := ep.localize(r, SignedUpInfoMsg)
-	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
+	ep.RedirectWithFlash(w, r, "/", m, kbs.InfoMT)
 }
 
 func (ep *Endpoint) InitSignInUser(w http.ResponseWriter, r *http.Request) {
@@ -371,7 +371,7 @@ func (ep *Endpoint) InitSignInUser(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.SignInTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -379,7 +379,7 @@ func (ep *Endpoint) InitSignInUser(w http.ResponseWriter, r *http.Request) {
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -390,7 +390,7 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err := ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -402,19 +402,22 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 		// Give a hint to user about kind of error.
 		if err == svc.CredentialsErr {
 			msgID = (err.(svc.Err)).MsgID()
+			ep.rerenderUserForm(w, r, user.ToForm(), nil, kbs.SignInTmpl, userSignInAction())
+			return
 		}
 
 		ep.errorRedirect(w, r, UserPath(), msgID, err)
 		return
 	}
 
-	// TODO: Create user session.
-	ep.Log.Info("User signed in", "user", user.Username)
+	// Register user slug in session.
+	ep.SetCookieVal(w, r, "user", user.Slug.String)
+	ep.Log.Info("User signed in", "user", user.Username.String)
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
 	m := ep.localize(r, SignedInInfoMsg)
-	ep.RedirectWithFlash(w, r, "/", m, kbs.InfoMT)
+	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
 // ConfirmUser web endpoint.
@@ -539,12 +542,12 @@ func userDeleteAction(model kbs.Identifiable) kbs.FormAction {
 
 // userSignUpAction
 func userSignUpAction() kbs.FormAction {
-	return kbs.FormAction{Target: UserPathSignUp(), Method: "POST"}
+	return kbs.FormAction{Target: AuthPathSignUp(), Method: "POST"}
 }
 
 // userSignInAction
 func userSignInAction() kbs.FormAction {
-	return kbs.FormAction{Target: UserPathSignIn(), Method: "POST"}
+	return kbs.FormAction{Target: AuthPathSignIn(), Method: "POST"}
 }
 
 func (ep *Endpoint) errorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {

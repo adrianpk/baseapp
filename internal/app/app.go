@@ -16,8 +16,8 @@ type (
 	}
 )
 
-// NewApp creates a new app  worker instance.func NewApp(cfg *kbs.Config, log *kbs.Logger, name string, core *kbs.Worker) (*App, error) {
-func NewApp(cfg *kbs.Config, log *kbs.Logger, name string) (*App, error) {
+// NewApp creates a new app  worker instance.func NewApp(cfg *kbs.Config, log kbs.Logger, name string, core *kbs.Worker) (*App, error) {
+func NewApp(cfg *kbs.Config, log kbs.Logger, name string) (*App, error) {
 	app := App{
 		App: kbs.NewApp(cfg, log, name),
 	}

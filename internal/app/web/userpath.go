@@ -4,8 +4,25 @@ import (
 	kbs "gitlab.com/kabestan/backend/kabestan"
 )
 
+// AuthRoot - Auth root path.
+var AuthRoot = "auth"
+
 // UserRoot - User resource root path.
 var UserRoot = "users"
+
+func AuthPath() string {
+	return kbs.ResPath(AuthRoot)
+}
+
+// AuthPathSignUp
+func AuthPathSignUp() string {
+	return kbs.ResPath(AuthRoot) + "/signup"
+}
+
+// AuthPathSignIn
+func AuthPathSignIn() string {
+	return kbs.ResPath(AuthRoot) + "/signin"
+}
 
 // UserPath
 func UserPath() string {
@@ -33,14 +50,4 @@ func UserPathInitDelete(res kbs.Identifiable) string {
 // UserPathSlug
 func UserPathSlug(res kbs.Identifiable) string {
 	return kbs.ResPathSlug(UserRoot, res)
-}
-
-// UserPathSignUp
-func UserPathSignUp() string {
-	return kbs.ResPath(UserRoot) + "/signup"
-}
-
-// UserPathSignIn
-func UserPathSignIn() string {
-	return kbs.ResPath(UserRoot) + "/signin"
 }

@@ -10,5 +10,6 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
   * Logging
   * Authentication
   * Authorization
+  * Localization (I10n)
   * Web Endpoint
   * JSON REST Endpoint
