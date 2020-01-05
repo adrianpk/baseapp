@@ -90,7 +90,7 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 	// ID shouldn't change.
 	user.ID = current.ID
 	// Username can change if system enabled.
-	// Set envar GRN_APP_USERNAME_UPDATABLE=true
+	// Set envar KBS_APP_USERNAME_UPDATABLE=true
 	// to let username be updatable.
 	if !(s.Cfg.ValAsBool("kbs.username.updatable", false)) {
 		user.Username = current.Username
