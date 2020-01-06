@@ -44,7 +44,7 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 ## Dev. Env. Setup [draft]
 
-After stabilizing this base app a (still not published) generator will be updated to automate most of this steps.
+After stabilizing this base app a (still not published) generator will be updated to automate most of these steps.
 
 ### Clone app
 
@@ -162,4 +162,12 @@ const (
 )
 ```
 
+### Update makefile
+**TODO**
+
+### Update Dockerfile
+**TODO**
+
 **Work in progress:** This draft needs to be augmented and, eventually, corrected.
+
+
