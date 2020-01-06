@@ -9,10 +9,10 @@
 "user_created_info_msg": "Utworzony przez użytkownika",
 "user_updated_info_msg": "Użytkownik zaktualizowany",
 "user_deleted_info_msg": "Użytkownik usunięty",
-
 "signed_up_info_msg": "Signed up completed",
 "confirmed_info_msg": "User email account confirmed",
-"logged_in_info_msg": "Successfully logged in",
+"signed_in_info_msg": "Signed in",
+"signed_out_info_msg": "Signed out",
 
 "get_all_err_msg": "Nie można uzyskać listy użytkowników",
 "create_err_msg": "Nie można uzyskać użytkownikai",

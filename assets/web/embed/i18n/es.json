@@ -9,9 +9,10 @@
 "user_created_info_msg": "Usuario ha sido creado",
 "user_updated_info_msg": "Usuario ha sido actualizado",
 "user_deleted_info_msg": "Usuario ha sido borrado",
-
 "signed_up_info_msg": "Signed up completed",
-"logged_in_info_msg": "Successfully logged in",
+"confirmed_info_msg": "User email account confirmed",
+"signed_in_info_msg": "Signed in",
+"signed_out_info_msg": "Signed out",
 
 "get_all_err_msg": "No se puede obtener la lista de usuarioso",
 "create_err_msg": "No es posible crear el usuario",

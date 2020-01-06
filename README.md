@@ -24,6 +24,7 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 | POST     | /auth/signup       | SignUp       |
 | GET      | /auth/signin       | InitSignIn   |
 | POST     | /auth/signin       | SignIn       |
+| GET      | /auth/signout      | SignOut      |
 
 ### User
 
