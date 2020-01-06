@@ -9,10 +9,10 @@
 "user_created_info_msg": "Benutzer erstellt",
 "user_updated_info_msg": "Benutzer aktualisiert",
 "user_deleted_info_msg": "Benutzer gelöscht",
-
 "signed_up_info_msg": "Signed up completed",
 "confirmed_info_msg": "User email account confirmed",
-"logged_in_info_msg": "Successfully logged in",
+"signed_in_info_msg": "Signed in",
+"signed_out_info_msg": "Signed out",
 
 "get_all_err_msg": "Benutzerliste kann nicht abgerufen werden",
 "create_err_msg": "Benutzer kann nicht abgerufen werden",
@@ -20,9 +20,7 @@
 "update_err_msg": "Benutzer kann nicht aktualisiert werden",
 "delete_err_msg": "Benutzer kann nicht gelöscht werden",
 "input_values_err_msg": "Überprüfen Sie die eingegebenen Werte",
-
 "credentials_err_msg": "Verify username and password",
-
 "cannot_proc_err_msg": "Es ist derzeit nicht möglich, die Anfrage zu bearbeiten",
 
 "required_err_msg": "Erforderlich",

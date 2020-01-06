@@ -29,10 +29,6 @@ const (
 	ConfMatchErrMsg  = "conf_match_err_msg"
 )
 
-const (
-	signedInCookieKey = "signed-in-slug"
-)
-
 func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error) {
 	//registerGobTypes()
 
@@ -51,10 +47,6 @@ func registerGobTypes() {
 	// gob.Register(CustomType1{})
 	// gob.Register(CustomType2{})
 	// gob.Register(CustomType3{})
-}
-
-func (ep *Endpoint) SignedInCookieKey() string {
-	return signedInCookieKey
 }
 
 // Middlewares
@@ -76,8 +68,4 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	}
 
 	return http.HandlerFunc(fn)
-}
-
-func (ep *Endpoint) IsAuthenticated(r *http.Request) (slug string, ok bool) {
-	return ep.ReadCookieVal(r, ep.SignedInCookieKey())
 }

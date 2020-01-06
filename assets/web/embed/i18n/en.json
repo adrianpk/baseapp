@@ -11,7 +11,8 @@
 "user_deleted_info_msg": "User deleted",
 "signed_up_info_msg": "Signed up completed",
 "confirmed_info_msg": "User email account confirmed",
-"signed_in_info_msg": "Successfully signed in",
+"signed_in_info_msg": "Signed in",
+"signed_out_info_msg": "Signed out",
 
 "get_all_users_err_msg": "Cannot get user list'",
 "create_user_err_msg": "Cannot create user",

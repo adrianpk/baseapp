@@ -14,7 +14,7 @@ func (app *App) addWebAuthRouter(parent chi.Router) chi.Router {
 		uar.Post("/signup", app.WebEP.SignUpUser)
 		uar.Get("/signin", app.WebEP.InitSignInUser)
 		uar.Post("/signin", app.WebEP.SignInUser)
-		//uar.Post("/signout", app.WebEP.SignOutUser)
+		uar.Get("/signout", app.WebEP.SignOutUser)
 	})
 }
 

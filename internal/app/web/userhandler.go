@@ -27,6 +27,7 @@ const (
 	SignedUpInfoMsg    = "signed_up_info_msg"
 	ConfirmedInfoMsg   = "confirmed_info_msg"
 	SignedInInfoMsg    = "signed_in_info_msg"
+	SignedOutInfoMsg   = "signed_out_info_msg"
 	// Error
 	CreateUserErrMsg        = "create_user_err_msg"
 	IndexUsersErrMsg        = "get_all_users_err_msg"
@@ -407,12 +408,23 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Register user slug in session.
-	ep.SetCookieVal(w, r, ep.SignedInCookieKey(), user.Slug.String)
+	ep.SignIn(w, r, user.Slug.String)
 	ep.Log.Debug("User signed in", "user", user.Username.String)
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
 	m := ep.Localize(r, SignedInInfoMsg)
+	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
+}
+
+// SignOutUser web endpoint.
+func (ep *Endpoint) SignOutUser(w http.ResponseWriter, r *http.Request) {
+	ep.Log.Info("Signing out user")
+	ep.SignOut(w, r)
+
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, SignedOutInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -469,34 +481,6 @@ func (ep *Endpoint) rerenderUserForm(w http.ResponseWriter, r *http.Request, dat
 
 	return
 }
-
-//// Localization - I18N
-//func (ep *Endpoint) localize(r *http.Request, msgID string) string {
-//l := ep.Localizer(r)
-//if l == nil {
-//ep.Log.Warn("No localizer available")
-//return msgID
-//}
-
-//t, _, err := l.LocalizeWithTag(&i18n.LocalizeConfig{
-//MessageID: msgID,
-//})
-
-//if err != nil {
-//ep.Log.Error(err)
-//return msgID
-//}
-
-////s.Log.Debug("Localized message", "value", t, "lang", lang)
-
-//return t
-//}
-
-//func (ep *Endpoint) localizeMessageID(l *i18n.Localizer, messageID string) (string, error) {
-//return l.Localize(&i18n.LocalizeConfig{
-//MessageID: messageID,
-//})
-//}
 
 // Misc
 func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
