@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
@@ -32,6 +31,7 @@ const (
 	CreateUserErrMsg        = "create_user_err_msg"
 	IndexUsersErrMsg        = "get_all_users_err_msg"
 	GetUserErrMsg           = "get_user_err_msg"
+	GetUsersErrMsg          = "get_users_err_msg"
 	UpdateUserErrMsg        = "update_user_err_msg"
 	DeleteUserErrMsg        = "delete_user_err_msg"
 	CredentialsErrMsg       = "credentials_err_msg"
@@ -46,7 +46,7 @@ func (ep *Endpoint) IndexUsers(w http.ResponseWriter, r *http.Request) {
 	// Get users list from registered service
 	users, err := ep.Service.IndexUsers()
 	if err != nil {
-		ep.errorRedirect(w, r, "/", IndexUsersErrMsg, err)
+		ep.ErrorRedirect(w, r, "/", IndexUsersErrMsg, err)
 		return
 	}
 
@@ -60,14 +60,14 @@ func (ep *Endpoint) IndexUsers(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.IndexTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, "/", IndexUsersErrMsg, err)
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
 		return
 	}
 
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, "/", IndexUsersErrMsg, err)
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
 		return
 	}
 }
@@ -82,7 +82,7 @@ func (ep *Endpoint) NewUser(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.NewTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -90,7 +90,7 @@ func (ep *Endpoint) NewUser(w http.ResponseWriter, r *http.Request) {
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -100,16 +100,12 @@ func (ep *Endpoint) CreateUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err := ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Create a model using form values.
 	user := userForm.ToModel()
-
-	// Update non form values
-	// NOTE: Use user's IP only on SignUp
-	// user.LastIP = db.ToNullString("0.0.0.0/24")
 
 	// Use registered service to do everything related
 	// to user creation.
@@ -124,13 +120,13 @@ func (ep *Endpoint) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// Then take care of other kind of possible errors
 	// that service can generate.
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CreateUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
-	m := ep.localize(r, UserCreatedInfoMsg)
+	m := ep.Localize(r, UserCreatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -139,7 +135,7 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 	// Get slug from request context.
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -147,7 +143,7 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 	// to user creation.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
 		return
 	}
 
@@ -157,14 +153,14 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 	// Template
 	ts, err := ep.TemplateFor(userRes, kbs.ShowTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Write response
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -173,14 +169,14 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get the user from repo.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
 		return
 	}
 
@@ -192,14 +188,14 @@ func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 	// Template
 	ts, err := ep.TemplateFor(userRes, kbs.EditTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Write response
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -208,7 +204,7 @@ func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
 		return
 	}
 
@@ -216,7 +212,7 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err = ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -229,18 +225,18 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
-		ep.Log.Warn("Validation errors", "dump", fmt.Sprintf("%+v", ves.FieldErrors))
+		ep.Log.Debug("Validation errors", "dump", fmt.Sprintf("%+v", ves.FieldErrors))
 		ep.rerenderUserForm(w, r, user.ToForm(), ves, kbs.NewTmpl, userCreateAction())
 		return
 	}
 
 	// Non validation errors
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), UpdateUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), UpdateUserErrMsg, err)
 		return
 	}
 
-	m := ep.localize(r, UserUpdatedInfoMsg)
+	m := ep.Localize(r, UserUpdatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -248,14 +244,14 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get the user from repo.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetUsersErrMsg, err)
 		return
 	}
 
@@ -267,14 +263,14 @@ func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Template
 	ts, err := ep.TemplateFor(userRes, kbs.InitDelTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Write response
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -283,18 +279,18 @@ func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
 		return
 	}
 
 	// Service
 	err = ep.Service.DeleteUser(s)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
 		return
 	}
 
-	m := ep.localize(r, UserDeletedInfoMsg)
+	m := ep.Localize(r, UserDeletedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -308,7 +304,7 @@ func (ep *Endpoint) InitSignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.SignUpTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -316,7 +312,7 @@ func (ep *Endpoint) InitSignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -327,7 +323,7 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err := ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -351,13 +347,13 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Then take care of other kind of possible errors
 	// that service can generate.
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), SignUpUserErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), SignUpUserErrMsg, err)
 		return
 	}
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
-	m := ep.localize(r, SignedUpInfoMsg)
+	m := ep.Localize(r, SignedUpInfoMsg)
 	ep.RedirectWithFlash(w, r, "/", m, kbs.InfoMT)
 }
 
@@ -371,7 +367,7 @@ func (ep *Endpoint) InitSignInUser(w http.ResponseWriter, r *http.Request) {
 	// Get template to render from cache.
 	ts, err := ep.TemplateFor(userRes, kbs.SignInTmpl)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -379,7 +375,7 @@ func (ep *Endpoint) InitSignInUser(w http.ResponseWriter, r *http.Request) {
 	// Execute it and redirect if error.
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 }
@@ -390,7 +386,7 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	userForm := model.UserForm{}
 	err := ep.FormToModel(r, &userForm)
 	if err != nil {
-		ep.errorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), CannotProcErrMsg, err)
 		return
 	}
 
@@ -406,7 +402,7 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		ep.errorRedirect(w, r, UserPath(), msgID, err)
+		ep.ErrorRedirect(w, r, UserPath(), msgID, err)
 		return
 	}
 
@@ -416,7 +412,7 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
-	m := ep.localize(r, SignedInInfoMsg)
+	m := ep.Localize(r, SignedInInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -424,14 +420,14 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), ConfirmUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	// Token
 	t, err := ep.getToken(r)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), ConfirmationTokenErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), ConfirmationTokenErrMsg, err)
 		return
 	}
 
@@ -445,11 +441,11 @@ func (ep *Endpoint) ConfirmUser(w http.ResponseWriter, r *http.Request) {
 			msgID = (err.(svc.Err)).MsgID()
 		}
 
-		ep.errorRedirect(w, r, UserPath(), msgID, err)
+		ep.ErrorRedirect(w, r, UserPath(), msgID, err)
 		return
 	}
 
-	m := ep.localize(r, UserCreatedInfoMsg)
+	m := ep.Localize(r, UserCreatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -460,47 +456,47 @@ func (ep *Endpoint) rerenderUserForm(w http.ResponseWriter, r *http.Request, dat
 
 	ts, err := ep.TemplateFor(userRes, template)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), InputValuesErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), InputValuesErrMsg, err)
 		return
 	}
 
 	// Write response
 	err = ts.Execute(w, wr)
 	if err != nil {
-		ep.errorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
 		return
 	}
 
 	return
 }
 
-// Localization - I18N
-func (ep *Endpoint) localize(r *http.Request, msgID string) string {
-	l := ep.Localizer(r)
-	if l == nil {
-		ep.Log.Warn("No localizer available")
-		return msgID
-	}
+//// Localization - I18N
+//func (ep *Endpoint) localize(r *http.Request, msgID string) string {
+//l := ep.Localizer(r)
+//if l == nil {
+//ep.Log.Warn("No localizer available")
+//return msgID
+//}
 
-	t, _, err := l.LocalizeWithTag(&i18n.LocalizeConfig{
-		MessageID: msgID,
-	})
+//t, _, err := l.LocalizeWithTag(&i18n.LocalizeConfig{
+//MessageID: msgID,
+//})
 
-	if err != nil {
-		ep.Log.Error(err)
-		return msgID
-	}
+//if err != nil {
+//ep.Log.Error(err)
+//return msgID
+//}
 
-	//s.Log.Debug("Localized message", "value", t, "lang", lang)
+////s.Log.Debug("Localized message", "value", t, "lang", lang)
 
-	return t
-}
+//return t
+//}
 
-func (ep *Endpoint) localizeMessageID(l *i18n.Localizer, messageID string) (string, error) {
-	return l.Localize(&i18n.LocalizeConfig{
-		MessageID: messageID,
-	})
-}
+//func (ep *Endpoint) localizeMessageID(l *i18n.Localizer, messageID string) (string, error) {
+//return l.Localize(&i18n.LocalizeConfig{
+//MessageID: messageID,
+//})
+//}
 
 // Misc
 func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
@@ -550,8 +546,8 @@ func userSignInAction() kbs.FormAction {
 	return kbs.FormAction{Target: AuthPathSignIn(), Method: "POST"}
 }
 
-func (ep *Endpoint) errorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {
-	m := ep.localize(r, msgID)
+func (ep *Endpoint) eErrorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {
+	m := ep.Localize(r, msgID)
 	ep.RedirectWithFlash(w, r, redirPath, m, kbs.ErrorMT)
 	ep.Log.Error(err)
 }

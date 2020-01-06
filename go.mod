@@ -7,7 +7,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.3.0
 	github.com/markbates/pkger v0.13.0
-	github.com/nicksnyder/go-i18n/v2 v2.0.3
 	github.com/satori/go.uuid v1.2.0
 	gitlab.com/kabestan/backend/kabestan v0.0.0-20191228021211-f4dcb668bc31
 	gitlab.com/kabestan/backend/kabestan/db v0.0.0
