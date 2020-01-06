@@ -38,5 +38,4 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 | PATCH    | /users/{slug}                 | Update       |
 | POST     | /users/{slug}/init-delete     | InitDelete   |
 | DELETE   | /users/{slug}                 | Delete       |
-| GET      | /users/{slug}/{token}/confirm | Delete       |
-
+| GET      | /users/{slug}/{token}/confirm | Confirm      |
