@@ -90,12 +90,12 @@ func (ur *AccountRepo) GetBySlug(slug string) (account model.Account, err error)
 	return account, err
 }
 
-// GetByAccountname account from repo by accountname.
-func (ur *AccountRepo) GetByAccountname(accountname string) (model.Account, error) {
+// GetByName account from repo by accountname.
+func (ur *AccountRepo) GetByName(name string) (model.Account, error) {
 	var account model.Account
 
-	st := `SELECT * FROM USERS WHERE accountname = '%s' LIMIT es_deleted IS NULL or NOT is_deleted LIMIT 1;`
-	st = fmt.Sprintf(st, accountname)
+	st := `SELECT * FROM USERS WHERE name = '%s' LIMIT es_deleted IS NULL or NOT is_deleted LIMIT 1;`
+	st = fmt.Sprintf(st, name)
 
 	err := ur.DB.Get(&account, st)
 

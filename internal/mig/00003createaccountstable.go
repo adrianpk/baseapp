@@ -11,8 +11,8 @@ func (s *step) CreateAccountsTable() error {
 		id UUID PRIMARY KEY,
 		slug VARCHAR(36) UNIQUE,
 		tenant_id VARCHAR(128),
-		owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
-		parent_id UUID REFERENCES accounts(id) ON DELETE CASCADE,
+		owner_id UUID,
+		parent_id UUID,
 		account_type VARCHAR(36),
 		name VARCHAR(64),
 		email VARCHAR(255)

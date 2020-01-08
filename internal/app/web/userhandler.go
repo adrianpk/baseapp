@@ -69,7 +69,7 @@ func (ep *Endpoint) IndexUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ep *Endpoint) NewUser(w http.ResponseWriter, r *http.Request) {
-	userForm := model.UserForm{}
+	userForm := model.UserForm{IsNew: true}
 
 	// Wrap response
 	wr := ep.WrapRes(w, r, &userForm, nil)
