@@ -60,7 +60,7 @@ VALUES (:id, :slug, :username, :password_digest, :email, :given_name, :middle_na
 
 // GetAll users from
 func (ur *UserRepo) GetAll() (users []model.User, err error) {
-	st := `SELECT * FROM users;`
+	st := `SELECT * FROM users WHERE is_deleted IS NULL OR NOT is_deleted;`
 
 	err = ur.DB.Select(&users, st)
 	if err != nil {
@@ -72,7 +72,7 @@ func (ur *UserRepo) GetAll() (users []model.User, err error) {
 
 // Get user by ID.
 func (ur *UserRepo) Get(id uuid.UUID) (user model.User, err error) {
-	st := `SELECT * FROM USERS WHERE id = '%s' LIMIT 1;`
+	st := `SELECT * FROM USERS WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id.String())
 
 	err = ur.DB.Get(&user, st)
@@ -85,7 +85,7 @@ func (ur *UserRepo) Get(id uuid.UUID) (user model.User, err error) {
 
 // GetBySlug user from repo by slug.
 func (ur *UserRepo) GetBySlug(slug string) (user model.User, err error) {
-	st := `SELECT * FROM USERS WHERE slug = '%s' LIMIT 1;`
+	st := `SELECT * FROM USERS WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, slug)
 
 	err = ur.DB.Get(&user, st)
@@ -97,7 +97,7 @@ func (ur *UserRepo) GetBySlug(slug string) (user model.User, err error) {
 func (ur *UserRepo) GetByUsername(username string) (model.User, error) {
 	var user model.User
 
-	st := `SELECT * FROM USERS WHERE username = '%s' LIMIT 1;`
+	st := `SELECT * FROM USERS WHERE username = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, username)
 
 	err := ur.DB.Get(&user, st)
@@ -200,7 +200,7 @@ func (ur *UserRepo) Update(user *model.User, tx ...*sqlx.Tx) error {
 
 // Delete user from repo by ID.
 func (ur *UserRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE id = '%s';`
+	st := `DELETE FROM USERS WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	t, local, err := ur.getTx(tx)
@@ -219,7 +219,7 @@ func (ur *UserRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 
 // DeleteBySlug:w user from repo by slug.
 func (ur *UserRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE slug = '%s';`
+	st := `DELETE FROM USERS WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ur.getTx(tx)
@@ -238,7 +238,7 @@ func (ur *UserRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 
 // DeleteByusername user from repo by username.
 func (ur *UserRepo) DeleteByUsername(username string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE username = '%s';`
+	st := `DELETE FROM USERS WHERE username = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, username)
 
 	t, local, err := ur.getTx(tx)
@@ -258,7 +258,7 @@ func (ur *UserRepo) DeleteByUsername(username string, tx ...*sqlx.Tx) error {
 func (ur *UserRepo) GetBySlugAndToken(slug, token string) (model.User, error) {
 	var user model.User
 
-	st := `SELECT * FROM USERS WHERE slug = '%s' AND confirmation_token = '%s' LIMIT 1;`
+	st := `SELECT * FROM USERS WHERE slug = '%s' AND confirmation_token = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, slug, token)
 
 	err := ur.DB.Get(&user, st)
@@ -268,7 +268,7 @@ func (ur *UserRepo) GetBySlugAndToken(slug, token string) (model.User, error) {
 
 // Confirm user from repo by slug.
 func (ur *UserRepo) ConfirmUser(slug, token string, tx ...*sqlx.Tx) (err error) {
-	st := `UPDATE USERS SET is_confirmed = TRUE WHERE slug = '%s' AND confirmation_token = '%s';`
+	st := `UPDATE USERS SET is_confirmed = TRUE WHERE slug = '%s' AND confirmation_token = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, slug, token)
 
 	t, local, err := ur.getTx(tx)
@@ -289,7 +289,7 @@ func (ur *UserRepo) ConfirmUser(slug, token string, tx ...*sqlx.Tx) (err error) 
 func (ur *UserRepo) SignIn(username, password string) (model.User, error) {
 	var u model.User
 
-	st := `SELECT * FROM users WHERE username = '%s' OR email = '%s' LIMIT 1;`
+	st := `SELECT * FROM users WHERE username = '%s' OR email = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 
 	st = fmt.Sprintf(st, username, username)
 

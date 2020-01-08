@@ -57,7 +57,7 @@ VALUES (:id, :slug, :owner_id, :parent_id, :account_type, :name, :email, :locale
 
 // GetAll accounts from
 func (ur *AccountRepo) GetAll() (accounts []model.Account, err error) {
-	st := `SELECT * FROM accounts WHERE is_delete IS NULL OR NOT is_deleted`
+	st := `SELECT * FROM accounts WHERE is_deleted IS NULL OR NOT is_deleted`
 
 	err = ur.DB.Select(&accounts, st)
 	if err != nil {
@@ -69,7 +69,7 @@ func (ur *AccountRepo) GetAll() (accounts []model.Account, err error) {
 
 // Get account by ID.
 func (ur *AccountRepo) Get(id uuid.UUID) (account model.Account, err error) {
-	st := `SELECT * FROM USERS WHERE id = '%s' WHERE is_delete IS NULL OR NOT is_deleted LIMIT 1;`
+	st := `SELECT * FROM accounts WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id.String())
 
 	err = ur.DB.Get(&account, st)
@@ -82,8 +82,18 @@ func (ur *AccountRepo) Get(id uuid.UUID) (account model.Account, err error) {
 
 // GetBySlug account from repo by slug.
 func (ur *AccountRepo) GetBySlug(slug string) (account model.Account, err error) {
-	st := `SELECT * FROM USERS WHERE slug = '%s' WHERE is_delete IS NULL OR NOT is_deleted LIMIT 1;`
+	st := `SELECT * FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, slug)
+
+	err = ur.DB.Get(&account, st)
+
+	return account, err
+}
+
+// GetByOwnerID account from repo by slug.
+func (ur *AccountRepo) GetByOwnerID(id uuid.UUID) (account model.Account, err error) {
+	st := `SELECT * FROM accounts WHERE owner_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st = fmt.Sprintf(st, id)
 
 	err = ur.DB.Get(&account, st)
 
@@ -94,7 +104,7 @@ func (ur *AccountRepo) GetBySlug(slug string) (account model.Account, err error)
 func (ur *AccountRepo) GetByName(name string) (model.Account, error) {
 	var account model.Account
 
-	st := `SELECT * FROM USERS WHERE name = '%s' LIMIT es_deleted IS NULL or NOT is_deleted LIMIT 1;`
+	st := `SELECT * FROM accounts WHERE name = '%s' AND (is_deleted IS NULL or NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, name)
 
 	err := ur.DB.Get(&account, st)
@@ -166,7 +176,7 @@ func (ur *AccountRepo) Update(account *model.Account, tx ...*sqlx.Tx) error {
 
 // Delete account from repo by ID.
 func (ur *AccountRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE id = '%s';`
+	st := `DELETE FROM accounts WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	t, local, err := ur.getTx(tx)
@@ -185,7 +195,7 @@ func (ur *AccountRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 
 // DeleteBySlug:w account from repo by slug.
 func (ur *AccountRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE slug = '%s';`
+	st := `DELETE FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ur.getTx(tx)
@@ -200,64 +210,6 @@ func (ur *AccountRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 	}
 
 	return err
-}
-
-// DeleteByaccountname account from repo by accountname.
-func (ur *AccountRepo) DeleteByAccountname(accountname string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM USERS WHERE accountname = '%s';`
-	st = fmt.Sprintf(st, accountname)
-
-	t, local, err := ur.getTx(tx)
-	if err != nil {
-		return err
-	}
-	_, err = t.Exec(st)
-
-	if local {
-		return t.Commit()
-	}
-
-	return err
-}
-
-// GetBySlug account from repo by slug token.
-func (ur *AccountRepo) GetBySlugAndToken(slug, token string) (model.Account, error) {
-	var account model.Account
-
-	st := `SELECT * FROM USERS WHERE slug = '%s' AND confirmation_token = '%s' LIMIT 1;`
-	st = fmt.Sprintf(st, slug, token)
-
-	err := ur.DB.Get(&account, st)
-
-	return account, err
-}
-
-// Confirm account from repo by slug.
-func (ur *AccountRepo) ConfirmAccount(slug, token string, tx ...*sqlx.Tx) (err error) {
-	st := `UPDATE USERS SET is_confirmed = TRUE WHERE slug = '%s' AND confirmation_token = '%s';`
-	st = fmt.Sprintf(st, slug, token)
-
-	t, local, err := ur.getTx(tx)
-	if err != nil {
-		return err
-	}
-
-	_, err = t.Exec(st)
-
-	if local {
-		return t.Commit()
-	}
-
-	return err
-}
-
-func (ur *AccountRepo) newTx() (tx *sqlx.Tx, err error) {
-	tx, err = ur.DB.Beginx()
-	if err != nil {
-		return tx, err
-	}
-
-	return tx, err
 }
 
 func (ur *AccountRepo) getTx(txs []*sqlx.Tx) (tx *sqlx.Tx, local bool, err error) {
