@@ -2,7 +2,13 @@ package svc
 
 import (
 	kbs "gitlab.com/kabestan/backend/kabestan"
+	"gitlab.com/kabestan/backend/kabestan/db"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
+)
+
+const (
+	userAccountType = "user"
+	orgAccountType  = "org"
 )
 
 const (
@@ -30,15 +36,52 @@ func (s *Service) CreateUser(user *model.User) (kbs.ValErrorSet, error) {
 
 	// Confirmation
 	user.GenAutoConfirmationToken()
+	user.SetCreateValues()
+
+	// Get a new transaction
+	tx, err := s.getTx()
+	if err != nil {
+		return nil, err
+	}
 
 	// Repo
-	repo := s.UserRepo
-	if repo == nil {
+	userRepo := s.UserRepo
+	if userRepo == nil {
 		return nil, NoRepoErr
 	}
 
-	err = repo.Create(user)
+	err = userRepo.Create(user, tx)
 	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Create an account for this user
+	account := &model.Account{
+		OwnerID:     user.ID,
+		AccountType: db.ToNullString(userAccountType),
+		Name:        user.Username,
+		Email:       user.Email,
+		StartsAt:    user.CreatedAt,
+		IsActive:    user.IsActive,
+	}
+
+	accountRepo := s.AccountRepo
+	if userRepo == nil {
+		tx.Rollback()
+		return nil, NoRepoErr
+	}
+
+	err = accountRepo.Create(account, tx)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Commit transaction
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

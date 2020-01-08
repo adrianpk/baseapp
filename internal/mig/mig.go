@@ -1,9 +1,9 @@
 package mig
 
 import (
-	kbs "gitlab.com/kabestan/backend/kabestan"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // package init.
+	kbs "gitlab.com/kabestan/backend/kabestan"
 )
 
 const (
@@ -45,10 +45,10 @@ func (m *Migrator) addSteps() {
 	s.Config(s.CreateUsersTable, s.DropUsersTable)
 	m.AddMigration(s)
 
-	//// CreateAccountsTable
-	//s = &step{}
-	//s.Config(s.CreateAccountsTable, s.DropAccountsTable)
-	//m.AddMigration(s)
+	// CreateAccountsTable
+	s = &step{}
+	s.Config(s.CreateAccountsTable, s.DropAccountsTable)
+	m.AddMigration(s)
 
 	//// CreateProfilesTable
 	//s = &step{}

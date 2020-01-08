@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
@@ -31,8 +32,8 @@ type (
 		CurrentTZ         sql.NullString `db:"current_tz" json:"-" schema:"-"`
 		StartsAt          pq.NullTime    `db:"starts_at" json:"-" schema:"-"`
 		EndsAt            pq.NullTime    `db:"ends_at" json:"-" schema:"-"`
-		IsActive          bool           `db:"is_active" json:"-" schema:"-"`
-		IsDeleted         bool           `db:"is_deleted" json:"-" schema:"-"`
+		IsActive          sql.NullBool   `db:"is_active" json:"-" schema:"-"`
+		IsDeleted         sql.NullBool   `db:"is_deleted" json:"-" schema:"-"`
 		kbs.Audit
 	}
 )
@@ -74,10 +75,19 @@ func (user *User) UpdatePasswordDigest() (digest string, err error) {
 
 // SetCreateValues sets de ID and slug.
 func (user *User) SetCreateValues() error {
-	pfx := user.Username.String
-	user.Identification.SetCreateValues(pfx)
-	user.Audit.SetCreateValues()
-	user.UpdatePasswordDigest()
+	fmt.Printf("User ID: '%s'\n", user.Identification.ID)
+	fmt.Printf("User Slug: '%s'\n", user.Identification.Slug.String)
+	// Set create values only only if they were not previously
+	if user.Identification.ID == uuid.Nil ||
+		user.Identification.Slug.String == "" {
+		fmt.Println("Not previous values, setting ID and slug")
+		fmt.Printf("New User ID: '%s'\n", user.Identification.ID)
+		fmt.Printf("New User Slug: '%s'\n", user.Identification.Slug.String)
+		pfx := user.Username.String
+		user.Identification.SetCreateValues(pfx)
+		user.Audit.SetCreateValues()
+		user.UpdatePasswordDigest()
+	}
 	return nil
 }
 

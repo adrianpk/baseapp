@@ -41,6 +41,8 @@ VALUES (:id, :slug, :username, :password_digest, :email, :given_name, :middle_na
 		return err
 	}
 
+	// Don't wait for repo to setup this values.
+	// We want user ID to user as account owner ID.
 	user.SetCreateValues()
 
 	_, err = t.NamedExec(st, user)

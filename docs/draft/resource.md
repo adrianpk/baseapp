@@ -18,6 +18,31 @@ Steps needed to create a new resource
 
   * File: `internal/mig/00003createaccountstable.go`
 
+## Add migration
+
+  * File: `internal/mig/mig.go`
+
+```go
+// GetMigrator configured.
+func (m *Migrator) addSteps() {
+	// Migrations
+	// Enable Postgis
+	s := &step{}
+	s.Config(s.EnablePostgis, s.DropPostgis)
+	m.AddMigration(s)
+
+	// CreateUsersTable
+	s = &step{}
+	s.Config(s.CreateUsersTable, s.DropUsersTable)
+	m.AddMigration(s)
+
+	// CreateAccountsTable <-- Something like this block
+	s = &step{}
+	s.Config(s.CreateAccountsTable, s.DropAccountsTable)
+	m.AddMigration(s)
+}
+```
+
 ## Create resource repo interface
 
   * File: `internal/repo/accountrepo.go`
@@ -36,7 +61,7 @@ Steps needed to create a new resource
 
 ## Create resource router
 
-  * Location: `internal/app/accountrouter.go`
+  * File: `internal/app/accountrouter.go`
 
 ## Add router to parent router
 
@@ -54,23 +79,23 @@ func (app *App) NewWebRouter() *kbs.Router {
 
 ## Create resource web endpoint
 
-  * Location: `internal/web/accounthandler.go`
+  * File: `internal/web/accounthandler.go`
 
 ## Create resource path routes
 
-  * Location: `internal/web/accountpath.go`
+  * File: `internal/web/accountpath.go`
 
 ## Create resource service
 
-  * Location: `internal/svc/accountsvc.go`
+  * File: `internal/svc/accountsvc.go`
 
 ## Create resource validator
 
-  * Location: `internal/svc/accountval.go`
+  * File: `internal/svc/accountval.go`
 
 ## Add resource repo dependency to service
 
-  * Location: `internal/svc/svc.go`
+  * Edit: `internal/svc/svc.go`
 
 ```go
 type (
@@ -81,4 +106,12 @@ type (
 	}
 )
 ```
+## Create templates
+
+  * Files: `assets/web/embed/template/account`
+
+## Edit content and translations
+
+  * Files: `assets/web/embed/i18n`
+
 

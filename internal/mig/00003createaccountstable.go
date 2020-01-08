@@ -6,13 +6,13 @@ import "log"
 func (s *step) CreateAccountsTable() error {
 	tx := s.GetTx()
 
-	st := `CREATE TABLE users
+	st := `CREATE TABLE accounts
 		(
 		id UUID PRIMARY KEY,
 		slug VARCHAR(36) UNIQUE,
 		tenant_id VARCHAR(128),
-		owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
-		parent_id UUID REFERENCE accounts(id) ON DELETE CASCADE,
+		owner_id UUID,
+		parent_id UUID,
 		account_type VARCHAR(36),
 		name VARCHAR(64),
 		email VARCHAR(255)

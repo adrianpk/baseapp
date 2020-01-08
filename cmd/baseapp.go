@@ -59,13 +59,15 @@ func main() {
 
 	// Repos
 	ur := repo.NewUserRepo(cfg, log, "user-repo", db)
+	ar := repo.NewAccountRepo(cfg, log, "account-repo", db)
 
 	// Core service
-	svc := svc.NewService(cfg, log, "core-service")
+	svc := svc.NewService(cfg, log, "core-service", db)
 
 	// Service dependencies
 	svc.Mailer = ml
 	svc.UserRepo = ur
+	svc.AccountRepo = ar
 
 	// App dependencies
 	a.Migrator = mg
