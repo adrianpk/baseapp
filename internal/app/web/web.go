@@ -3,6 +3,7 @@ package web
 import (
 	//"encoding/gob"
 
+	"errors"
 	"net/http"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
@@ -14,6 +15,11 @@ type (
 		*kbs.WebEndpoint
 		Service *svc.Service
 	}
+)
+
+const (
+	SlugCtxKey kbs.ContextKey = "slug"
+	ConfCtxKey kbs.ContextKey = "conf"
 )
 
 const (
@@ -68,4 +74,15 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	}
 
 	return http.HandlerFunc(fn)
+}
+
+func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
+	ctx := r.Context()
+	slug, ok := ctx.Value(SlugCtxKey).(string)
+	if !ok {
+		err := errors.New("no slug provided")
+		return "", err
+	}
+
+	return slug, nil
 }
