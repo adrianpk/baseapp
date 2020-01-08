@@ -103,7 +103,7 @@ func (s *Service) GetUser(slug string) (user model.User, err error) {
 	return user, nil
 }
 
-func (s *Service) GetUserByUsernamei(username string) (user model.User, err error) {
+func (s *Service) GetUserByUsername(username string) (user model.User, err error) {
 	repo := s.UserRepo
 	if err != nil {
 		return user, err
@@ -118,13 +118,19 @@ func (s *Service) GetUserByUsernamei(username string) (user model.User, err erro
 }
 
 func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, error) {
-	repo := s.UserRepo
-	if repo == nil {
+	// Get a new transaction
+	tx, err := s.getTx()
+	if err != nil {
+		return nil, err
+	}
+
+	userRepo := s.UserRepo
+	if userRepo == nil {
 		return nil, NoRepoErr
 	}
 
 	// Get user
-	current, err := repo.GetBySlug(slug)
+	current, err := userRepo.GetBySlug(slug)
 	if err != nil {
 		return nil, err
 	}
@@ -147,10 +153,39 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 		return v.Errors, err
 	}
 
-	// Update
-	err = repo.Update(user)
+	// Update user
+	err = userRepo.Update(user, tx)
 	if err != nil {
 		return v.Errors, err
+	}
+
+	// Get account repo
+	accountRepo := s.AccountRepo
+	if accountRepo == nil {
+		return nil, NoRepoErr
+	}
+
+	// Get associated account
+	account, err := accountRepo.GetByOwnerID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update values
+	account.Name = user.Username
+	account.Email = user.Email
+	account.IsActive = user.IsActive
+
+	err = accountRepo.Update(&account)
+	if err != nil {
+		return nil, err
+	}
+
+	// Commit transaction
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return nil, err
 	}
 
 	// Output
