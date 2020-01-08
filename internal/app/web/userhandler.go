@@ -15,11 +15,6 @@ const (
 )
 
 const (
-	SlugCtxKey kbs.ContextKey = "slug"
-	ConfCtxKey kbs.ContextKey = "conf"
-)
-
-const (
 	// Defined in 'assets/web/embed/i18n/xx.json'
 	UserCreatedInfoMsg = "user_created_info_msg"
 	UserUpdatedInfoMsg = "user_updated_info_msg"
@@ -331,8 +326,7 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Create a model using form values.
 	user := userForm.ToModel()
 
-	// Update non form values
-	// NOTE: Use user's IP only on SignUp
+	// Get IP from user request
 	// user.LastIP = db.ToNullString("0.0.0.0/24")
 
 	// Use registered service to do everything related
@@ -391,6 +385,11 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get IP from user request
+	// ip := db.ToNullString("0.0.0.0/24")
+	// TODO: Provide IP to the service in order to register last IP
+	// Can be used to detect spurious logins.
+	// user, err := ep.Service.SignInUser(userForm.Username, userForm.Password, ip)
 	user, err := ep.Service.SignInUser(userForm.Username, userForm.Password)
 
 	if err != nil {
@@ -483,17 +482,6 @@ func (ep *Endpoint) rerenderUserForm(w http.ResponseWriter, r *http.Request, dat
 }
 
 // Misc
-func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
-	ctx := r.Context()
-	slug, ok := ctx.Value(SlugCtxKey).(string)
-	if !ok {
-		err := errors.New("no slug provided")
-		return "", err
-	}
-
-	return slug, nil
-}
-
 func (ep *Endpoint) getToken(r *http.Request) (token string, err error) {
 	ctx := r.Context()
 	token, ok := ctx.Value(ConfCtxKey).(string)
@@ -528,10 +516,4 @@ func userSignUpAction() kbs.FormAction {
 // userSignInAction
 func userSignInAction() kbs.FormAction {
 	return kbs.FormAction{Target: AuthPathSignIn(), Method: "POST"}
-}
-
-func (ep *Endpoint) eErrorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {
-	m := ep.Localize(r, msgID)
-	ep.RedirectWithFlash(w, r, redirPath, m, kbs.ErrorMT)
-	ep.Log.Error(err)
 }

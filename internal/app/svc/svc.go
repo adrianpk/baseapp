@@ -9,7 +9,8 @@ import (
 type (
 	Service struct {
 		*kbs.Service
-		UserRepo repo.UserRepo
+		UserRepo    repo.UserRepo
+		AccountRepo repo.AccountRepo
 	}
 )
 

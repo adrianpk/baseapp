@@ -18,33 +18,33 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 ### Auth
 
-| Method   | Path               | Handler      |
-| -------- | ------------------ | ------------ |
-| GET      | /auth/signup       | InitSignUp   |
-| POST     | /auth/signup       | SignUp       |
-| GET      | /auth/signin       | InitSignIn   |
-| POST     | /auth/signin       | SignIn       |
-| GET      | /auth/signout      | SignOut      |
+| Method | Path          | Handler    |
+|--------|---------------|------------|
+| GET    | /auth/signup  | InitSignUp |
+| POST   | /auth/signup  | SignUp     |
+| GET    | /auth/signin  | InitSignIn |
+| POST   | /auth/signin  | SignIn     |
+| GET    | /auth/signout | SignOut    |
 
 ### User
 
-| Method   | Path                          | Handler      |
-| -------- | ----------------------------- | ------------ |
-| GET      | /users                        | Index        |
-| GET      | /users/new                    | New          |
-| POST     | /users                        | Create       |
-| GET      | /users/{slug}                 | Show         |
-| GET      | /users/{slug}/edit            | Edit         |
-| PUT      | /users/{slug}                 | Update       |
-| PATCH    | /users/{slug}                 | Update       |
-| POST     | /users/{slug}/init-delete     | InitDelete   |
-| DELETE   | /users/{slug}                 | Delete       |
-| GET      | /users/{slug}/{token}/confirm | Confirm      |
+| Method | Path                          | Handler    |
+|--------|-------------------------------|------------|
+| GET    | /users                        | Index      |
+| GET    | /users/new                    | New        |
+| POST   | /users                        | Create     |
+| GET    | /users/{slug}                 | Show       |
+| GET    | /users/{slug}/edit            | Edit       |
+| PUT    | /users/{slug}                 | Update     |
+| PATCH  | /users/{slug}                 | Update     |
+| POST   | /users/{slug}/init-delete     | InitDelete |
+| DELETE | /users/{slug}                 | Delete     |
+| GET    | /users/{slug}/{token}/confirm | Confirm    |
 
 
 ## Dev. Env. Setup [draft]
 
-After stabilizing this base app a (still not published) generator will be updated to automate most of this steps.
+After stabilizing this base app a (still not published) generator will be updated to automate most of these steps.
 
 ### Clone app
 
@@ -54,7 +54,7 @@ $ git clone https://gitlab.com/kabestan/repo/baseapp appname
 
 Replace appname by the name of your app.
 
-## Create user
+## Create database user
 
 If it does not exist yet.
 
@@ -162,4 +162,16 @@ const (
 )
 ```
 
+### Create resource files
+
+Follow [these steps](docs/draft/resource.md)
+
+### Update makefile
+**TODO**
+
+### Update Dockerfile
+**TODO**
+
 **Work in progress:** This draft needs to be augmented and, eventually, corrected.
+
+

@@ -118,60 +118,60 @@ func (ur *UserRepo) Update(user *model.User, tx ...*sqlx.Tx) error {
 	st.WriteString("UPDATE users SET ")
 
 	if user.Username != ref.Username {
-		st.WriteString(strUpd("username", "username"))
+		st.WriteString(kbs.SQLStrUpd("username", "username"))
 		pcu = true
 	}
 
 	if user.PasswordDigest != ref.PasswordDigest {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("password_digest", "password_digest"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("password_digest", "password_digest"))
 		pcu = true
 	}
 
 	if user.Email != ref.Email {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("email", "email"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("email", "email"))
 		pcu = true
 	}
 
 	if user.GivenName != ref.GivenName {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("given_name", "given_name"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("given_name", "given_name"))
 		pcu = true
 	}
 
 	if user.MiddleNames != ref.MiddleNames {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("middle_names", "middle_names"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("middle_names", "middle_names"))
 		pcu = true
 	}
 
 	if user.FamilyName != ref.FamilyName {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("family_name", "family_name"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("family_name", "family_name"))
 		pcu = true
 	}
 
 	if user.ConfirmationToken != ref.ConfirmationToken {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("confirmation_token", "confirmation_token"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("confirmation_token", "confirmation_token"))
 		pcu = true
 	}
 
 	if user.IsConfirmed != ref.IsConfirmed {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("is_confirmed", "is_confirmed"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("is_confirmed", "is_confirmed"))
 		pcu = true
 	}
 
 	if user.LastIP != ref.LastIP {
-		st.WriteString(preDelimiter(pcu))
-		st.WriteString(strUpd("last_ip", "last_ip"))
+		st.WriteString(kbs.SQLComma(pcu))
+		st.WriteString(kbs.SQLStrUpd("last_ip", "last_ip"))
 		pcu = true
 	}
 
 	st.WriteString(" ")
-	st.WriteString(whereID(ref.ID.String()))
+	st.WriteString(kbs.SQLWhereID(ref.ID.String()))
 	st.WriteString(";")
 
 	//fmt.Println(st.String())
@@ -300,25 +300,6 @@ func (ur *UserRepo) SignIn(username, password string) (model.User, error) {
 	}
 
 	return u, nil
-}
-
-// preDelimiter selects a comma or space
-// for each field in update statements.
-func preDelimiter(upc bool) string {
-	if upc {
-		return ", "
-	}
-	return " "
-}
-
-// strUpdCol build an update colum fragment of type string.
-func strUpd(colName, fieldName string) string {
-	return fmt.Sprintf("%s = :%s", colName, fieldName)
-}
-
-// whereID build an SQL where clause for ID.
-func whereID(id string) string {
-	return fmt.Sprintf("WHERE id = '%s'", id)
 }
 
 func (ur *UserRepo) newTx() (tx *sqlx.Tx, err error) {

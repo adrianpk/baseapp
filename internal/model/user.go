@@ -2,8 +2,8 @@ package model
 
 import (
 	"database/sql"
-	"time"
 
+	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/backend/kabestan/db"
@@ -29,8 +29,8 @@ type (
 		Locale            sql.NullString `db:"locale" json:"-" schema:"-"`
 		BaseTZ            sql.NullString `db:"base_tz" json:"-" schema:"-"`
 		CurrentTZ         sql.NullString `db:"current_tz" json:"-" schema:"-"`
-		StartsAt          time.Time      `db:"starts_at" json:"-" schema:"-"`
-		EndsAt            time.Time      `db:"ends_at" json:"-" schema:"-"`
+		StartsAt          pq.NullTime    `db:"starts_at" json:"-" schema:"-"`
+		EndsAt            pq.NullTime    `db:"ends_at" json:"-" schema:"-"`
 		IsActive          bool           `db:"is_active" json:"-" schema:"-"`
 		IsDeleted         bool           `db:"is_deleted" json:"-" schema:"-"`
 		kbs.Audit
@@ -50,16 +50,6 @@ type (
 		IsNew             bool   `json:"-" schema:"-"`
 	}
 )
-
-//type (
-//Form interface {
-//ToForm() Model
-//}
-
-//Model interface {
-//ToModel() Form
-//}
-//)
 
 func ToUserFormList(users []User) (fs []UserForm) {
 	for _, m := range users {
