@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"gitlab.com/kabestan/repo/baseapp/internal/model"
 	"github.com/jmoiron/sqlx"
 	uuid "github.com/satori/go.uuid"
+	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
 type (
