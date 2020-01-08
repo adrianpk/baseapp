@@ -18,6 +18,31 @@ Steps needed to create a new resource
 
   * File: `internal/mig/00003createaccountstable.go`
 
+## Add migration
+
+  * File: `internal/mig/mig.go`
+
+```go
+// GetMigrator configured.
+func (m *Migrator) addSteps() {
+	// Migrations
+	// Enable Postgis
+	s := &step{}
+	s.Config(s.EnablePostgis, s.DropPostgis)
+	m.AddMigration(s)
+
+	// CreateUsersTable
+	s = &step{}
+	s.Config(s.CreateUsersTable, s.DropUsersTable)
+	m.AddMigration(s)
+
+	// CreateAccountsTable <-- Something like this block
+	s = &step{}
+	s.Config(s.CreateAccountsTable, s.DropAccountsTable)
+	m.AddMigration(s)
+}
+```
+
 ## Create resource repo interface
 
   * File: `internal/repo/accountrepo.go`
