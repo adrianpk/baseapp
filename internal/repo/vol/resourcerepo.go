@@ -26,7 +26,8 @@ type (
 var (
 	userRes = model.Resource{
 		Identification: kbs.Identification{
-			ID: kbs.ToUUID("e8b43223-17fe-4e36-bd0f-a7d96e867d95"),
+			ID:   kbs.ToUUID("e8b43223-17fe-4e36-bd0f-a7d96e867d95"),
+			Slug: db.ToNullString("user-aa0298fe796f"),
 		},
 		Name: db.ToNullString("user"),
 		Tag:  db.ToNullString("b47f09"),
@@ -35,9 +36,10 @@ var (
 
 	accountRes = model.Resource{
 		Identification: kbs.Identification{
-			ID: kbs.ToUUID("fc86c00c-2d4f-400b-ae57-d9d5c87d13c8"),
+			ID:   kbs.ToUUID("fc86c00c-2d4f-400b-ae57-d9d5c87d13c8"),
+			Slug: db.ToNullString("account-7463efd308b4"),
 		},
-		Name: db.ToNullString("user"),
+		Name: db.ToNullString("account"),
 		Tag:  db.ToNullString("f0929c"),
 		Path: db.ToNullString("/accounts"),
 	}
@@ -68,7 +70,7 @@ func (ur *ResourceRepo) Create(resource *model.Resource, tx ...*sqlx.Tx) error {
 	}
 
 	resourcesTable[resource.ID] = resourceRow{
-		mutable: false,
+		mutable: true,
 		model:   *resource,
 	}
 
@@ -119,6 +121,17 @@ func (ur *ResourceRepo) GetByName(name string) (model.Resource, error) {
 func (ur *ResourceRepo) GetByTag(tag string) (model.Resource, error) {
 	for _, row := range resourcesTable {
 		if tag == row.model.Tag.String {
+			return row.model, nil
+		}
+	}
+	return model.Resource{}, nil
+}
+
+// GetByPath resource from repo by path ('/path').
+// Only exact match at the moment.
+func (ur *ResourceRepo) GetByPath(path string) (model.Resource, error) {
+	for _, row := range resourcesTable {
+		if path == row.model.Path.String {
 			return row.model, nil
 		}
 	}

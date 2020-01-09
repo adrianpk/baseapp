@@ -14,6 +14,7 @@ type (
 		GetBySlug(slug string) (resource model.Resource, err error)
 		GetByName(name string) (model.Resource, error)
 		GetByTag(tag string) (resource model.Resource, err error)
+		GetByPath(path string) (resource model.Resource, err error)
 		Update(resource *model.Resource, tx ...*sqlx.Tx) error
 		Delete(id uuid.UUID, tx ...*sqlx.Tx) error
 		DeleteBySlug(slug string, tx ...*sqlx.Tx) error
