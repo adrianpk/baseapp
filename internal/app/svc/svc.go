@@ -10,9 +10,10 @@ import (
 type (
 	Service struct {
 		*kbs.Service
-		DB          *sqlx.DB
-		UserRepo    repo.UserRepo
-		AccountRepo repo.AccountRepo
+		DB           *sqlx.DB
+		UserRepo     repo.UserRepo
+		AccountRepo  repo.AccountRepo
+		ResourceRepo repo.ResourceRepo
 	}
 )
 

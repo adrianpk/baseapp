@@ -1,10 +1,6 @@
 # Gtd
 
 ## Inbox
-* Correct account templates
-
-## Next
-* Implement Profile resource
 
 * Implement RBAC resources
 
@@ -14,6 +10,10 @@
   * ResourcePermission
   * UserRole
   * RolePermission
+
+## Next
+
+* Implement Profile resource
 
 * Implement KeyValue resource
 
@@ -31,6 +31,7 @@
 * Implement file upload for image resource
 
 ## Someday
+  * Correct account templates
   * Implement JSON REST endpoints
 
 ## Maybe
