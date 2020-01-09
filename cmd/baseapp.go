@@ -12,6 +12,7 @@ import (
 	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/mig"
 	repo "gitlab.com/kabestan/repo/baseapp/internal/repo/pg"
+	vrepo "gitlab.com/kabestan/repo/baseapp/internal/repo/vol"
 )
 
 type contextKey string
@@ -61,6 +62,9 @@ func main() {
 	ur := repo.NewUserRepo(cfg, log, "user-repo", db)
 	ar := repo.NewAccountRepo(cfg, log, "account-repo", db)
 
+	// Volatile
+	rr := vrepo.NewResourceRepo(cfg, log, "resource-repo")
+
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)
 
@@ -68,6 +72,7 @@ func main() {
 	svc.Mailer = ml
 	svc.UserRepo = ur
 	svc.AccountRepo = ar
+	svc.ResourceRepo = rr
 
 	// App dependencies
 	a.Migrator = mg
