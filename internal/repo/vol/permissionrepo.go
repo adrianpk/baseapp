@@ -57,7 +57,7 @@ func NewPermissionRepo(cfg *kbs.Config, log kbs.Logger, name string) *Permission
 }
 
 // Create a permission
-func (ur *PermissionRepo) Create(permission *model.Permission, tx ...*sqlx.Tx) error {
+func (pr *PermissionRepo) Create(permission *model.Permission, tx ...*sqlx.Tx) error {
 	_, ok := permissionsTable[permission.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -76,7 +76,7 @@ func (ur *PermissionRepo) Create(permission *model.Permission, tx ...*sqlx.Tx) e
 }
 
 // GetAll permissionsTable from
-func (ur *PermissionRepo) GetAll() (permissions []model.Permission, err error) {
+func (pr *PermissionRepo) GetAll() (permissions []model.Permission, err error) {
 	size := len(permissionsTable)
 	out := make([]model.Permission, size)
 	for _, row := range permissionsTable {
@@ -86,7 +86,7 @@ func (ur *PermissionRepo) GetAll() (permissions []model.Permission, err error) {
 }
 
 // Get permission by ID.
-func (ur *PermissionRepo) Get(id uuid.UUID) (permission model.Permission, err error) {
+func (pr *PermissionRepo) Get(id uuid.UUID) (permission model.Permission, err error) {
 	for _, row := range permissionsTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -96,7 +96,7 @@ func (ur *PermissionRepo) Get(id uuid.UUID) (permission model.Permission, err er
 }
 
 // GetBySlug permission from repo by slug.
-func (ur *PermissionRepo) GetBySlug(slug string) (permission model.Permission, err error) {
+func (pr *PermissionRepo) GetBySlug(slug string) (permission model.Permission, err error) {
 	for _, row := range permissionsTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -106,7 +106,7 @@ func (ur *PermissionRepo) GetBySlug(slug string) (permission model.Permission, e
 }
 
 // GetByName permission from repo by name.
-func (ur *PermissionRepo) GetByName(name string) (model.Permission, error) {
+func (pr *PermissionRepo) GetByName(name string) (model.Permission, error) {
 	for _, row := range permissionsTable {
 		if name == row.model.Name.String {
 			return row.model, nil
@@ -116,7 +116,7 @@ func (ur *PermissionRepo) GetByName(name string) (model.Permission, error) {
 }
 
 // Update permission data in
-func (ur *PermissionRepo) Update(permission *model.Permission, tx ...*sqlx.Tx) error {
+func (pr *PermissionRepo) Update(permission *model.Permission, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if permission.ID == row.model.ID {
 			if !row.mutable {
@@ -134,7 +134,7 @@ func (ur *PermissionRepo) Update(permission *model.Permission, tx ...*sqlx.Tx) e
 }
 
 // Delete permission from repo by ID.
-func (ur *PermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (pr *PermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -149,7 +149,7 @@ func (ur *PermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 }
 
 // DeleteBySlug permission from repo by slug.
-func (ur *PermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (pr *PermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

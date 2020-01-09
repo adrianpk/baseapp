@@ -59,7 +59,7 @@ func NewResourceRepo(cfg *kbs.Config, log kbs.Logger, name string) *ResourceRepo
 }
 
 // Create a resource
-func (ur *ResourceRepo) Create(resource *model.Resource, tx ...*sqlx.Tx) error {
+func (rr *ResourceRepo) Create(resource *model.Resource, tx ...*sqlx.Tx) error {
 	_, ok := resourcesTable[resource.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -78,7 +78,7 @@ func (ur *ResourceRepo) Create(resource *model.Resource, tx ...*sqlx.Tx) error {
 }
 
 // GetAll resourcesTable from
-func (ur *ResourceRepo) GetAll() (resources []model.Resource, err error) {
+func (rr *ResourceRepo) GetAll() (resources []model.Resource, err error) {
 	size := len(resourcesTable)
 	out := make([]model.Resource, size)
 	for _, row := range resourcesTable {
@@ -88,7 +88,7 @@ func (ur *ResourceRepo) GetAll() (resources []model.Resource, err error) {
 }
 
 // Get resource by ID.
-func (ur *ResourceRepo) Get(id uuid.UUID) (resource model.Resource, err error) {
+func (rr *ResourceRepo) Get(id uuid.UUID) (resource model.Resource, err error) {
 	for _, row := range resourcesTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -98,7 +98,7 @@ func (ur *ResourceRepo) Get(id uuid.UUID) (resource model.Resource, err error) {
 }
 
 // GetBySlug resource from repo by slug.
-func (ur *ResourceRepo) GetBySlug(slug string) (resource model.Resource, err error) {
+func (rr *ResourceRepo) GetBySlug(slug string) (resource model.Resource, err error) {
 	for _, row := range resourcesTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -108,7 +108,7 @@ func (ur *ResourceRepo) GetBySlug(slug string) (resource model.Resource, err err
 }
 
 // GetByName resource from repo by name.
-func (ur *ResourceRepo) GetByName(name string) (model.Resource, error) {
+func (rr *ResourceRepo) GetByName(name string) (model.Resource, error) {
 	for _, row := range resourcesTable {
 		if name == row.model.Name.String {
 			return row.model, nil
@@ -118,7 +118,7 @@ func (ur *ResourceRepo) GetByName(name string) (model.Resource, error) {
 }
 
 // GetByTag resource from repo by tag.
-func (ur *ResourceRepo) GetByTag(tag string) (model.Resource, error) {
+func (rr *ResourceRepo) GetByTag(tag string) (model.Resource, error) {
 	for _, row := range resourcesTable {
 		if tag == row.model.Tag.String {
 			return row.model, nil
@@ -129,7 +129,7 @@ func (ur *ResourceRepo) GetByTag(tag string) (model.Resource, error) {
 
 // GetByPath resource from repo by path ('/path').
 // Only exact match at the moment.
-func (ur *ResourceRepo) GetByPath(path string) (model.Resource, error) {
+func (rr *ResourceRepo) GetByPath(path string) (model.Resource, error) {
 	for _, row := range resourcesTable {
 		if path == row.model.Path.String {
 			return row.model, nil
@@ -139,7 +139,7 @@ func (ur *ResourceRepo) GetByPath(path string) (model.Resource, error) {
 }
 
 // Update resource data in
-func (ur *ResourceRepo) Update(resource *model.Resource, tx ...*sqlx.Tx) error {
+func (rr *ResourceRepo) Update(resource *model.Resource, tx ...*sqlx.Tx) error {
 	for _, row := range resourcesTable {
 		if resource.ID == row.model.ID {
 			if !row.mutable {
@@ -157,7 +157,7 @@ func (ur *ResourceRepo) Update(resource *model.Resource, tx ...*sqlx.Tx) error {
 }
 
 // Delete resource from repo by ID.
-func (ur *ResourceRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (rr *ResourceRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range resourcesTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -172,7 +172,7 @@ func (ur *ResourceRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 }
 
 // DeleteBySlug resource from repo by slug.
-func (ur *ResourceRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (rr *ResourceRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range resourcesTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

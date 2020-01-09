@@ -59,7 +59,7 @@ func NewResourcePermissionRepo(cfg *kbs.Config, log kbs.Logger, name string) *Re
 }
 
 // Create a resourcePermission
-func (ur *ResourcePermissionRepo) Create(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
+func (rpr *ResourcePermissionRepo) Create(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
 	_, ok := resourcePermissionsTable[resourcePermission.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -78,7 +78,7 @@ func (ur *ResourcePermissionRepo) Create(resourcePermission *model.ResourcePermi
 }
 
 // GetAll resourcePermissionsTable from
-func (ur *ResourcePermissionRepo) GetAll() (resourcePermissions []model.ResourcePermission, err error) {
+func (rpr *ResourcePermissionRepo) GetAll() (resourcePermissions []model.ResourcePermission, err error) {
 	size := len(resourcePermissionsTable)
 	out := make([]model.ResourcePermission, size)
 	for _, row := range resourcePermissionsTable {
@@ -88,7 +88,7 @@ func (ur *ResourcePermissionRepo) GetAll() (resourcePermissions []model.Resource
 }
 
 // Get resourcePermission by ID.
-func (ur *ResourcePermissionRepo) Get(id uuid.UUID) (resourcePermission model.ResourcePermission, err error) {
+func (rpr *ResourcePermissionRepo) Get(id uuid.UUID) (resourcePermission model.ResourcePermission, err error) {
 	for _, row := range resourcePermissionsTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -98,7 +98,7 @@ func (ur *ResourcePermissionRepo) Get(id uuid.UUID) (resourcePermission model.Re
 }
 
 // GetBySlug resourcePermission from repo by slug.
-func (ur *ResourcePermissionRepo) GetBySlug(slug string) (resourcePermission model.ResourcePermission, err error) {
+func (rpr *ResourcePermissionRepo) GetBySlug(slug string) (resourcePermission model.ResourcePermission, err error) {
 	for _, row := range resourcePermissionsTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -108,7 +108,7 @@ func (ur *ResourcePermissionRepo) GetBySlug(slug string) (resourcePermission mod
 }
 
 // GetByResourceID
-func (ur *ResourcePermissionRepo) GetByResourceID(resourceID uuid.UUID) (resourcePermissions []model.ResourcePermission, err error) {
+func (rpr *ResourcePermissionRepo) GetByResourceID(resourceID uuid.UUID) (resourcePermissions []model.ResourcePermission, err error) {
 	size := len(resourcePermissionsTable)
 	resourcePermissions = make([]model.ResourcePermission, size)
 	for _, row := range resourcePermissionsTable {
@@ -120,7 +120,7 @@ func (ur *ResourcePermissionRepo) GetByResourceID(resourceID uuid.UUID) (resourc
 }
 
 // GetByPermissionID
-func (ur *ResourcePermissionRepo) GetByPermissionID(permissionID uuid.UUID) (resourcePermissions []model.ResourcePermission, err error) {
+func (rpr *ResourcePermissionRepo) GetByPermissionID(permissionID uuid.UUID) (resourcePermissions []model.ResourcePermission, err error) {
 	size := len(resourcePermissionsTable)
 	resourcePermissions = make([]model.ResourcePermission, size)
 	for _, row := range resourcePermissionsTable {
@@ -132,7 +132,7 @@ func (ur *ResourcePermissionRepo) GetByPermissionID(permissionID uuid.UUID) (res
 }
 
 // Update resourcePermission data in
-func (ur *ResourcePermissionRepo) Update(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
+func (rpr *ResourcePermissionRepo) Update(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
 	for _, row := range resourcePermissionsTable {
 		if resourcePermission.ID == row.model.ID {
 			if !row.mutable {
@@ -150,7 +150,7 @@ func (ur *ResourcePermissionRepo) Update(resourcePermission *model.ResourcePermi
 }
 
 // Delete resourcePermission from repo by ID.
-func (ur *ResourcePermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (rpr *ResourcePermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range resourcePermissionsTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -165,7 +165,7 @@ func (ur *ResourcePermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 }
 
 // DeleteBySlug resourcePermission from repo by slug.
-func (ur *ResourcePermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (rpr *ResourcePermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range resourcePermissionsTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

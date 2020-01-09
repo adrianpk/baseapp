@@ -57,7 +57,7 @@ func NewRoleRepo(cfg *kbs.Config, log kbs.Logger, name string) *RoleRepo {
 }
 
 // Create a role
-func (ur *RoleRepo) Create(role *model.Role, tx ...*sqlx.Tx) error {
+func (rr *RoleRepo) Create(role *model.Role, tx ...*sqlx.Tx) error {
 	_, ok := rolesTable[role.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -76,7 +76,7 @@ func (ur *RoleRepo) Create(role *model.Role, tx ...*sqlx.Tx) error {
 }
 
 // GetAll rolesTable from
-func (ur *RoleRepo) GetAll() (roles []model.Role, err error) {
+func (rr *RoleRepo) GetAll() (roles []model.Role, err error) {
 	size := len(rolesTable)
 	out := make([]model.Role, size)
 	for _, row := range rolesTable {
@@ -86,7 +86,7 @@ func (ur *RoleRepo) GetAll() (roles []model.Role, err error) {
 }
 
 // Get role by ID.
-func (ur *RoleRepo) Get(id uuid.UUID) (role model.Role, err error) {
+func (rr *RoleRepo) Get(id uuid.UUID) (role model.Role, err error) {
 	for _, row := range rolesTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -96,7 +96,7 @@ func (ur *RoleRepo) Get(id uuid.UUID) (role model.Role, err error) {
 }
 
 // GetBySlug role from repo by slug.
-func (ur *RoleRepo) GetBySlug(slug string) (role model.Role, err error) {
+func (rr *RoleRepo) GetBySlug(slug string) (role model.Role, err error) {
 	for _, row := range rolesTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -106,7 +106,7 @@ func (ur *RoleRepo) GetBySlug(slug string) (role model.Role, err error) {
 }
 
 // GetByName role from repo by name.
-func (ur *RoleRepo) GetByName(name string) (model.Role, error) {
+func (rr *RoleRepo) GetByName(name string) (model.Role, error) {
 	for _, row := range rolesTable {
 		if name == row.model.Name.String {
 			return row.model, nil
@@ -116,7 +116,7 @@ func (ur *RoleRepo) GetByName(name string) (model.Role, error) {
 }
 
 // Update role data in
-func (ur *RoleRepo) Update(role *model.Role, tx ...*sqlx.Tx) error {
+func (rr *RoleRepo) Update(role *model.Role, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if role.ID == row.model.ID {
 			if !row.mutable {
@@ -134,7 +134,7 @@ func (ur *RoleRepo) Update(role *model.Role, tx ...*sqlx.Tx) error {
 }
 
 // Delete role from repo by ID.
-func (ur *RoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (rr *RoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -149,7 +149,7 @@ func (ur *RoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 }
 
 // DeleteBySlug role from repo by slug.
-func (ur *RoleRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (rr *RoleRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {
