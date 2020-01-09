@@ -67,6 +67,7 @@ func main() {
 	roleRepo := vrepo.NewRoleRepo(cfg, log, "role-repo")
 	permissionRepo := vrepo.NewPermissionRepo(cfg, log, "permission-repo")
 	resourcePermissionRepo := vrepo.NewResourcePermissionRepo(cfg, log, "resourcepermission-repo")
+	rolePermissionRepo := vrepo.NewResourcePermissionRepo(cfg, log, "rolepermission-repo")
 
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)
@@ -79,6 +80,7 @@ func main() {
 	svc.RoleRepo = roleRepo
 	svc.PermissionRepo = permissionRepo
 	svc.ResourcePermissionRepo = resourcePermissionRepo
+	svc.RolePermissionRepo = rolePermissionRepo
 
 	// App dependencies
 	a.Migrator = mg

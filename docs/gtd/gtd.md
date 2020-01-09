@@ -13,6 +13,17 @@
 
 ## Next
 
+* Implement an authentication middleware
+
+    * Use encrypted cookie data / JWT claims to allow/disable path access.
+
+* Implment a cache for all RBAC resources data
+
+    * Avoid Db rountrips on each request
+    * Nor a big problem right now (in memory volatile repo)
+    * Memory?
+    * Redis?
+
 * Implement Profile resource
 
 * Implement KeyValue resource
