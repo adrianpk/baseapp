@@ -8,7 +8,7 @@
   * Role
   * Permission
   * ResourcePermission
-  * UserRole
+  * AccountRole
   * RolePermission
 
 ## Next
