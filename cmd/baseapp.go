@@ -59,20 +59,24 @@ func main() {
 	}
 
 	// Repos
-	ur := repo.NewUserRepo(cfg, log, "user-repo", db)
-	ar := repo.NewAccountRepo(cfg, log, "account-repo", db)
+	userRepo := repo.NewUserRepo(cfg, log, "user-repo", db)
+	accountRepo := repo.NewAccountRepo(cfg, log, "account-repo", db)
 
 	// Volatile
-	rr := vrepo.NewResourceRepo(cfg, log, "resource-repo")
+	resourceRepo := vrepo.NewResourceRepo(cfg, log, "resource-repo")
+	roleRepo := vrepo.NewRoleRepo(cfg, log, "role-repo")
+	permissionRepo := vrepo.NewPermissionRepo(cfg, log, "permission-repo")
 
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)
 
 	// Service dependencies
 	svc.Mailer = ml
-	svc.UserRepo = ur
-	svc.AccountRepo = ar
-	svc.ResourceRepo = rr
+	svc.UserRepo = userRepo
+	svc.AccountRepo = accountRepo
+	svc.ResourceRepo = resourceRepo
+	svc.RoleRepo = roleRepo
+	svc.PermissionRepo = permissionRepo
 
 	// App dependencies
 	a.Migrator = mg
