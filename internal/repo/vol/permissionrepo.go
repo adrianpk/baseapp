@@ -11,12 +11,6 @@ import (
 )
 
 type (
-	PermissionRepo struct {
-		Cfg  *kbs.Config
-		Log  kbs.Logger
-		Name string
-	}
-
 	permissionRow struct {
 		mutable bool
 		model   model.Permission
@@ -48,16 +42,7 @@ var (
 	}
 )
 
-func NewPermissionRepo(cfg *kbs.Config, log kbs.Logger, name string) *PermissionRepo {
-	return &PermissionRepo{
-		Cfg:  cfg,
-		Log:  log,
-		Name: name,
-	}
-}
-
-// Create a permission
-func (pr *PermissionRepo) Create(permission *model.Permission, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) CreatePermission(permission *model.Permission, tx ...*sqlx.Tx) error {
 	_, ok := permissionsTable[permission.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -75,8 +60,7 @@ func (pr *PermissionRepo) Create(permission *model.Permission, tx ...*sqlx.Tx) e
 	return nil
 }
 
-// GetAll permissionsTable from
-func (pr *PermissionRepo) GetAll() (permissions []model.Permission, err error) {
+func (ar *AuthRepo) GetAllPermissions() (permissions []model.Permission, err error) {
 	size := len(permissionsTable)
 	out := make([]model.Permission, size)
 	for _, row := range permissionsTable {
@@ -85,8 +69,7 @@ func (pr *PermissionRepo) GetAll() (permissions []model.Permission, err error) {
 	return out, nil
 }
 
-// Get permission by ID.
-func (pr *PermissionRepo) Get(id uuid.UUID) (permission model.Permission, err error) {
+func (ar *AuthRepo) GetPermission(id uuid.UUID) (permission model.Permission, err error) {
 	for _, row := range permissionsTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -95,8 +78,7 @@ func (pr *PermissionRepo) Get(id uuid.UUID) (permission model.Permission, err er
 	return model.Permission{}, nil
 }
 
-// GetBySlug permission from repo by slug.
-func (pr *PermissionRepo) GetBySlug(slug string) (permission model.Permission, err error) {
+func (ar *AuthRepo) GetPermissionBySlug(slug string) (permission model.Permission, err error) {
 	for _, row := range permissionsTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -105,8 +87,7 @@ func (pr *PermissionRepo) GetBySlug(slug string) (permission model.Permission, e
 	return model.Permission{}, nil
 }
 
-// GetByName permission from repo by name.
-func (pr *PermissionRepo) GetByName(name string) (model.Permission, error) {
+func (ar *AuthRepo) GetPermissionByName(name string) (model.Permission, error) {
 	for _, row := range permissionsTable {
 		if name == row.model.Name.String {
 			return row.model, nil
@@ -115,8 +96,7 @@ func (pr *PermissionRepo) GetByName(name string) (model.Permission, error) {
 	return model.Permission{}, nil
 }
 
-// Update permission data in
-func (pr *PermissionRepo) Update(permission *model.Permission, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) UpdatePermission(permission *model.Permission, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if permission.ID == row.model.ID {
 			if !row.mutable {
@@ -133,8 +113,7 @@ func (pr *PermissionRepo) Update(permission *model.Permission, tx ...*sqlx.Tx) e
 	return errors.New("no records updated")
 }
 
-// Delete permission from repo by ID.
-func (pr *PermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeletePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -148,8 +127,7 @@ func (pr *PermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	return errors.New("no records deleted")
 }
 
-// DeleteBySlug permission from repo by slug.
-func (pr *PermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeletePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range permissionsTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

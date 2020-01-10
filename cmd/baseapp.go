@@ -61,14 +61,10 @@ func main() {
 	// Repos
 	userRepo := repo.NewUserRepo(cfg, log, "user-repo", db)
 	accountRepo := repo.NewAccountRepo(cfg, log, "account-repo", db)
-	authRepo := repo.NewAuthRepo(cfg, log, "auth-repo", db)
+	//authRepo := repo.NewAuthRepo(cfg, log, "auth-repo", db)
 
-	// Volatile
-	resourceRepo := vrepo.NewResourceRepo(cfg, log, "resource-repo")
-	roleRepo := vrepo.NewRoleRepo(cfg, log, "role-repo")
-	permissionRepo := vrepo.NewPermissionRepo(cfg, log, "permission-repo")
-	resourcePermissionRepo := vrepo.NewResourcePermissionRepo(cfg, log, "resourcepermission-repo")
-	rolePermissionRepo := vrepo.NewRolePermissionRepo(cfg, log, "rolepermission-repo")
+	// Volatile Repo
+	authRepo := vrepo.NewAuthRepo(cfg, log, "auth-repo")
 
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)
@@ -77,11 +73,6 @@ func main() {
 	svc.Mailer = ml
 	svc.UserRepo = userRepo
 	svc.AccountRepo = accountRepo
-	svc.ResourceRepo = resourceRepo
-	svc.RoleRepo = roleRepo
-	svc.PermissionRepo = permissionRepo
-	svc.ResourcePermissionRepo = resourcePermissionRepo
-	svc.RolePermissionRepo = rolePermissionRepo
 	svc.AuthRepo = authRepo
 
 	// App dependencies

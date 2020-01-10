@@ -29,6 +29,7 @@ func NewAuthRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *Aut
 	}
 }
 
+// AccountRole --------------------------------------------------------------------------------
 // Create an AccountRole
 func (ar *AuthRepo) CreateAccountRole(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
 	st := `INSERT INTO account_role (id, slug, account_id, role_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
@@ -205,6 +206,7 @@ func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	return err
 }
 
+// Misc --------------------------------------------------------------------------------
 func (ar *AuthRepo) getTx(txs []*sqlx.Tx) (tx *sqlx.Tx, local bool, err error) {
 	// Create a new transaction if its no passed as argument.
 	if len(txs) > 0 {
