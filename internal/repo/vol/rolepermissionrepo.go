@@ -31,7 +31,7 @@ var (
 			ID:   kbs.ToUUID("9e7f5355-a8a5-46b7-a3b8-4ddc26c9386b"),
 			Slug: db.ToNullString("rolePermission1-bbc4116229c6"),
 		},
-		RoleID:       kbs.ToUUID("e8b43223-17fe-4e36-bd0f-a7d96e867d95"), // userRes
+		RoleID:       kbs.ToUUID("288bb973-2196-4007-808a-d7844ecf4dd9"), // userRes
 		PermissionID: kbs.ToUUID("00ee4774-776b-4e62-95b1-d32fd248f867"), // permission1
 	}
 
@@ -40,8 +40,8 @@ var (
 			ID:   kbs.ToUUID("de90dce3-1c33-4d79-9dfa-a06fbb7d7c00"),
 			Slug: db.ToNullString("rolePermission2-fd3e9d6aa641"),
 		},
-		RoleID:       kbs.ToUUID("fc86c00c-2d4f-400b-ae57-d9d5c87d13c8"), // accountRes
-		PermissionID: kbs.ToUUID("00ee4774-776b-4e62-95b1-d32fd248f867"), // permission2
+		RoleID:       kbs.ToUUID("d0d6bc3a-38b0-4a00-83c0-516d2514d7b5"), // accountRes
+		PermissionID: kbs.ToUUID("2c9bba14-c579-4c44-a2da-6ff15324605c"), // permission2
 	}
 
 	rolePermissionsTable = map[uuid.UUID]rolePermissionRow{

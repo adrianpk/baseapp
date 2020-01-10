@@ -32,7 +32,7 @@ var (
 			Slug: db.ToNullString("accountRole1-bbc4116229c6"),
 		},
 		AccountID: kbs.ToUUID("e8b43223-17fe-4e36-bd0f-a7d96e867d95"), // userRes
-		RoleID:    kbs.ToUUID("00ee4774-776b-4e62-95b1-d32fd248f867"), // permission1
+		RoleID:    kbs.ToUUID("288bb973-2196-4007-808a-d7844ecf4dd9"), // permission1
 	}
 
 	accountRole2 = model.AccountRole{
@@ -41,7 +41,7 @@ var (
 			Slug: db.ToNullString("accountRole2-fd3e9d6aa641"),
 		},
 		AccountID: kbs.ToUUID("fc86c00c-2d4f-400b-ae57-d9d5c87d13c8"), // accountRes
-		RoleID:    kbs.ToUUID("00ee4774-776b-4e62-95b1-d32fd248f867"), // permission2
+		RoleID:    kbs.ToUUID("d0d6bc3a-38b0-4a00-83c0-516d2514d7b5"), // permission2
 	}
 
 	accountRolesTable = map[uuid.UUID]accountRoleRow{

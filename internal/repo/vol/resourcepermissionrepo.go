@@ -41,7 +41,7 @@ var (
 			Slug: db.ToNullString("resourcePermission2-fd3e9d6aa641"),
 		},
 		ResourceID:   kbs.ToUUID("fc86c00c-2d4f-400b-ae57-d9d5c87d13c8"), // accountRes
-		PermissionID: kbs.ToUUID("00ee4774-776b-4e62-95b1-d32fd248f867"), // permission2
+		PermissionID: kbs.ToUUID("2c9bba14-c579-4c44-a2da-6ff15324605c"), // permission2
 	}
 
 	resourcePermissionsTable = map[uuid.UUID]resourcePermissionRow{
