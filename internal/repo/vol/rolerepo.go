@@ -27,19 +27,19 @@ var (
 	role1 = model.Role{
 		Identification: kbs.Identification{
 			ID:   kbs.ToUUID("288bb973-2196-4007-808a-d7844ecf4dd9"),
-			Slug: db.ToNullString("role1-6ccf99f1a582"),
+			Slug: db.ToNullString("superadmin-6ccf99f1a582"),
 		},
-		Name:        db.ToNullString("role1"),
-		Description: db.ToNullString("role1 description"),
+		Name:        db.ToNullString("superadmin"),
+		Description: db.ToNullString("Superadmin role"),
 	}
 
 	role2 = model.Role{
 		Identification: kbs.Identification{
 			ID:   kbs.ToUUID("d0d6bc3a-38b0-4a00-83c0-516d2514d7b5"),
-			Slug: db.ToNullString("role2-2de6909780aa"),
+			Slug: db.ToNullString("admin-2de6909780aa"),
 		},
-		Name:        db.ToNullString("role1"),
-		Description: db.ToNullString("role1 description"),
+		Name:        db.ToNullString("admin"),
+		Description: db.ToNullString("Admin role"),
 	}
 
 	rolesTable = map[uuid.UUID]roleRow{
