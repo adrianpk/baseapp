@@ -56,7 +56,7 @@ VALUES (:id, :slug, :account_id, :role_id, :is_active, :is_deleted, :created_by_
 }
 
 // GetAllAccountRole
-func (ar *AuthRepo) GetAllAccountRole() (accountRole []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAllAccountRoles() (accountRole []model.AccountRole, err error) {
 	st := `SELECT * FROM account_roles WHERE is_deleted IS NULL OR NOT is_deleted`
 
 	err = ar.DB.Select(&accountRole, st)
@@ -82,7 +82,7 @@ func (ar *AuthRepo) GetAccountRole(id uuid.UUID) (accountRole model.AccountRole,
 
 // GetAccountRoleBySlug account from repo by slug.
 func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.AccountRole, err error) {
-	st := `SELECT * FROM account_roles WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM account_roles WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 
 	st = fmt.Sprintf(st, slug)
 
@@ -92,21 +92,27 @@ func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.Account
 }
 
 // GetAccountRoletByAccountID account from repo by slug.
-func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole model.AccountRole, err error) {
-	st := `SELECT * FROM accounts WHERE account_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
+	st := `SELECT * FROM accounts WHERE account_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
-	err = ar.DB.Get(&accountRole, st)
+	err = ar.DB.Select(&accountRole, st)
+	if err != nil {
+		return accountRole, err
+	}
 
 	return accountRole, err
 }
 
 // GetAccountRoletByRoleID account from repo by slug.
-func (ar *AuthRepo) GetAccountRoleByRoleID(id uuid.UUID) (accountRole model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRoleByRoleID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
 	st := `SELECT * FROM accounts WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
-	err = ar.DB.Get(&accountRole, st)
+	err = ar.DB.Select(&accountRole, st)
+	if err != nil {
+		return accountRole, err
+	}
 
 	return accountRole, err
 }

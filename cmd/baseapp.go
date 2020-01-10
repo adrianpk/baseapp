@@ -61,6 +61,7 @@ func main() {
 	// Repos
 	userRepo := repo.NewUserRepo(cfg, log, "user-repo", db)
 	accountRepo := repo.NewAccountRepo(cfg, log, "account-repo", db)
+	authRepo := repo.NewAuthRepo(cfg, log, "auth-repo", db)
 
 	// Volatile
 	resourceRepo := vrepo.NewResourceRepo(cfg, log, "resource-repo")
@@ -68,7 +69,6 @@ func main() {
 	permissionRepo := vrepo.NewPermissionRepo(cfg, log, "permission-repo")
 	resourcePermissionRepo := vrepo.NewResourcePermissionRepo(cfg, log, "resourcepermission-repo")
 	rolePermissionRepo := vrepo.NewRolePermissionRepo(cfg, log, "rolepermission-repo")
-	accountRoleRepo := vrepo.NewAccountRoleRepo(cfg, log, "accountrole-repo")
 
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)
@@ -82,7 +82,7 @@ func main() {
 	svc.PermissionRepo = permissionRepo
 	svc.ResourcePermissionRepo = resourcePermissionRepo
 	svc.RolePermissionRepo = rolePermissionRepo
-	svc.AccountRoleRepo = accountRoleRepo
+	svc.AuthRepo = authRepo
 
 	// App dependencies
 	a.Migrator = mg

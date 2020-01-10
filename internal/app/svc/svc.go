@@ -18,7 +18,7 @@ type (
 		PermissionRepo         repo.PermissionRepo
 		ResourcePermissionRepo repo.ResourcePermissionRepo
 		RolePermissionRepo     repo.RolePermissionRepo
-		AccountRoleRepo        repo.AccountRoleRepo
+		AuthRepo               repo.AuthRepo
 	}
 )
 
