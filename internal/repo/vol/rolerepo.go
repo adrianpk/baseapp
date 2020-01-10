@@ -11,12 +11,6 @@ import (
 )
 
 type (
-	RoleRepo struct {
-		Cfg  *kbs.Config
-		Log  kbs.Logger
-		Name string
-	}
-
 	roleRow struct {
 		mutable bool
 		model   model.Role
@@ -27,19 +21,19 @@ var (
 	role1 = model.Role{
 		Identification: kbs.Identification{
 			ID:   kbs.ToUUID("288bb973-2196-4007-808a-d7844ecf4dd9"),
-			Slug: db.ToNullString("role1-6ccf99f1a582"),
+			Slug: db.ToNullString("superadmin-6ccf99f1a582"),
 		},
-		Name:        db.ToNullString("role1"),
-		Description: db.ToNullString("role1 description"),
+		Name:        db.ToNullString("superadmin"),
+		Description: db.ToNullString("Superadmin role"),
 	}
 
 	role2 = model.Role{
 		Identification: kbs.Identification{
 			ID:   kbs.ToUUID("d0d6bc3a-38b0-4a00-83c0-516d2514d7b5"),
-			Slug: db.ToNullString("role2-2de6909780aa"),
+			Slug: db.ToNullString("admin-2de6909780aa"),
 		},
-		Name:        db.ToNullString("role1"),
-		Description: db.ToNullString("role1 description"),
+		Name:        db.ToNullString("admin"),
+		Description: db.ToNullString("Admin role"),
 	}
 
 	rolesTable = map[uuid.UUID]roleRow{
@@ -48,16 +42,7 @@ var (
 	}
 )
 
-func NewRoleRepo(cfg *kbs.Config, log kbs.Logger, name string) *RoleRepo {
-	return &RoleRepo{
-		Cfg:  cfg,
-		Log:  log,
-		Name: name,
-	}
-}
-
-// Create a role
-func (rr *RoleRepo) Create(role *model.Role, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) CreateRole(role *model.Role, tx ...*sqlx.Tx) error {
 	_, ok := rolesTable[role.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -75,8 +60,7 @@ func (rr *RoleRepo) Create(role *model.Role, tx ...*sqlx.Tx) error {
 	return nil
 }
 
-// GetAll rolesTable from
-func (rr *RoleRepo) GetAll() (roles []model.Role, err error) {
+func (ar *AuthRepo) GetAllRoles() (roles []model.Role, err error) {
 	size := len(rolesTable)
 	out := make([]model.Role, size)
 	for _, row := range rolesTable {
@@ -85,8 +69,7 @@ func (rr *RoleRepo) GetAll() (roles []model.Role, err error) {
 	return out, nil
 }
 
-// Get role by ID.
-func (rr *RoleRepo) Get(id uuid.UUID) (role model.Role, err error) {
+func (ar *AuthRepo) GetRole(id uuid.UUID) (role model.Role, err error) {
 	for _, row := range rolesTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -95,8 +78,7 @@ func (rr *RoleRepo) Get(id uuid.UUID) (role model.Role, err error) {
 	return model.Role{}, nil
 }
 
-// GetBySlug role from repo by slug.
-func (rr *RoleRepo) GetBySlug(slug string) (role model.Role, err error) {
+func (ar *AuthRepo) GetRoleBySlug(slug string) (role model.Role, err error) {
 	for _, row := range rolesTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -105,8 +87,7 @@ func (rr *RoleRepo) GetBySlug(slug string) (role model.Role, err error) {
 	return model.Role{}, nil
 }
 
-// GetByName role from repo by name.
-func (rr *RoleRepo) GetByName(name string) (model.Role, error) {
+func (ar *AuthRepo) GetRoleByName(name string) (model.Role, error) {
 	for _, row := range rolesTable {
 		if name == row.model.Name.String {
 			return row.model, nil
@@ -115,8 +96,7 @@ func (rr *RoleRepo) GetByName(name string) (model.Role, error) {
 	return model.Role{}, nil
 }
 
-// Update role data in
-func (rr *RoleRepo) Update(role *model.Role, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) UpdateRole(role *model.Role, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if role.ID == row.model.ID {
 			if !row.mutable {
@@ -133,8 +113,7 @@ func (rr *RoleRepo) Update(role *model.Role, tx ...*sqlx.Tx) error {
 	return errors.New("no records updated")
 }
 
-// Delete role from repo by ID.
-func (rr *RoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteRole(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -148,8 +127,7 @@ func (rr *RoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	return errors.New("no records deleted")
 }
 
-// DeleteBySlug role from repo by slug.
-func (rr *RoleRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range rolesTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

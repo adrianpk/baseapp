@@ -11,14 +11,6 @@ import (
 )
 
 type (
-	RolePermissionRepo struct {
-		Cfg          *kbs.Config
-		Log          kbs.Logger
-		Name         string
-		RoleID       uuid.UUID
-		PermissionID uuid.UUID
-	}
-
 	rolePermissionRow struct {
 		mutable bool
 		model   model.RolePermission
@@ -50,16 +42,7 @@ var (
 	}
 )
 
-func NewRolePermissionRepo(cfg *kbs.Config, log kbs.Logger, name string) *RolePermissionRepo {
-	return &RolePermissionRepo{
-		Cfg:  cfg,
-		Log:  log,
-		Name: name,
-	}
-}
-
-// Create a rolePermission
-func (rpr *RolePermissionRepo) Create(rolePermission *model.RolePermission, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) CreateRolePermission(rolePermission *model.RolePermission, tx ...*sqlx.Tx) error {
 	_, ok := rolePermissionsTable[rolePermission.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -77,8 +60,7 @@ func (rpr *RolePermissionRepo) Create(rolePermission *model.RolePermission, tx .
 	return nil
 }
 
-// GetAll rolePermissionsTable from
-func (rpr *RolePermissionRepo) GetAll() (rolePermissions []model.RolePermission, err error) {
+func (ar *AuthRepo) GetAllRolePermissions() (rolePermissions []model.RolePermission, err error) {
 	size := len(rolePermissionsTable)
 	out := make([]model.RolePermission, size)
 	for _, row := range rolePermissionsTable {
@@ -87,8 +69,7 @@ func (rpr *RolePermissionRepo) GetAll() (rolePermissions []model.RolePermission,
 	return out, nil
 }
 
-// Get rolePermission by ID.
-func (rpr *RolePermissionRepo) Get(id uuid.UUID) (rolePermission model.RolePermission, err error) {
+func (ar *AuthRepo) GetRolePermission(id uuid.UUID) (rolePermission model.RolePermission, err error) {
 	for _, row := range rolePermissionsTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -97,8 +78,7 @@ func (rpr *RolePermissionRepo) Get(id uuid.UUID) (rolePermission model.RolePermi
 	return model.RolePermission{}, nil
 }
 
-// GetBySlug rolePermission from repo by slug.
-func (rpr *RolePermissionRepo) GetBySlug(slug string) (rolePermission model.RolePermission, err error) {
+func (ar *AuthRepo) GetRolePermissionBySlug(slug string) (rolePermission model.RolePermission, err error) {
 	for _, row := range rolePermissionsTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -107,8 +87,7 @@ func (rpr *RolePermissionRepo) GetBySlug(slug string) (rolePermission model.Role
 	return model.RolePermission{}, nil
 }
 
-// GetByRoleID
-func (rpr *RolePermissionRepo) GetByRoleID(resourceID uuid.UUID) (rolePermissions []model.RolePermission, err error) {
+func (ar *AuthRepo) GetRolePermissionByRoleID(resourceID uuid.UUID) (rolePermissions []model.RolePermission, err error) {
 	size := len(rolePermissionsTable)
 	rolePermissions = make([]model.RolePermission, size)
 	for _, row := range rolePermissionsTable {
@@ -119,8 +98,7 @@ func (rpr *RolePermissionRepo) GetByRoleID(resourceID uuid.UUID) (rolePermission
 	return rolePermissions, nil
 }
 
-// GetByPermissionID
-func (rpr *RolePermissionRepo) GetByPermissionID(permissionID uuid.UUID) (rolePermissions []model.RolePermission, err error) {
+func (ar *AuthRepo) GetRolePermissionByPermissionID(permissionID uuid.UUID) (rolePermissions []model.RolePermission, err error) {
 	size := len(rolePermissionsTable)
 	rolePermissions = make([]model.RolePermission, size)
 	for _, row := range rolePermissionsTable {
@@ -131,8 +109,7 @@ func (rpr *RolePermissionRepo) GetByPermissionID(permissionID uuid.UUID) (rolePe
 	return rolePermissions, nil
 }
 
-// Update rolePermission data in
-func (rpr *RolePermissionRepo) Update(rolePermission *model.RolePermission, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) UpdateRolePermission(rolePermission *model.RolePermission, tx ...*sqlx.Tx) error {
 	for _, row := range rolePermissionsTable {
 		if rolePermission.ID == row.model.ID {
 			if !row.mutable {
@@ -149,8 +126,7 @@ func (rpr *RolePermissionRepo) Update(rolePermission *model.RolePermission, tx .
 	return errors.New("no records updated")
 }
 
-// Delete rolePermission from repo by ID.
-func (rpr *RolePermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteRolePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range rolePermissionsTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -164,8 +140,7 @@ func (rpr *RolePermissionRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	return errors.New("no records deleted")
 }
 
-// DeleteBySlug rolePermission from repo by slug.
-func (rpr *RolePermissionRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range rolePermissionsTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {

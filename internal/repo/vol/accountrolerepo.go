@@ -11,14 +11,6 @@ import (
 )
 
 type (
-	AccountRoleRepo struct {
-		Cfg       *kbs.Config
-		Log       kbs.Logger
-		Name      string
-		AccountID uuid.UUID
-		RoleID    uuid.UUID
-	}
-
 	accountRoleRow struct {
 		mutable bool
 		model   model.AccountRole
@@ -50,16 +42,7 @@ var (
 	}
 )
 
-func NewAccountRoleRepo(cfg *kbs.Config, log kbs.Logger, name string) *AccountRoleRepo {
-	return &AccountRoleRepo{
-		Cfg:  cfg,
-		Log:  log,
-		Name: name,
-	}
-}
-
-// Create a accountRole
-func (arr *AccountRoleRepo) Create(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) CreateAccountRole(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
 	_, ok := accountRolesTable[accountRole.ID]
 	if ok {
 		errors.New("duplicate key violates unique constraint")
@@ -77,8 +60,7 @@ func (arr *AccountRoleRepo) Create(accountRole *model.AccountRole, tx ...*sqlx.T
 	return nil
 }
 
-// GetAll accountRolesTable from
-func (arr *AccountRoleRepo) GetAll() (accountRoles []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAllAccountRoles() (accountRoles []model.AccountRole, err error) {
 	size := len(accountRolesTable)
 	out := make([]model.AccountRole, size)
 	for _, row := range accountRolesTable {
@@ -87,8 +69,7 @@ func (arr *AccountRoleRepo) GetAll() (accountRoles []model.AccountRole, err erro
 	return out, nil
 }
 
-// Get accountRole by ID.
-func (arr *AccountRoleRepo) Get(id uuid.UUID) (accountRole model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRole(id uuid.UUID) (accountRole model.AccountRole, err error) {
 	for _, row := range accountRolesTable {
 		if id == row.model.ID {
 			return row.model, nil
@@ -97,8 +78,7 @@ func (arr *AccountRoleRepo) Get(id uuid.UUID) (accountRole model.AccountRole, er
 	return model.AccountRole{}, nil
 }
 
-// GetBySlug accountRole from repo by slug.
-func (arr *AccountRoleRepo) GetBySlug(slug string) (accountRole model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.AccountRole, err error) {
 	for _, row := range accountRolesTable {
 		if slug == row.model.Slug.String {
 			return row.model, nil
@@ -107,8 +87,7 @@ func (arr *AccountRoleRepo) GetBySlug(slug string) (accountRole model.AccountRol
 	return model.AccountRole{}, nil
 }
 
-// GetByAccountID
-func (arr *AccountRoleRepo) GetByAccountID(resourceID uuid.UUID) (accountRoles []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRoleByAccountID(resourceID uuid.UUID) (accountRoles []model.AccountRole, err error) {
 	size := len(accountRolesTable)
 	accountRoles = make([]model.AccountRole, size)
 	for _, row := range accountRolesTable {
@@ -119,8 +98,7 @@ func (arr *AccountRoleRepo) GetByAccountID(resourceID uuid.UUID) (accountRoles [
 	return accountRoles, nil
 }
 
-// GetByRoleID
-func (arr *AccountRoleRepo) GetByRoleID(permissionID uuid.UUID) (accountRoles []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRoleByRoleID(permissionID uuid.UUID) (accountRoles []model.AccountRole, err error) {
 	size := len(accountRolesTable)
 	accountRoles = make([]model.AccountRole, size)
 	for _, row := range accountRolesTable {
@@ -131,8 +109,7 @@ func (arr *AccountRoleRepo) GetByRoleID(permissionID uuid.UUID) (accountRoles []
 	return accountRoles, nil
 }
 
-// Update accountRole data in
-func (arr *AccountRoleRepo) Update(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) UpdateAccountRole(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
 	for _, row := range accountRolesTable {
 		if accountRole.ID == row.model.ID {
 			if !row.mutable {
@@ -149,8 +126,7 @@ func (arr *AccountRoleRepo) Update(accountRole *model.AccountRole, tx ...*sqlx.T
 	return errors.New("no records updated")
 }
 
-// Delete accountRole from repo by ID.
-func (arr *AccountRoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteAccountRole(id uuid.UUID, tx ...*sqlx.Tx) error {
 	for _, row := range accountRolesTable {
 		if id == row.model.ID {
 			if !row.mutable {
@@ -164,8 +140,7 @@ func (arr *AccountRoleRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 	return errors.New("no records deleted")
 }
 
-// DeleteBySlug accountRole from repo by slug.
-func (arr *AccountRoleRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
+func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	for _, row := range accountRolesTable {
 		if slug == row.model.Slug.String {
 			if !row.mutable {
