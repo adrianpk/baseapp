@@ -29,10 +29,199 @@ func NewAuthRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *Aut
 	}
 }
 
+// Resource --------------------------------------------------------------------------------
+// Create a Resource
+func (ar *AuthRepo) CreateResource(resource *model.Resource, tx ...*sqlx.Tx) error {
+	st := `INSERT INTO resource (id, slug, name, tag, path, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :name, :tag, :path :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	resource.SetCreateValues()
+
+	_, err = t.NamedExec(st, resource)
+	if err != nil {
+		return err
+	}
+
+	// Commit on local transactions
+	if local {
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// GetAllResource
+func (ar *AuthRepo) GetAllResources() (resource []model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE is_deleted IS NULL OR NOT is_deleted`
+
+	err = ar.DB.Select(&resource, st)
+	if err != nil {
+		return resource, err
+	}
+
+	return resource, err
+}
+
+// GetResource account by ID.
+func (ar *AuthRepo) GetResource(id uuid.UUID) (resource model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st = fmt.Sprintf(st, id.String())
+
+	err = ar.DB.Get(&resource, st)
+	if err != nil {
+		return resource, err
+	}
+
+	return resource, err
+}
+
+// GetResourceBySlug account from repo by slug.
+func (ar *AuthRepo) GetResourceBySlug(slug string) (resource model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, slug)
+
+	err = ar.DB.Get(&resource, st)
+
+	return resource, err
+}
+
+// GetResourceByName account from repo by slug.
+func (ar *AuthRepo) GetResourceByName(name string) (resource model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE name = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, name)
+
+	err = ar.DB.Get(&resource, st)
+
+	return resource, err
+}
+
+// GetResourceByTag account from repo by tag.
+func (ar *AuthRepo) GetResourceByTag(tag string) (resource model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE tag = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, tag)
+
+	err = ar.DB.Get(&resource, st)
+
+	return resource, err
+}
+
+// GetResourceByPath account from repo by path.
+func (ar *AuthRepo) GetResourceByPath(path string) (resource model.Resource, err error) {
+	st := `SELECT * FROM resources WHERE path = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, path)
+
+	err = ar.DB.Get(&resource, st)
+
+	return resource, err
+}
+
+// Update resource
+func (ar *AuthRepo) UpdateResource(resource *model.Resource, tx ...*sqlx.Tx) error {
+	ref, err := ar.GetResource(resource.ID)
+	if err != nil {
+		return fmt.Errorf("cannot retrieve reference account: %s", err.Error())
+	}
+
+	resource.SetUpdateValues()
+
+	var st strings.Builder
+	pcu := false // previous column updated?
+
+	st.WriteString("UPDATE resources SET ")
+
+	if resource.Name.String != ref.Name.String {
+		st.WriteString(kbs.SQLStrUpd("name", "name"))
+		pcu = true
+	}
+
+	if resource.Tag.String != ref.Tag.String {
+		st.WriteString(kbs.SQLStrUpd("tag", "tag"))
+		pcu = true
+	}
+
+	if resource.Path.String != ref.Path.String {
+		st.WriteString(kbs.SQLStrUpd("path", "path"))
+		pcu = true
+	}
+
+	st.WriteString(" ")
+	st.WriteString(kbs.SQLWhereID(ref.ID.String()))
+	st.WriteString(";")
+
+	//fmt.Println(st.String())
+
+	if pcu == false {
+		return errors.New("no fields to update")
+	}
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.NamedExec(st.String(), resource)
+
+	if local {
+		ar.Log.Info("Transaction created by repo: committing")
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// DeleteResource account from repo by ID.
+func (ar *AuthRepo) DeleteResource(id uuid.UUID, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM resource WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, id)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
+// DeleteBySlug account from repo by slug.
+func (ar *AuthRepo) DeleteResourceBySlug(slug string, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM resources WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, slug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
 // ResourcePermission --------------------------------------------------------------------------------
 // Create a ResourcePermission
 func (ar *AuthRepo) CreateResourcePermission(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO account_role (id, slug, resource_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+	st := `INSERT INTO resource_permission (id, slug, resource_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
 VALUES (:id, :slug, :resource_id, :permission_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
@@ -94,7 +283,7 @@ func (ar *AuthRepo) GetResourcePermissionBySlug(slug string) (resourcePermission
 
 // GetResourcePermissiontByResourceID account from repo by slug.
 func (ar *AuthRepo) GetResourcePermissionByResourceID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
-	st := `SELECT * FROM accounts WHERE resource_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+	st := `SELECT * FROM resource_permissions WHERE resource_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&resourcePermission, st)
@@ -107,7 +296,7 @@ func (ar *AuthRepo) GetResourcePermissionByResourceID(id uuid.UUID) (resourcePer
 
 // GetResourcePermissiontByRoleID account from repo by slug.
 func (ar *AuthRepo) GetResourcePermissionByPermissionID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
-	st := `SELECT * FROM accounts WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM resource_permissions WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&resourcePermission, st)
@@ -170,7 +359,7 @@ func (ar *AuthRepo) UpdateResourcePermission(resourcePermission *model.ResourceP
 
 // DeleteResourcePermission account from repo by ID.
 func (ar *AuthRepo) DeleteResourcePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM resource_permissions WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	t, local, err := ar.getTx(tx)
@@ -189,7 +378,7 @@ func (ar *AuthRepo) DeleteResourcePermission(id uuid.UUID, tx ...*sqlx.Tx) error
 
 // DeleteBySlug account from repo by slug.
 func (ar *AuthRepo) DeleteResourcePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM resource_permissions WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ar.getTx(tx)
@@ -209,7 +398,7 @@ func (ar *AuthRepo) DeleteResourcePermissionBySlug(slug string, tx ...*sqlx.Tx) 
 // RolePermission --------------------------------------------------------------------------------
 // Create a RolePermission
 func (ar *AuthRepo) CreateRolePermission(resourcePermission *model.RolePermission, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO account_role (id, slug, role_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+	st := `INSERT INTO role_permissions (id, slug, role_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
 VALUES (:id, :slug, :role_id, :permission_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
@@ -235,7 +424,7 @@ VALUES (:id, :slug, :role_id, :permission_id, :is_active, :is_deleted, :created_
 
 // GetAllRolePermission
 func (ar *AuthRepo) GetAllRolePermissions() (resourcePermission []model.RolePermission, err error) {
-	st := `SELECT * FROM resource_permissions WHERE is_deleted IS NULL OR NOT is_deleted`
+	st := `SELECT * FROM role_permissions WHERE is_deleted IS NULL OR NOT is_deleted`
 
 	err = ar.DB.Select(&resourcePermission, st)
 	if err != nil {
@@ -247,7 +436,7 @@ func (ar *AuthRepo) GetAllRolePermissions() (resourcePermission []model.RolePerm
 
 // GetRolePermission account by ID.
 func (ar *AuthRepo) GetRolePermission(id uuid.UUID) (resourcePermission model.RolePermission, err error) {
-	st := `SELECT * FROM resource_permissions WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM role_permissions WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id.String())
 
 	err = ar.DB.Get(&resourcePermission, st)
@@ -260,7 +449,7 @@ func (ar *AuthRepo) GetRolePermission(id uuid.UUID) (resourcePermission model.Ro
 
 // GetRolePermissionBySlug account from repo by slug.
 func (ar *AuthRepo) GetRolePermissionBySlug(slug string) (resourcePermission model.RolePermission, err error) {
-	st := `SELECT * FROM resource_permissions WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+	st := `SELECT * FROM role_permissions WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 
 	st = fmt.Sprintf(st, slug)
 
@@ -271,7 +460,7 @@ func (ar *AuthRepo) GetRolePermissionBySlug(slug string) (resourcePermission mod
 
 // GetRolePermissiontByRoleID account from repo by slug.
 func (ar *AuthRepo) GetRolePermissionByRoleID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
-	st := `SELECT * FROM accounts WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+	st := `SELECT * FROM role_permissions WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&resourcePermission, st)
@@ -284,7 +473,7 @@ func (ar *AuthRepo) GetRolePermissionByRoleID(id uuid.UUID) (resourcePermission 
 
 // GetRolePermissiontByRoleID account from repo by slug.
 func (ar *AuthRepo) GetRolePermissionByPermissionID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
-	st := `SELECT * FROM accounts WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM role_permissions WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&resourcePermission, st)
@@ -307,7 +496,7 @@ func (ar *AuthRepo) UpdateRolePermission(resourcePermission *model.RolePermissio
 	var st strings.Builder
 	pcu := false // previous column updated?
 
-	st.WriteString("UPDATE resource_permissions SET ")
+	st.WriteString("UPDATE role_permissions SET ")
 
 	if resourcePermission.RoleID != ref.RoleID {
 		st.WriteString(kbs.SQLStrUpd("role_id", "role_id"))
@@ -347,7 +536,7 @@ func (ar *AuthRepo) UpdateRolePermission(resourcePermission *model.RolePermissio
 
 // DeleteRolePermission account from repo by ID.
 func (ar *AuthRepo) DeleteRolePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM role_permissions WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	t, local, err := ar.getTx(tx)
@@ -366,7 +555,7 @@ func (ar *AuthRepo) DeleteRolePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
 
 // DeleteBySlug account from repo by slug.
 func (ar *AuthRepo) DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM role_permissions WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ar.getTx(tx)
@@ -448,7 +637,7 @@ func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.Account
 
 // GetAccountRoletByAccountID account from repo by slug.
 func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
-	st := `SELECT * FROM accounts WHERE account_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+	st := `SELECT * FROM account_roles WHERE account_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&accountRole, st)
@@ -461,7 +650,7 @@ func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole []model
 
 // GetAccountRoletByRoleID account from repo by slug.
 func (ar *AuthRepo) GetAccountRoleByRoleID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
-	st := `SELECT * FROM accounts WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM account_roles WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
 	err = ar.DB.Select(&accountRole, st)
@@ -543,7 +732,7 @@ func (ar *AuthRepo) DeleteAccountRole(id uuid.UUID, tx ...*sqlx.Tx) error {
 
 // DeleteBySlug:w account from repo by slug.
 func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM account_roles WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ar.getTx(tx)
