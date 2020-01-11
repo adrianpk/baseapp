@@ -13,6 +13,7 @@ import (
 	"gitlab.com/kabestan/repo/baseapp/internal/mig"
 	repo "gitlab.com/kabestan/repo/baseapp/internal/repo/pg"
 	vrepo "gitlab.com/kabestan/repo/baseapp/internal/repo/vol"
+	"gitlab.com/kabestan/repo/baseapp/internal/seed"
 )
 
 type contextKey string
@@ -52,6 +53,12 @@ func main() {
 		log.Error(err)
 	}
 
+	// Seeder
+	sd, err := seed.NewSeeder(cfg, log, "seeder-worker", db)
+	if err != nil {
+		log.Error(err)
+	}
+
 	// Mailer
 	ml, err := kbs.NewSESMailer(cfg, log, "ses-mailer")
 	if err != nil {
@@ -77,6 +84,7 @@ func main() {
 
 	// App dependencies
 	a.Migrator = mg
+	a.Seeder = sd
 	a.WebEP.Service = svc
 
 	// Init service
