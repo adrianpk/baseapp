@@ -375,6 +375,168 @@ func (ar *AuthRepo) DeletePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
 	return err
 }
 
+// Role --------------------------------------------------------------------------------
+// Create a Role
+func (ar *AuthRepo) CreateRole(role *model.Role, tx ...*sqlx.Tx) error {
+	st := `INSERT INTO roles (id, slug, name, description, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :name, :description, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	role.SetCreateValues()
+
+	_, err = t.NamedExec(st, role)
+	if err != nil {
+		return err
+	}
+
+	// Commit on local transactions
+	if local {
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// GetAllRole
+func (ar *AuthRepo) GetAllRoles() (role []model.Role, err error) {
+	st := `SELECT * FROM roles WHERE is_deleted IS NULL OR NOT is_deleted`
+
+	err = ar.DB.Select(&role, st)
+	if err != nil {
+		return role, err
+	}
+
+	return role, err
+}
+
+// GetRole account by ID.
+func (ar *AuthRepo) GetRole(id uuid.UUID) (role model.Role, err error) {
+	st := `SELECT * FROM roles WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st = fmt.Sprintf(st, id.String())
+
+	err = ar.DB.Get(&role, st)
+	if err != nil {
+		return role, err
+	}
+
+	return role, err
+}
+
+// GetRoleBySlug account from repo by slug.
+func (ar *AuthRepo) GetRoleBySlug(slug string) (role model.Role, err error) {
+	st := `SELECT * FROM roles WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, slug)
+
+	err = ar.DB.Get(&role, st)
+
+	return role, err
+}
+
+// GetRoleByName account from repo by slug.
+func (ar *AuthRepo) GetRoleByName(name string) (role model.Role, err error) {
+	st := `SELECT * FROM roles WHERE name = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, name)
+
+	err = ar.DB.Get(&role, st)
+
+	return role, err
+}
+
+// Update role
+func (ar *AuthRepo) UpdateRole(role *model.Role, tx ...*sqlx.Tx) error {
+	ref, err := ar.GetRole(role.ID)
+	if err != nil {
+		return fmt.Errorf("cannot retrieve reference account: %s", err.Error())
+	}
+
+	role.SetUpdateValues()
+
+	var st strings.Builder
+	pcu := false // previous column updated?
+
+	st.WriteString("UPDATE roles SET ")
+
+	if role.Name.String != ref.Name.String {
+		st.WriteString(kbs.SQLStrUpd("name", "name"))
+		pcu = true
+	}
+
+	if role.Description.String != ref.Description.String {
+		st.WriteString(kbs.SQLStrUpd("description", "description"))
+		pcu = true
+	}
+
+	st.WriteString(" ")
+	st.WriteString(kbs.SQLWhereID(ref.ID.String()))
+	st.WriteString(";")
+
+	//fmt.Println(st.String())
+
+	if pcu == false {
+		return errors.New("no fields to update")
+	}
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.NamedExec(st.String(), role)
+
+	if local {
+		ar.Log.Info("Transaction created by repo: committing")
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// DeleteRole account from repo by ID.
+func (ar *AuthRepo) DeleteRole(id uuid.UUID, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM role WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, id)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
+// DeleteBySlug account from repo by slug.
+func (ar *AuthRepo) DeleteRoleBySlug(slug string, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM roles WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, slug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
 // ResourcePermission --------------------------------------------------------------------------------
 // Create a ResourcePermission
 func (ar *AuthRepo) CreateResourcePermission(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
