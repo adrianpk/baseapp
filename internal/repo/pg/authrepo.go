@@ -218,6 +218,163 @@ func (ar *AuthRepo) DeleteResourceBySlug(slug string, tx ...*sqlx.Tx) error {
 	return err
 }
 
+// Permission --------------------------------------------------------------------------------
+// Create a Permission
+func (ar *AuthRepo) CreatePermission(permission *model.Permission, tx ...*sqlx.Tx) error {
+	st := `INSERT INTO permission (id, slug, name, description, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :name, :description, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	permission.SetCreateValues()
+
+	_, err = t.NamedExec(st, permission)
+	if err != nil {
+		return err
+	}
+
+	// Commit on local transactions
+	if local {
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// GetAllPermission
+func (ar *AuthRepo) GetAllPermissions() (permission []model.Permission, err error) {
+	st := `SELECT * FROM permissions WHERE is_deleted IS NULL OR NOT is_deleted`
+
+	err = ar.DB.Select(&permission, st)
+	if err != nil {
+		return permission, err
+	}
+
+	return permission, err
+}
+
+// GetPermission account by ID.
+func (ar *AuthRepo) GetPermission(id uuid.UUID) (permission model.Permission, err error) {
+	st := `SELECT * FROM permissions WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st = fmt.Sprintf(st, id.String())
+
+	err = ar.DB.Get(&permission, st)
+	if err != nil {
+		return permission, err
+	}
+
+	return permission, err
+}
+
+// GetPermissionBySlug account from repo by slug.
+func (ar *AuthRepo) GetPermissionBySlug(slug string) (permission model.Permission, err error) {
+	st := `SELECT * FROM permissions WHERE slug = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, slug)
+
+	err = ar.DB.Get(&permission, st)
+
+	return permission, err
+}
+
+// GetPermissionByName account from repo by slug.
+func (ar *AuthRepo) GetPermissionByName(name string) (permission model.Permission, err error) {
+	st := `SELECT * FROM permissions WHERE name = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
+
+	st = fmt.Sprintf(st, name)
+
+	err = ar.DB.Get(&permission, st)
+
+	return permission, err
+}
+
+// Update permission
+func (ar *AuthRepo) UpdatePermission(permission *model.Permission, tx ...*sqlx.Tx) error {
+	ref, err := ar.GetPermission(permission.ID)
+	if err != nil {
+		return fmt.Errorf("cannot retrieve reference account: %s", err.Error())
+	}
+
+	permission.SetUpdateValues()
+
+	var st strings.Builder
+	pcu := false // previous column updated?
+
+	st.WriteString("UPDATE permissions SET ")
+
+	if permission.Name.String != ref.Name.String {
+		st.WriteString(kbs.SQLStrUpd("name", "name"))
+		pcu = true
+	}
+
+	st.WriteString(" ")
+	st.WriteString(kbs.SQLWhereID(ref.ID.String()))
+	st.WriteString(";")
+
+	//fmt.Println(st.String())
+
+	if pcu == false {
+		return errors.New("no fields to update")
+	}
+
+	// Create a local transaction if it is not passed as argument.
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.NamedExec(st.String(), permission)
+
+	if local {
+		ar.Log.Info("Transaction created by repo: committing")
+		return t.Commit()
+	}
+
+	return nil
+}
+
+// DeletePermission account from repo by ID.
+func (ar *AuthRepo) DeletePermission(id uuid.UUID, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM permission WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, id)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
+// DeleteBySlug account from repo by slug.
+func (ar *AuthRepo) DeletePermissionBySlug(slug string, tx ...*sqlx.Tx) error {
+	st := `DELETE FROM permissions WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st = fmt.Sprintf(st, slug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.Exec(st)
+
+	if local {
+		return t.Commit()
+	}
+
+	return err
+}
+
 // ResourcePermission --------------------------------------------------------------------------------
 // Create a ResourcePermission
 func (ar *AuthRepo) CreateResourcePermission(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
