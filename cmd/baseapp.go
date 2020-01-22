@@ -9,7 +9,7 @@ import (
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/app"
-	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
+	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/mig"
 	repo "gitlab.com/kabestan/repo/baseapp/internal/repo/pg"
 	vrepo "gitlab.com/kabestan/repo/baseapp/internal/repo/vol"

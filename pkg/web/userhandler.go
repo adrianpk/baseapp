@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
-	"gitlab.com/kabestan/repo/baseapp/internal/app/svc"
+	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
