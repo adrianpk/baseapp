@@ -180,14 +180,13 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 
 	err = accountRepo.Update(&account)
 	if err != nil {
-		s.Log.Info("2 - No associated account, create one! (implement)")
-		//return nil, err
+		s.Log.Info("FIX: No associated account, create one! (implement)")
+		return nil, nil
 	}
 
 	// Commit transaction
 	err = tx.Commit()
 	if err != nil {
-		s.Log.Info("3 - No associated account, create one! (implement)")
 		tx.Rollback()
 		return nil, err
 	}

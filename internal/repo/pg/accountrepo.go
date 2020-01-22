@@ -31,8 +31,8 @@ func NewAccountRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *
 
 // Create a account
 func (ur *AccountRepo) Create(account *model.Account, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO accounts (id, slug, tenant_id,  owner_id, parent_id, account_type, name, email, locale, base_tz, current_tz, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :name, :email, :locale, :base_tz, :current_tz, :starts_at, :ends_at, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+	st := `INSERT INTO accounts (id, slug, tenant_id,  owner_id, parent_id, account_type, username, email, given_name, middle_names, family_name, locale, base_tz, current_tz,is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :username, :email, :given_name, :middle_names, :family_name, :locale, :base_tz, :current_tz, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
 	t, local, err := ur.getTx(tx)

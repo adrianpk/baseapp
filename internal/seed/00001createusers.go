@@ -11,6 +11,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	zeroUUID   = "00000000-0000-0000-0000-000000000000"
+	systemUUID = "00000000-0000-0000-0000-000000000001"
+)
+
+const (
+	systemTenant      = "system"
+	systemAccountType = "system"
+)
+
+const (
+	utcTZ = "UTC"
+	cetTZ = "CET"
+)
+
 var (
 	// TODO: Create a builder for users that reads values from somewere: file, csv, map, etc...
 	users = []map[string]interface{}{
@@ -18,10 +33,16 @@ var (
 
 		newUserMap("00000000-0000-0000-0000-000000000002", "superadmin-000000000002", "superadmin", "superadmin", "superadmin@kabestan.localhost"),
 	}
+
+	accounts = []map[string]interface{}{
+		newAccountMap(users[0], systemAccountType, "", "", ""),
+
+		newAccountMap(users[1], systemAccountType, "", "", ""),
+	}
 )
 
 // CreateUsers seeding
-func (s *step) CreateUsers() error {
+func (s *step) CreateUsersAndAccounts() error {
 	tx := s.GetTx()
 
 	st := `INSERT INTO users (id, slug, username, password_digest, email, last_ip, confirmation_token, is_confirmed, geolocation, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
@@ -35,14 +56,25 @@ VALUES (:id, :slug, :username, :password_digest, :email, :last_ip, :confirmation
 		}
 	}
 
+	st = `INSERT INTO accounts (id, slug, tenant_id,  owner_id, parent_id, account_type, username, email, given_name, middle_names, family_name, locale, base_tz, current_tz,is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :username, :email, :given_name, :middle_names, :family_name, :locale, :base_tz, :current_tz, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+
+	// NOTE: Continue processing following after error?
+	for _, a := range accounts {
+		_, err := tx.NamedExec(st, a)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	return nil
 }
 
 func newUserMap(id, slug, username, password, email string) map[string]interface{} {
-
 	return map[string]interface{}{
-		"id":                 id,   //genUUID()
-		"slug":               slug, //genSlug(username),
+		"id":                 id,           //genUUID()
+		"slug":               slug,         //genSlug(username),
+		"tenant_id":          systemTenant, //genSlug(username),
 		"username":           username,
 		"password_digest":    genPassDigest(password),
 		"email":              email,
@@ -54,8 +86,8 @@ func newUserMap(id, slug, username, password, email string) map[string]interface
 		"ends_at":            time.Time{},
 		"is_active":          true,
 		"is_deleted":         false,
-		"created_by_id":      uuid.Nil,
-		"updated_by_id":      uuid.Nil,
+		"created_by_id":      systemUUID,
+		"updated_by_id":      zeroUUID,
 		"created_at":         time.Now(),
 		"updated_at":         time.Time{},
 	}
@@ -102,4 +134,29 @@ func genSlug(prefix string) (slug string) {
 	l := s[len(s)-1]
 
 	return strings.ToLower(fmt.Sprintf("%s-%s", prefix, l))
+}
+
+func newAccountMap(userMap map[string]interface{}, accountType, givenName, middleNames, familyName string) map[string]interface{} {
+	return map[string]interface{}{
+		"id":            userMap["id"],   //genUUID()
+		"slug":          userMap["slug"], //genSlug(username),
+		"tenant_id":     systemTenant,    //genSlug(username),
+		"owner_id":      userMap["id"],
+		"parent_id":     zeroUUID,
+		"account_type":  accountType,
+		"username":      userMap["username"],
+		"email":         userMap["email"],
+		"given_name":    givenName,
+		"middle_names":  middleNames,
+		"family_name":   familyName,
+		"locale":        "en-US",
+		"base_tz":       cetTZ,
+		"current_tz":    cetTZ,
+		"is_active":     true,
+		"is_deleted":    false,
+		"created_by_id": systemUUID,
+		"updated_by_id": zeroUUID,
+		"created_at":    time.Now(),
+		"updated_at":    time.Time{},
+	}
 }

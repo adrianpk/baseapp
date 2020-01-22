@@ -29,10 +29,8 @@ func (s *step) CreateAccountsTable() error {
 	st = `
 		ALTER TABLE accounts
 		ADD COLUMN locale VARCHAR(32),
-		ADD COLUMN base_tz VARCHAR(2),
-		ADD COLUMN current_tz VARCHAR(2),
-		ADD COLUMN starts_at TIMESTAMP,
-		ADD COLUMN ends_at TIMESTAMP,
+		ADD COLUMN base_tz VARCHAR(64),
+		ADD COLUMN current_tz VARCHAR(64),
 		ADD COLUMN is_active BOOLEAN,
 		ADD COLUMN is_deleted BOOLEAN,
 		ADD COLUMN created_by_id UUID,
