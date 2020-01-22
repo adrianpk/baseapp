@@ -2,6 +2,8 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
@@ -56,6 +58,10 @@ func ToUserFormList(users []User) (fs []UserForm) {
 		fs = append(fs, m.ToForm())
 	}
 	return fs
+}
+
+func (user *User) FullName() string {
+	return strings.Trim(fmt.Sprintf("%s %s", user.GivenName.String, user.FamilyName.String), " ")
 }
 
 // UpdatePasswordDigest if password changed.
