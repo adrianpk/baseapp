@@ -14,9 +14,9 @@ import (
 var (
 	// TODO: Create a builder for users that reads values from somewere: file, csv, map, etc...
 	users = []map[string]interface{}{
-		newUserMap("00000000-0000-0000-0000-000000000001", "system-000000000001", "system", "system", "system@kabestan.localhost", "", "", ""),
+		newUserMap("00000000-0000-0000-0000-000000000001", "system-000000000001", "system", "system", "system@kabestan.localhost"),
 
-		newUserMap("00000000-0000-0000-0000-000000000002", "superadmin-000000000002", "superadmin", "superadmin", "superadmin@kabestan.localhost", "", "", ""),
+		newUserMap("00000000-0000-0000-0000-000000000002", "superadmin-000000000002", "superadmin", "superadmin", "superadmin@kabestan.localhost"),
 	}
 )
 
@@ -24,8 +24,8 @@ var (
 func (s *step) CreateUsers() error {
 	tx := s.GetTx()
 
-	st := `INSERT INTO users (id, slug, username, password_digest, email, given_name, middle_names, family_name, last_ip,  confirmation_token, is_confirmed, geolocation, locale, base_tz, current_tz, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :username, :password_digest, :email, :given_name, :middle_names, :family_name, :last_ip, :confirmation_token, :is_confirmed, :geolocation, :locale, :base_tz, :current_tz, :starts_at, :ends_at, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+	st := `INSERT INTO users (id, slug, username, password_digest, email, last_ip, confirmation_token, is_confirmed, geolocation, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :username, :password_digest, :email, :last_ip, :confirmation_token, :is_confirmed, :geolocation, :starts_at, :ends_at, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// NOTE: Continue processing following after error?
 	for _, u := range users {
@@ -38,7 +38,7 @@ VALUES (:id, :slug, :username, :password_digest, :email, :given_name, :middle_na
 	return nil
 }
 
-func newUserMap(id, slug, username, password, email, givenName, middleNames, familyName string) map[string]interface{} {
+func newUserMap(id, slug, username, password, email string) map[string]interface{} {
 
 	return map[string]interface{}{
 		"id":                 id,   //genUUID()
@@ -46,16 +46,10 @@ func newUserMap(id, slug, username, password, email, givenName, middleNames, fam
 		"username":           username,
 		"password_digest":    genPassDigest(password),
 		"email":              email,
-		"given_name":         givenName,
-		"middle_names":       middleNames,
-		"family_name":        familyName,
 		"last_ip":            "198.24.10.0/24",
 		"confirmation_token": genUUIDStr(),
 		"is_confirmed":       true,
 		"geolocation":        "POINT(0 0)",
-		"locale":             "en-US",
-		"base_tz":            "GMT",
-		"current_tz":         "CET",
 		"starts_at":          time.Now(),
 		"ends_at":            time.Time{},
 		"is_active":          true,

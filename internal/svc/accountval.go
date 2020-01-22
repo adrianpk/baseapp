@@ -23,9 +23,9 @@ func NewAccountValidator(u *model.Account) AccountValidator {
 
 func (uv AccountValidator) ValidateForCreate() error {
 	// Accountname
-	ok0 := uv.ValidateRequiredName()
-	ok1 := uv.ValidateMinLengthName(4)
-	ok2 := uv.ValidateMaxLengthName(16)
+	ok0 := uv.ValidateRequiredUsername()
+	ok1 := uv.ValidateMinLengthUsername(4)
+	ok2 := uv.ValidateMaxLengthUsername(16)
 	// Email
 	ok3 := uv.ValidateEmailEmail()
 
@@ -39,10 +39,10 @@ func (uv AccountValidator) ValidateForCreate() error {
 // NOTE: Update validations shoud be different
 // than the ones executed on creation.
 func (uv AccountValidator) ValidateForUpdate() error {
-	// Name
-	ok0 := uv.ValidateRequiredName()
-	ok1 := uv.ValidateMinLengthName(4)
-	ok2 := uv.ValidateMaxLengthName(16)
+	// Username
+	ok0 := uv.ValidateRequiredUsername()
+	ok1 := uv.ValidateMinLengthUsername(4)
+	ok2 := uv.ValidateMaxLengthUsername(16)
 	// Email
 	ok3 := uv.ValidateEmailEmail()
 
@@ -53,10 +53,10 @@ func (uv AccountValidator) ValidateForUpdate() error {
 	return errors.New("account has errors")
 }
 
-func (uv AccountValidator) ValidateRequiredName(errMsg ...string) (ok bool) {
+func (uv AccountValidator) ValidateRequiredUsername(errMsg ...string) (ok bool) {
 	u := uv.Model
 
-	ok = uv.ValidateRequired(u.Name.String)
+	ok = uv.ValidateRequired(u.Username.String)
 	if ok {
 		return true
 	}
@@ -66,14 +66,14 @@ func (uv AccountValidator) ValidateRequiredName(errMsg ...string) (ok bool) {
 		msg = errMsg[0]
 	}
 
-	uv.Errors["Name"] = append(uv.Errors["Name"], msg)
+	uv.Errors["Username"] = append(uv.Errors["Username"], msg)
 	return false
 }
 
-func (uv AccountValidator) ValidateMinLengthName(min int, errMsg ...string) (ok bool) {
+func (uv AccountValidator) ValidateMinLengthUsername(min int, errMsg ...string) (ok bool) {
 	u := uv.Model
 
-	ok = uv.ValidateMinLength(u.Name.String, min)
+	ok = uv.ValidateMinLength(u.Username.String, min)
 	if ok {
 		return true
 	}
@@ -83,14 +83,14 @@ func (uv AccountValidator) ValidateMinLengthName(min int, errMsg ...string) (ok 
 		msg = errMsg[0]
 	}
 
-	uv.Errors["Name"] = append(uv.Errors["Name"], msg)
+	uv.Errors["Username"] = append(uv.Errors["Username"], msg)
 	return false
 }
 
-func (uv AccountValidator) ValidateMaxLengthName(max int, errMsg ...string) (ok bool) {
+func (uv AccountValidator) ValidateMaxLengthUsername(max int, errMsg ...string) (ok bool) {
 	u := uv.Model
 
-	ok = uv.ValidateMaxLength(u.Name.String, max)
+	ok = uv.ValidateMaxLength(u.Username.String, max)
 	if ok {
 		return true
 	}
@@ -100,7 +100,7 @@ func (uv AccountValidator) ValidateMaxLengthName(max int, errMsg ...string) (ok 
 		msg = errMsg[0]
 	}
 
-	uv.Errors["Name"] = append(uv.Errors["Name"], msg)
+	uv.Errors["Username"] = append(uv.Errors["Username"], msg)
 	return false
 }
 
