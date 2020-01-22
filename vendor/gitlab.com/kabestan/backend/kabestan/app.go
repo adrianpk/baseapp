@@ -16,6 +16,8 @@ type (
 		alive bool
 		// Migrator
 		Migrator MigratorIF
+		// Seeder
+		Seeder SeederIF
 		// Routers
 		WebRouter      *Router
 		JSONRESTRouter *Router

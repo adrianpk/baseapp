@@ -7,9 +7,9 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/lib/pq"
 	"gitlab.com/kabestan/backend/kabestan/db"
 	"gitlab.com/kabestan/backend/kabestan/db/pg"
-	"github.com/lib/pq"
 
 	"time"
 
@@ -129,4 +129,21 @@ func (a *Audit) SetUpdateValues() error {
 	now := time.Now()
 	a.UpdatedAt = pg.ToNullTime(now)
 	return nil
+}
+
+// ToUUID parses string and return a UUID.
+// If error returns aspecial form of UUID that
+// is specified to have all 128 bits set to zero.
+func ToUUID(uuidStr string) uuid.UUID {
+	u, err := uuid.FromString(uuidStr)
+	if err != nil {
+		return uuid.Nil
+	}
+
+	return u
+}
+
+// ParseUUID string.
+func ParseUUID(uuidStr string) (uuid.UUID, error) {
+	return uuid.FromString(uuidStr)
 }

@@ -55,10 +55,6 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
-gitlab.com/kabestan/backend/kabestan v0.0.0-20200122114530-a4f1ff7bc2c4 h1:bQoMDeSmcE9iYibT2gDzBPDaSSb0bd5hvYpCmUt+oqc=
-gitlab.com/kabestan/backend/kabestan v0.0.0-20200122114530-a4f1ff7bc2c4/go.mod h1:0dm/84BZq5eGnZ11Nsv9Ffj0PRKr1qovVd/C53ZAgjQ=
-gitlab.com/kabestan/backend/kabestan/db v0.0.0-20200111024303-1eea754ea2f3 h1:JvH2sG6PJ9gRUeVDsTvVteLlbmbz6PlH5MkJKT8rqBc=
-gitlab.com/kabestan/backend/kabestan/db v0.0.0-20200111024303-1eea754ea2f3/go.mod h1:KGS4PGz/iDzBa8gWTyPIdkPGR+AAnnLPEjgr5/5TWvs=
 gitlab.com/kabestan/backend/kabestan/db/pg v0.0.0-20200111024303-1eea754ea2f3 h1:UONC3ewEe3gRSvqXmKKou2/YN3UMPI3L/yzS7o+Hibo=
 gitlab.com/kabestan/backend/kabestan/db/pg v0.0.0-20200111024303-1eea754ea2f3/go.mod h1:Oi1Ad/ugf7y0H8qvaK1wcw5LIWCunAebrZUPM+txB6w=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
