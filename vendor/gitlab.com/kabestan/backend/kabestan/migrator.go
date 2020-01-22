@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq" // package init.
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -83,12 +82,12 @@ const (
 
 	pgDropMigrationsSt = `DROP TABLE %s.%s;`
 
-	pgSelMigrationSt = `SELECT is_applied FROM %s.%s WHERE name = '%s' and is_applied = true`
+	pgSelMigrationSt = `SELECT is_applied FROM %s.%s WHERE name = '%s' and is_applied = true;`
 
 	pgRecMigrationSt = `INSERT INTO %s.%s (id, name, up_fx, down_fx, is_applied, created_at)
 		VALUES (:id, :name, :up_fx, :down_fx, :is_applied, :created_at);`
 
-	pgDelMigrationSt = `DELETE FROM %s.%s WHERE name = '%s' and is_applied = true`
+	pgDelMigrationSt = `DELETE FROM %s.%s WHERE name = '%s' and is_applied = true;`
 )
 
 // NewMigrator.
@@ -143,9 +142,8 @@ func (m *Migrator) PreSetup() {
 // referenced database has been already created.
 // Only for postgress at the moment.
 func (m *Migrator) dbExists() bool {
-	st := fmt.Sprintf(`select exists(
-		SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s')
-	);`, m.dbName)
+	st := fmt.Sprintf(`SELECT EXISTS(
+		SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s'));`, m.dbName)
 
 	r, err := m.DB.Query(st)
 	if err != nil {
@@ -235,7 +233,6 @@ func (m *Migrator) CloseAppConns() (string, error) {
 	return m.dbName, nil
 }
 
-// DropDb migration.
 func (m *Migrator) createMigrationsTable() (string, error) {
 	tx := m.GetTx()
 
@@ -257,6 +254,8 @@ func (m *Migrator) Migrate() error {
 	m.PreSetup()
 
 	for _, mg := range m.migs {
+		fmt.Println("0000000000000000000000000")
+		fmt.Printf("%+v/n/n", *mg)
 		exec := mg.Executor
 		fn := getFxName(exec.GetUp())
 		name := migName(fn)

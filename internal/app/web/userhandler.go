@@ -406,8 +406,14 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Register user slug in session.
-	ep.SignIn(w, r, user.Slug.String)
+	// Register user data in secure session cookie.
+	userData := map[string]string{
+		"slug":     user.Slug.String,
+		"username": user.Username.String,
+		"name":     user.FullName(),
+		//"role":     user.Role.String,
+	}
+	ep.SignIn(w, r, userData)
 	ep.Log.Debug("User signed in", "user", user.Username.String)
 
 	// Localize Ok info message, put it into a flash message

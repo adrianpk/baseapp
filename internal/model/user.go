@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
@@ -59,6 +60,10 @@ func ToUserFormList(users []User) (fs []UserForm) {
 	return fs
 }
 
+func (user *User) FullName() string {
+	return strings.Trim(fmt.Sprintf("%s %s", user.GivenName.String, user.FamilyName.String), " ")
+}
+
 // UpdatePasswordDigest if password changed.
 func (user *User) UpdatePasswordDigest() (digest string, err error) {
 	if user.Password == "" {
@@ -75,14 +80,9 @@ func (user *User) UpdatePasswordDigest() (digest string, err error) {
 
 // SetCreateValues sets de ID and slug.
 func (user *User) SetCreateValues() error {
-	fmt.Printf("User ID: '%s'\n", user.Identification.ID)
-	fmt.Printf("User Slug: '%s'\n", user.Identification.Slug.String)
 	// Set create values only only if they were not previously
 	if user.Identification.ID == uuid.Nil ||
 		user.Identification.Slug.String == "" {
-		fmt.Println("Not previous values, setting ID and slug")
-		fmt.Printf("New User ID: '%s'\n", user.Identification.ID)
-		fmt.Printf("New User Slug: '%s'\n", user.Identification.Slug.String)
 		pfx := user.Username.String
 		user.Identification.SetCreateValues(pfx)
 		user.Audit.SetCreateValues()

@@ -37,8 +37,17 @@ func NewApp(cfg *kbs.Config, log kbs.Logger, name string) (*App, error) {
 
 // Init runs pre Start process.
 func (app *App) Init() error {
-	//return app.Migrator.RollbackAll()
-	return app.Migrator.Migrate()
+	err := app.Migrator.Migrate()
+	if err != nil {
+		return err
+	}
+
+	err = app.Seeder.Seed()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (app *App) Start() error {
