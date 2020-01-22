@@ -36,9 +36,7 @@ func NewApp(cfg *kbs.Config, log kbs.Logger, name string) (*App, error) {
 }
 
 // Init runs pre Start process.
-// Init runs pre Start process.
 func (app *App) Init() error {
-	//return app.Migrator.RollbackAll()
 	err := app.Migrator.Migrate()
 	if err != nil {
 		return err
