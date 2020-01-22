@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
-	"gitlab.com/kabestan/repo/baseapp/internal/app/web"
+	"gitlab.com/kabestan/repo/baseapp/pkg/web"
 )
 
 type (

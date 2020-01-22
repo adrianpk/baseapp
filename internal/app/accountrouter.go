@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"gitlab.com/kabestan/repo/baseapp/internal/app/web"
+	"gitlab.com/kabestan/repo/baseapp/pkg/web"
 )
 
 // These handlers require authorization
