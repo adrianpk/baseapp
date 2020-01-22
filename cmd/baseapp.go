@@ -48,13 +48,13 @@ func main() {
 	}
 
 	// Migrator
-	mg, err := mig.NewMigrator(cfg, log, "migration-worker", db)
+	mg, err := mig.NewMigrator(cfg, log, "migrator", db)
 	if err != nil {
 		log.Error(err)
 	}
 
 	// Seeder
-	sd, err := seed.NewSeeder(cfg, log, "seeder-worker", db)
+	sd, err := seed.NewSeeder(cfg, log, "seeder", db)
 	if err != nil {
 		log.Error(err)
 	}
