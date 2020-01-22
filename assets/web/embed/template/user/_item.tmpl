@@ -16,13 +16,6 @@
               </label>
             </div>
 
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Name</label>
-              <label class="appearance-none w-full py-2 px-3 text-gray-900" id="email"/>
-                {{$user.GivenName}} {{$user.MiddleNames}} {{$user.FamilyName}}
-              </label>
-            </div>
-
             {{if eq $action.Method "DELETE"}}
             {{if not $user.IsNew}}
                   <div class="mt-4 mb-4 py-2">

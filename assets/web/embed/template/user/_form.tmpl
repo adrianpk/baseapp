@@ -49,36 +49,6 @@
               {{end}}
             </div>
 
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="given-name">Given Name</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="given-name" name="given-name" type="text" value="{{$user.GivenName}}"/>
-              {{with $errors.GivenName}}
-                {{range $errors.GivenName}}
-                  <label class='py-2 text-red-700'>{{. | $loc.Localize}}</label>
-                {{end}}
-              {{end}}
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="middle-names">Middle Names</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-names" name="middle-names" type="text" value="{{$user.MiddleNames}}"/>
-              {{with $errors.MiddleNames}}
-                {{range $errors.MiddleNames}}
-                  <label class='py-2 text-red-700'>{{. | $loc.Localize}}</label>
-                {{end}}
-              {{end}}
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="family-name">Family Name</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="family-name" name="family-name" type="text" value="{{$user.FamilyName}}"/>
-              {{with $errors.FamilyName}}
-                {{range $errors.FamilyName}}
-                  <label class='py-2 text-red-700'>{{. | $loc.Localize}}</label>
-                {{end}}
-              {{end}}
-            </div>
-
             <div class="">
               {{if $user.IsNew}}
               <!-- Save -->

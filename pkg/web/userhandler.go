@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
-	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
+	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 )
 
 const (
@@ -410,7 +410,6 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	userData := map[string]string{
 		"slug":     user.Slug.String,
 		"username": user.Username.String,
-		"name":     user.FullName(),
 		//"role":     user.Role.String,
 	}
 	ep.SignIn(w, r, userData)

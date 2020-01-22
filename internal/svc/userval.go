@@ -33,12 +33,8 @@ func (uv UserValidator) ValidateForCreate() error {
 	ok5 := uv.ValidateRequiredPassword()
 	ok6 := uv.ValidateMinLengthPassword(8)
 	ok7 := uv.ValidateMaxLengthPassword(32)
-	// GivenName
-	ok8 := uv.ValidateRequiredGivenName()
-	// FamilyName
-	ok9 := uv.ValidateRequiredFamilyName()
 
-	if ok0 && ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 && ok8 && ok9 {
+	if ok0 && ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 {
 		return nil
 	}
 
@@ -59,12 +55,8 @@ func (uv UserValidator) ValidateForUpdate() error {
 	//ok5 := uv.ValidateRequiredPassword()
 	//ok6 := uv.ValidateMinLengthPassword(8)
 	//ok7 := uv.ValidateMaxLengthPassword(32)
-	// GivenName
-	ok8 := uv.ValidateRequiredGivenName()
-	// FamilyName
-	ok9 := uv.ValidateRequiredFamilyName()
 
-	if ok0 && ok1 && ok2 && ok3 && ok4 && ok8 && ok9 {
+	if ok0 && ok1 && ok2 && ok3 && ok4 {
 		return nil
 	}
 
@@ -225,39 +217,5 @@ func (uv UserValidator) ValidateMaxLengthPassword(max int, errMsg ...string) (ok
 	}
 
 	uv.Errors["Password"] = append(uv.Errors["Password"], msg)
-	return false
-}
-
-func (uv UserValidator) ValidateRequiredGivenName(errMsg ...string) (ok bool) {
-	u := uv.Model
-
-	ok = uv.ValidateRequired(u.GivenName.String)
-	if ok {
-		return true
-	}
-
-	msg := kbs.ValMsg.RequiredErrMsg
-	if len(errMsg) > 0 {
-		msg = errMsg[0]
-	}
-
-	uv.Errors["GivenName"] = append(uv.Errors["GivenName"], msg)
-	return false
-}
-
-func (uv UserValidator) ValidateRequiredFamilyName(errMsg ...string) (ok bool) {
-	u := uv.Model
-
-	ok = uv.ValidateRequired(u.FamilyName.String)
-	if ok {
-		return true
-	}
-
-	msg := kbs.ValMsg.RequiredErrMsg
-	if len(errMsg) > 0 {
-		msg = errMsg[0]
-	}
-
-	uv.Errors["FamilyName"] = append(uv.Errors["FamilyName"], msg)
 	return false
 }

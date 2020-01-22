@@ -60,7 +60,7 @@ func (s *Service) CreateUser(user *model.User) (kbs.ValErrorSet, error) {
 	account := &model.Account{
 		OwnerID:     user.ID,
 		AccountType: db.ToNullString(userAccountType),
-		Name:        user.Username,
+		Username:    user.Username,
 		Email:       user.Email,
 		StartsAt:    user.CreatedAt,
 		IsActive:    user.IsActive,
@@ -168,22 +168,26 @@ func (s *Service) UpdateUser(slug string, user *model.User) (kbs.ValErrorSet, er
 	// Get associated account
 	account, err := accountRepo.GetByOwnerID(user.ID)
 	if err != nil {
-		return nil, err
+		// TODO: Temp. patch. all users should
+		// have an associated account.
+		return nil, nil
 	}
 
 	// Update values
-	account.Name = user.Username
+	account.Username = user.Username
 	account.Email = user.Email
 	account.IsActive = user.IsActive
 
 	err = accountRepo.Update(&account)
 	if err != nil {
-		return nil, err
+		s.Log.Info("2 - No associated account, create one! (implement)")
+		//return nil, err
 	}
 
 	// Commit transaction
 	err = tx.Commit()
 	if err != nil {
+		s.Log.Info("3 - No associated account, create one! (implement)")
 		tx.Rollback()
 		return nil, err
 	}

@@ -14,8 +14,11 @@ func (s *step) CreateAccountsTable() error {
 		owner_id UUID,
 		parent_id UUID,
 		account_type VARCHAR(36),
-		name VARCHAR(64),
-		email VARCHAR(255)
+		username VARCHAR(32) UNIQUE,
+		email VARCHAR(255),
+		given_name VARCHAR(32),
+		middle_names VARCHAR(32) NULL,
+		family_name VARCHAR(64)
 		);`
 
 	_, err := tx.Exec(st)
@@ -29,13 +32,13 @@ func (s *step) CreateAccountsTable() error {
 		ADD COLUMN base_tz VARCHAR(2),
 		ADD COLUMN current_tz VARCHAR(2),
 		ADD COLUMN starts_at TIMESTAMP,
-		ADD COLUMN ends_at TIMESTAMP WITH TIME ZONE,
+		ADD COLUMN ends_at TIMESTAMP,
 		ADD COLUMN is_active BOOLEAN,
 		ADD COLUMN is_deleted BOOLEAN,
 		ADD COLUMN created_by_id UUID,
 		ADD COLUMN updated_by_id UUID,
-		ADD COLUMN created_at TIMESTAMP WITH TIME ZONE,
-		ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE;`
+		ADD COLUMN created_at TIMESTAMP,
+		ADD COLUMN updated_at TIMESTAMP;`
 
 	_, err = tx.Exec(st)
 	if err != nil {

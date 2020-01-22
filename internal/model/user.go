@@ -2,8 +2,6 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
-	"strings"
 
 	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
@@ -21,16 +19,10 @@ type (
 		PasswordDigest    sql.NullString `db:"password_digest" json:"-" schema:"-"`
 		Email             sql.NullString `db:"email" json:"email" schema:"email"`
 		EmailConfirmation sql.NullString `db:"-" json:"emailConfirmation" schema:"email-confirmation"`
-		GivenName         sql.NullString `db:"given_name" json:"givenName" schema:"given-name"`
-		MiddleNames       sql.NullString `db:"middle_names" json:"middleNames" schema:"middle-names"`
-		FamilyName        sql.NullString `db:"family_name" json:"familyName" schema:"family-name"`
 		LastIP            sql.NullString `db:"last_ip" json:"-" schema:"-"`
 		ConfirmationToken sql.NullString `db:"confirmation_token" json:"-" schema:"-"`
 		IsConfirmed       sql.NullBool   `db:"is_confirmed" json:"-" schema:"-"`
 		Geolocation       kbs.Point      `db:"geolocation" json:"-" schema:"-"`
-		Locale            sql.NullString `db:"locale" json:"-" schema:"-"`
-		BaseTZ            sql.NullString `db:"base_tz" json:"-" schema:"-"`
-		CurrentTZ         sql.NullString `db:"current_tz" json:"-" schema:"-"`
 		StartsAt          pq.NullTime    `db:"starts_at" json:"-" schema:"-"`
 		EndsAt            pq.NullTime    `db:"ends_at" json:"-" schema:"-"`
 		IsActive          sql.NullBool   `db:"is_active" json:"-" schema:"-"`
@@ -46,9 +38,6 @@ type (
 		Password          string `json:"password" schema:"password"`
 		Email             string `json:"email" schema:"email"`
 		EmailConfirmation string `json:"emailConfirmation" schema:"email-confirmation"`
-		GivenName         string `json:"givenName" schema:"given-name"`
-		MiddleNames       string `json:"middleNames" schema:"middle-names"`
-		FamilyName        string `json:"familyName" schema:"family-name"`
 		IsNew             bool   `json:"-" schema:"-"`
 	}
 )
@@ -58,10 +47,6 @@ func ToUserFormList(users []User) (fs []UserForm) {
 		fs = append(fs, m.ToForm())
 	}
 	return fs
-}
-
-func (user *User) FullName() string {
-	return strings.Trim(fmt.Sprintf("%s %s", user.GivenName.String, user.FamilyName.String), " ")
 }
 
 // UpdatePasswordDigest if password changed.
@@ -116,14 +101,8 @@ func (user *User) Match(tc *User) bool {
 		user.Username == tc.Username &&
 		user.PasswordDigest == tc.PasswordDigest &&
 		user.Email == tc.Email &&
-		user.GivenName == tc.GivenName &&
-		user.MiddleNames == tc.MiddleNames &&
-		user.FamilyName == tc.FamilyName &&
-		user.ConfirmationToken == tc.ConfirmationToken &&
 		user.IsConfirmed == tc.IsConfirmed &&
 		user.Geolocation == tc.Geolocation &&
-		user.BaseTZ == tc.BaseTZ &&
-		user.CurrentTZ == tc.CurrentTZ &&
 		user.StartsAt == tc.StartsAt &&
 		user.EndsAt == tc.EndsAt
 	return r
@@ -142,9 +121,6 @@ func (user *User) ToForm() UserForm {
 		Username:          user.Username.String,
 		Email:             user.Email.String,
 		EmailConfirmation: user.Email.String,
-		GivenName:         user.GivenName.String,
-		MiddleNames:       user.MiddleNames.String,
-		FamilyName:        user.FamilyName.String,
 		IsNew:             user.IsNew(),
 	}
 }
@@ -159,9 +135,6 @@ func (userForm *UserForm) ToModel() User {
 		Password:          userForm.Password,
 		Email:             db.ToNullString(userForm.Email),
 		EmailConfirmation: db.ToNullString(userForm.EmailConfirmation),
-		GivenName:         db.ToNullString(userForm.GivenName),
-		MiddleNames:       db.ToNullString(userForm.MiddleNames),
-		FamilyName:        db.ToNullString(userForm.FamilyName),
 	}
 }
 
