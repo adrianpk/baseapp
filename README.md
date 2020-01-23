@@ -46,6 +46,11 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 After stabilizing this base app a (still not published) generator will be updated to automate most of these steps.
 
+
+## App Description
+
+  [More info](docs/description.md)
+
 ### Clone app
 
 ```shell
@@ -160,6 +165,90 @@ const (
 	// Replace by prefered
 	appName = "kbs"
 )
+```
+
+### Run app
+
+```shell
+$ make clean-and-run
+```
+
+**You should see something like this**
+
+```shell
+/scripts/run.sh
+4:54PM INF Cookie store key value=hVuOOv4PNBnqTk2o13JsBMOPcPAe4p18
+4:54PM INF Reading template path=account.bak/_ctxbar.tmpl
+4:54PM INF Reading template path=account.bak/_flash.tmpl
+4:54PM INF Reading template path=account.bak/_form.tmpl
+4:54PM INF Reading template path=account.bak/_header.tmpl
+4:54PM INF Reading template path=account.bak/_item.tmpl
+4:54PM INF Reading template path=account.bak/_list.tmpl
+4:54PM INF Reading template path=account.bak/_signin.tmpl
+4:54PM INF Reading template path=account.bak/_signup.tmpl
+4:54PM INF Reading template path=account.bak/edit.tmpl
+4:54PM INF Reading template path=account.bak/index.tmpl
+4:54PM INF Reading template path=account.bak/initdel.tmpl
+4:54PM INF Reading template path=account.bak/new.tmpl
+4:54PM INF Reading template path=account.bak/show.tmpl
+4:54PM INF Reading template path=account.bak/signin.tmpl
+4:54PM INF Reading template path=account.bak/signup.tmpl
+4:54PM INF Reading template path=layout/base.tmpl
+4:54PM INF Reading template path=resource/_ctxbar.tmpl
+4:54PM INF Reading template path=resource/_flash.tmpl
+4:54PM INF Reading template path=resource/_form.tmpl
+4:54PM INF Reading template path=resource/_header.tmpl
+4:54PM INF Reading template path=resource/_item.tmpl
+4:54PM INF Reading template path=resource/_list.tmpl
+4:54PM INF Reading template path=resource/edit.tmpl
+4:54PM INF Reading template path=resource/index.tmpl
+4:54PM INF Reading template path=resource/initdel.tmpl
+4:54PM INF Reading template path=resource/new.tmpl
+4:54PM INF Reading template path=resource/show.tmpl
+4:54PM INF Reading template path=user/_ctxbar.tmpl
+4:54PM INF Reading template path=user/_flash.tmpl
+4:54PM INF Reading template path=user/_form.tmpl
+4:54PM INF Reading template path=user/_header.tmpl
+4:54PM INF Reading template path=user/_item.tmpl
+4:54PM INF Reading template path=user/_list.tmpl
+4:54PM INF Reading template path=user/_signin.tmpl
+4:54PM INF Reading template path=user/_signup.tmpl
+4:54PM INF Reading template path=user/edit.tmpl
+4:54PM INF Reading template path=user/index.tmpl
+4:54PM INF Reading template path=user/initdel.tmpl
+4:54PM INF Reading template path=user/new.tmpl
+4:54PM INF Reading template path=user/show.tmpl
+4:54PM INF Reading template path=user/signin.tmpl
+4:54PM INF Reading template path=user/signup.tmpl
+4:54PM INF Parsed template set path=user/edit.tmpl
+4:54PM INF Parsed template set path=user/initdel.tmpl
+4:54PM INF Parsed template set path=user/show.tmpl
+4:54PM INF Parsed template set path=user/new.tmpl
+4:54PM INF Parsed template set path=user/signup.tmpl
+4:54PM INF Parsed template set path=user/signin.tmpl
+4:54PM INF Parsed template set path=user/index.tmpl
+4:54PM INF Parsed template set path=account.bak/initdel.tmpl
+4:54PM INF Parsed template set path=account.bak/signup.tmpl
+4:54PM INF Parsed template set path=account.bak/index.tmpl
+4:54PM INF Parsed template set path=account.bak/signin.tmpl
+4:54PM INF Parsed template set path=account.bak/edit.tmpl
+4:54PM INF Parsed template set path=account.bak/show.tmpl
+4:54PM INF Parsed template set path=account.bak/new.tmpl
+4:54PM INF Parsed template set path=resource/edit.tmpl
+4:54PM INF Parsed template set path=resource/index.tmpl
+4:54PM INF Parsed template set path=resource/new.tmpl
+4:54PM INF Parsed template set path=resource/initdel.tmpl
+4:54PM INF Parsed template set path=resource/show.tmpl
+4:54PM INF Dialing to Postgres host="host=localhost port=5432 user=kabestan password=******** dbname=kabestan_dev sslmode=disable"
+4:54PM INF Postgres connection established
+4:54PM INF New migrator name=migrator
+4:54PM INF New seeder name=seeder
+4:54PM INF New handler name=ses-mailer
+2020/01/23 16:54:59 Migration 'enable_postgis' already applied.
+2020/01/23 16:54:59 Migration 'create_users_table' already applied.
+2020/01/23 16:54:59 Migration 'create_accounts_table' already applied.
+2020/01/23 16:54:59 Seed 'create_users_and_accounts' already applied.
+4:54PM INF Web server initializing port=:8080
 ```
 
 ### Create resource files
