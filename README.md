@@ -26,21 +26,8 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 | POST   | /auth/signin  | SignIn     |
 | GET    | /auth/signout | SignOut    |
 
-### User
 
-| Method | Path                          | Handler    |
-|--------|-------------------------------|------------|
-| GET    | /users                        | Index      |
-| GET    | /users/new                    | New        |
-| POST   | /users                        | Create     |
-| GET    | /users/{slug}                 | Show       |
-| GET    | /users/{slug}/edit            | Edit       |
-| PUT    | /users/{slug}                 | Update     |
-| PATCH  | /users/{slug}                 | Update     |
-| POST   | /users/{slug}/init-delete     | InitDelete |
-| DELETE | /users/{slug}                 | Delete     |
-| GET    | /users/{slug}/{token}/confirm | Confirm    |
-
+[More routes](docs/routes.md)
 
 ## Dev. Env. Setup [draft]
 
@@ -250,6 +237,49 @@ $ make clean-and-run
 2020/01/23 16:54:59 Seed 'create_users_and_accounts' already applied.
 4:54PM INF Web server initializing port=:8080
 ```
+
+## Make commands
+
+A brief summary of the most used commands
+
+**make build**
+
+Builds the application
+
+**make run**
+
+Run the application through a shell script that previously sets the environment variables with required values.
+In case you need to change some envar, you can edit this script: `scripts/run.sh`.
+
+**make test**
+
+Run tests
+
+**make grc-test**
+
+Run tests with coloured output. [grc](https://github.com/garabik/grc) needs to be available in your system.
+
+**package-resources**
+
+It generates a binary representation for html templates, translations and other resources that allows compiler to embed them within the target file. `clean-and-run` runs this make task as subtask before starting the applicacion.
+
+**build-stg**
+
+Build a staging Docker image of this application and pushes it to Docker Hub.
+
+**build-prod**
+
+Same as `make build-stage` but for production images.
+
+**install-stg**
+
+Deploys app to Googke GKE usando [HELM](https://helm.sh/).
+I haven't created helm .yaml files so this command is not functional yet.
+
+**install-prod**
+
+Same as `make install-stage` but for production images.
+
 
 ### Create resource files
 
