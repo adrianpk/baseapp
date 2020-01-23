@@ -1,6 +1,9 @@
 <!-- Head -->
 {{define "head"}}
-{{"new_user" | .Loc.Localize}}
+{{$res := "user" | .Loc.Localize}}
+{{$section := "new" | .Loc.Localize}}
+{{$title := concat $section $res}}
+{{$title}}
 {{end}}
 <!-- Head -->
 
@@ -13,7 +16,9 @@
 <!-- Contextual bar -->
 
 <!-- Header -->
-{{$title := "new_user" | .Loc.Localize}}
+{{$res := "user" | .Loc.Localize}}
+{{$section := "new" | .Loc.Localize}}
+{{$title := concat $section $res}}
 {{template "header" $title}}
 <!-- Header -->
 

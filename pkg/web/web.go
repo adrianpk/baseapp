@@ -23,6 +23,19 @@ const (
 )
 
 const (
+	// Info
+	CreatedInfoMsg = "created_info_msg"
+	UpdatedInfoMsg = "updated_info_msg"
+	DeletedInfoMsg = "deleted_info_msg"
+	// Error
+	CreateErrMsg = "create_err_msg"
+	IndexErrMsg  = "get_all_err_msg"
+	GetErrMsg    = "get_err_msg"
+	UpdateErrMsg = "update_err_msg"
+	DeleteErrMsg = "delete_err_msg"
+)
+
+const (
 	// Generic
 	CannotProcErrMsg  = "cannot_proc_err_msg"
 	InputValuesErrMsg = "input_values_err_msg"
@@ -85,4 +98,10 @@ func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
 	}
 
 	return slug, nil
+}
+
+func (ep *Endpoint) ErrorRedirect(w http.ResponseWriter, r *http.Request, redirPath, messageID string, err error) {
+	m := ep.Localize(r, messageID)
+	ep.RedirectWithFlash(w, r, redirPath, m, kbs.ErrorMT)
+	ep.Log.Error(err)
 }

@@ -16,24 +16,17 @@ const (
 
 const (
 	// Defined in 'assets/web/embed/i18n/xx.json'
-	UserCreatedInfoMsg = "user_created_info_msg"
-	UserUpdatedInfoMsg = "user_updated_info_msg"
-	UserDeletedInfoMsg = "user_deleted_info_msg"
-	SignedUpInfoMsg    = "signed_up_info_msg"
-	ConfirmedInfoMsg   = "confirmed_info_msg"
-	SignedInInfoMsg    = "signed_in_info_msg"
-	SignedOutInfoMsg   = "signed_out_info_msg"
+	userResPl = "users"
+	// Info
+	SignedUpInfoMsg  = "signed_up_info_msg"
+	ConfirmedInfoMsg = "confirmed_info_msg"
+	SignedInInfoMsg  = "signed_in_info_msg"
+	SignedOutInfoMsg = "signed_out_info_msg"
 	// Error
-	CreateUserErrMsg        = "create_user_err_msg"
-	IndexUsersErrMsg        = "get_all_users_err_msg"
-	GetUserErrMsg           = "get_user_err_msg"
-	GetUsersErrMsg          = "get_users_err_msg"
-	UpdateUserErrMsg        = "update_user_err_msg"
-	DeleteUserErrMsg        = "delete_user_err_msg"
 	CredentialsErrMsg       = "credentials_err_msg"
-	SignUpUserErrMsg        = "signup_err_msg"
-	SignInUserErrMsg        = "signin_err_msg"
-	ConfirmUserErrMsg       = "confirm_user_err_msg"
+	SignUpErrMsg            = "signup_err_msg"
+	SignInErrMsg            = "signin_err_msg"
+	ConfirmErrMsg           = "confirm_user_err_msg"
 	ConfirmationTokenErrMsg = "confirmation_token_err_msg"
 )
 
@@ -42,7 +35,7 @@ func (ep *Endpoint) IndexUsers(w http.ResponseWriter, r *http.Request) {
 	// Get users list from registered service
 	users, err := ep.Service.IndexUsers()
 	if err != nil {
-		ep.ErrorRedirect(w, r, "/", IndexUsersErrMsg, err)
+		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
 	}
 
@@ -122,7 +115,7 @@ func (ep *Endpoint) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
-	m := ep.Localize(r, UserCreatedInfoMsg)
+	m := ep.Localize(r, CreatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -139,7 +132,7 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 	// to user creation.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
@@ -172,7 +165,7 @@ func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 	// Use registerd service to get the user from repo.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
@@ -200,7 +193,7 @@ func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), GetUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
@@ -228,11 +221,11 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	// Non validation errors
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), UpdateUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
-	m := ep.Localize(r, UserUpdatedInfoMsg)
+	m := ep.Localize(r, UpdatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -247,7 +240,7 @@ func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Use registerd service to get the user from repo.
 	user, err := ep.Service.GetUser(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), GetUsersErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
@@ -275,18 +268,18 @@ func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Service
 	err = ep.Service.DeleteUser(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, UserPath(), DeleteUserErrMsg, err)
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
-	m := ep.Localize(r, UserDeletedInfoMsg)
+	m := ep.Localize(r, DeletedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 
@@ -342,7 +335,7 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 	// Then take care of other kind of possible errors
 	// that service can generate.
 	if err != nil {
-		ep.ErrorRedirect(w, r, AuthPath(), SignUpUserErrMsg, err)
+		ep.ErrorRedirect(w, r, AuthPath(), SignUpErrMsg, err)
 		return
 	}
 
@@ -393,7 +386,7 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	user, err := ep.Service.SignInUser(userForm.Username, userForm.Password)
 
 	if err != nil {
-		msgID := SignInUserErrMsg
+		msgID := SignInErrMsg
 
 		// Give a hint to user about kind of error.
 		if err == svc.CredentialsErr {
@@ -450,7 +443,7 @@ func (ep *Endpoint) ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	// Service
 	err = ep.Service.ConfirmUser(s, t)
 	if err != nil {
-		msgID := ConfirmUserErrMsg
+		msgID := ConfirmErrMsg
 
 		// Give a hint to user if it was already confirmed.
 		if err == svc.AlreadyConfirmedErr {
@@ -461,7 +454,7 @@ func (ep *Endpoint) ConfirmUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := ep.Localize(r, UserCreatedInfoMsg)
+	m := ep.Localize(r, CreatedInfoMsg)
 	ep.RedirectWithFlash(w, r, UserPath(), m, kbs.InfoMT)
 }
 

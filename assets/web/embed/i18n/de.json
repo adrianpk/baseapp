@@ -1,40 +1,51 @@
 {
-"user_index": "Benutzerindex",
-"new_user": "Neuer Benutzer",
-"edit_user": "Benutzer bearbeiten",
-"show_user": "Benutzer anzeigen",
-"sign_in": "Sign In",
-"sign_up": "Sign Up",
+"user": "User",
+"users": "Users",
 
-"user_created_info_msg": "Benutzer erstellt",
-"user_updated_info_msg": "Benutzer aktualisiert",
-"user_deleted_info_msg": "Benutzer gelöscht",
-"signed_up_info_msg": "Signed up completed",
-"confirmed_info_msg": "User email account confirmed",
+"account": "Account",
+"account": "Accounts",
+
+"profile": "Profile",
+"profiles": "Profiles",
+
+"resource": "Resource",
+"resource": "Resources",
+
+"role": "Role",
+"roles": "Roles",
+
+"permission": "Permission",
+"permissions": "Permissions",
+
+"index": "Index",
+"new": "Newr",
+"edit": "Editr",
+"show": "Show",
+"signin": "Sign In",
+"signup": "Sign Up",
+
+"created_info_msg": "Created",
+"updated_info_msg": "Updated",
+"deleted_info_msg": "Deleted",
+"signed_up_info_msg": "Signed up",
+"confirmed_info_msg": "Email account confirmed",
 "signed_in_info_msg": "Signed in",
 "signed_out_info_msg": "Signed out",
 
-"get_all_err_msg": "Benutzerliste kann nicht abgerufen werden",
-"create_err_msg": "Benutzer kann nicht abgerufen werden",
-"get_err_msg": "Benutzer kann nicht erstellt werden",
-"update_err_msg": "Benutzer kann nicht aktualisiert werden",
-"delete_err_msg": "Benutzer kann nicht gelöscht werden",
-"input_values_err_msg": "Überprüfen Sie die eingegebenen Werte",
+"get_all_err_msg": "Cannot get entities list'",
+"create_err_msg": "Cannot create entity",
+"get_err_msg": "Cannot get entity",
+"update_err_msg": "Cannot update entity",
+"delete_err_msg": "Cannot delete entity ",
+"input_values_err_msg": "Verify values",
+"sign_in_err_msg": "Sign in error",
 "credentials_err_msg": "Verify username and password",
-"cannot_proc_err_msg": "Es ist derzeit nicht möglich, die Anfrage zu bearbeiten",
+"cannot_proc_err_msg": "It is not possible to process the request at this time",
 
-"required_err_msg": "Erforderlich",
-"min_length_err_msg": "Zu kurz",
-"max_length_err_msg": "Zu lang",
-"not_allowed_err_msg": "Nicht in erlaubter Liste",
-"not_email_err_msg": "Keine E-Mail-Adresse",
-"conf_match_err_msg": "Stimmt nicht mit der Bestätigung überein",
-
-"sample_message": "Beispielnachrich",
-"sample_count_message": {
-  "description": "Some variable count message",
-  "one": "Punkt {{.Name}} hat {{.Count}} Wert",
-  "many": "Punkt {{.Name}} hat {{.Count}} Werte",
-  "other": "Punkt {{.Name}} hat {{.Count}} Werte"
-  }
+"required_err_msg": "Required",
+"min_length_err_msg": "Too short",
+"max_length_err_msg": "Too long",
+"not_allowed_err_msg": "Not in allowed list",
+"not_email_err_msg": "Not an email address",
+"conf_match_err_msg": "Does not match with confirmation"
 }

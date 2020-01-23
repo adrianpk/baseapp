@@ -32,8 +32,8 @@ func NewUserRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *Use
 
 // Create a user
 func (ur *UserRepo) Create(user *model.User, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO users (id, slug, tenant_id, username, password_digest, email, last_ip,  confirmation_token, is_confirmed, geolocation, locale, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :tenant_id, :username, :password_digest, :email, :last_ip, :confirmation_token, :is_confirmed, :geolocation, :locale, :base_tz, :current_tz, :starts_at, :ends_at, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+	st := `INSERT INTO users (id, slug, tenant_id, username, password_digest, email, last_ip,  confirmation_token, is_confirmed, geolocation, starts_at, ends_at, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :tenant_id, :username, :password_digest, :email, :last_ip, :confirmation_token, :is_confirmed, :geolocation, :starts_at, :ends_at, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
 	t, local, err := ur.getTx(tx)
