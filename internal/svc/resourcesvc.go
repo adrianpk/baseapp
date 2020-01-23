@@ -29,6 +29,9 @@ func (s *Service) CreateResource(resource *model.Resource) (kbs.ValErrorSet, err
 		return nil, NoRepoErr
 	}
 
+	// Set tag if needed
+	resource.GenTagIfEmpty()
+
 	err = repo.CreateResource(resource)
 	if err != nil {
 		return nil, err

@@ -54,4 +54,9 @@ func (m *Migrator) addSteps() {
 	s = &step{}
 	s.Config(s.CreateResourcesTable, s.DropResourcesTable)
 	m.AddMigration(s)
+
+	// CreateRolesTable
+	s = &step{}
+	s.Config(s.CreateRolesTable, s.DropRolesTable)
+	m.AddMigration(s)
 }
