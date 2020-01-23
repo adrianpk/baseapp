@@ -14,16 +14,7 @@ const (
 
 const (
 	// Defined in 'assets/web/embed/i18n/xx.json'
-	ResourceCreatedInfoMsg = "resource_created_info_msg"
-	ResourceUpdatedInfoMsg = "resource_updated_info_msg"
-	ResourceDeletedInfoMsg = "resource_deleted_info_msg"
-	// Error
-	CreateResourceErrMsg = "create_resource_err_msg"
-	IndexResourcesErrMsg = "get_all_resources_err_msg"
-	GetResourceErrMsg    = "get_resource_err_msg"
-	GetResourcesErrMsg   = "get_resources_err_msg"
-	UpdateResourceErrMsg = "update_resource_err_msg"
-	DeleteResourceErrMsg = "delete_resource_err_msg"
+	resourceResPl = "resources"
 )
 
 // IndexResources web endpoint.
@@ -31,7 +22,7 @@ func (ep *Endpoint) IndexResources(w http.ResponseWriter, r *http.Request) {
 	// Get resources list from registered service
 	resources, err := ep.Service.IndexResources()
 	if err != nil {
-		ep.ErrorRedirect(w, r, "/", IndexResourcesErrMsg, err)
+		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
 	}
 
@@ -111,7 +102,7 @@ func (ep *Endpoint) CreateResource(w http.ResponseWriter, r *http.Request) {
 
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
-	m := ep.Localize(r, ResourceCreatedInfoMsg)
+	m := ep.Localize(r, CreatedInfoMsg)
 	ep.RedirectWithFlash(w, r, ResourcePath(), m, kbs.InfoMT)
 }
 
@@ -128,7 +119,7 @@ func (ep *Endpoint) ShowResource(w http.ResponseWriter, r *http.Request) {
 	// to resource creation.
 	resource, err := ep.Service.GetResource(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), GetResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
@@ -161,7 +152,7 @@ func (ep *Endpoint) EditResource(w http.ResponseWriter, r *http.Request) {
 	// Use registerd service to get the resource from repo.
 	resource, err := ep.Service.GetResource(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), GetResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
@@ -189,7 +180,7 @@ func (ep *Endpoint) EditResource(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) UpdateResource(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), GetResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
@@ -217,11 +208,11 @@ func (ep *Endpoint) UpdateResource(w http.ResponseWriter, r *http.Request) {
 
 	// Non validation errors
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), UpdateResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
-	m := ep.Localize(r, ResourceUpdatedInfoMsg)
+	m := ep.Localize(r, UpdatedInfoMsg)
 	ep.RedirectWithFlash(w, r, ResourcePath(), m, kbs.InfoMT)
 }
 
@@ -236,7 +227,7 @@ func (ep *Endpoint) InitDeleteResource(w http.ResponseWriter, r *http.Request) {
 	// Use registerd service to get the resource from repo.
 	resource, err := ep.Service.GetResource(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), GetResourcesErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
@@ -264,18 +255,18 @@ func (ep *Endpoint) InitDeleteResource(w http.ResponseWriter, r *http.Request) {
 func (ep *Endpoint) DeleteResource(w http.ResponseWriter, r *http.Request) {
 	s, err := ep.getSlug(r)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), DeleteResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
 	// Service
 	err = ep.Service.DeleteResource(s)
 	if err != nil {
-		ep.ErrorRedirect(w, r, ResourcePath(), DeleteResourceErrMsg, err)
+		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
 	}
 
-	m := ep.Localize(r, ResourceDeletedInfoMsg)
+	m := ep.Localize(r, DeletedInfoMsg)
 	ep.RedirectWithFlash(w, r, ResourcePath(), m, kbs.InfoMT)
 }
 
@@ -313,10 +304,4 @@ func resourceUpdateAction(model kbs.Identifiable) kbs.FormAction {
 // resourceDeleteAction
 func resourceDeleteAction(model kbs.Identifiable) kbs.FormAction {
 	return kbs.FormAction{Target: ResourcePathSlug(model), Method: "DELETE"}
-}
-
-func (ep *Endpoint) ErrorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {
-	m := ep.Localize(r, msgID)
-	ep.RedirectWithFlash(w, r, redirPath, m, kbs.ErrorMT)
-	ep.Log.Error(err)
 }

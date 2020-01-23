@@ -7,10 +7,10 @@
             {{$csrf.csrfField}}
 
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="resourcename">Resourcename</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourcename" name="resourcename" placeholder="Min. 4 characters" value="{{$resource.Resourcename}}"/>
-              {{with $errors.Resourcename}}
-                {{range $errors.Resourcename}}
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="resourcename">Name</label>
+              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourcename" name="resourcename" placeholder="Min. 4 characters" value="{{$resource.Name}}"/>
+              {{with $errors.Name}}
+                {{range $errors.Name}}
                   <label class='py-2 text-red-700 block'>{{. | $loc.Localize}}</label>
                 {{end}}
               {{end}}

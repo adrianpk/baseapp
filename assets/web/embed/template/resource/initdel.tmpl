@@ -1,6 +1,9 @@
 <!-- Head -->
 {{define "head"}}
-{{"resource_index" | .Loc.Localize}}
+{{$res := "resource" | .Loc.Localize}}
+{{$section := "delete" | .Loc.Localize}}
+{{$title := concat $section $res}}
+{{$title}}
 {{end}}
 <!-- Head -->
 
@@ -13,7 +16,9 @@
 <!-- Contextual bar -->
 
 <!-- Header -->
-{{$title := "show_resource" | .Loc.Localize}}
+{{$res := "resource" | .Loc.Localize}}
+{{$section := "delete" | .Loc.Localize}}
+{{$title := concat $section $res}}
 {{template "header" $title}}
 <!-- Header -->
 
