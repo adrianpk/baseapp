@@ -50,8 +50,8 @@ func (m *Migrator) addSteps() {
 	s.Config(s.CreateAccountsTable, s.DropAccountsTable)
 	m.AddMigration(s)
 
-	//// CreateProfilesTable
-	//s = &step{}
-	//s.Config(mg.CreateProfilesTable, mg.DropProfilesTable)
-	//m.AddMigration(s)
+	// CreateResourcesTable
+	s = &step{}
+	s.Config(s.CreateResourcesTable, s.DropResourcesTable)
+	m.AddMigration(s)
 }

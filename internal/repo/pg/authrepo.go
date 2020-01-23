@@ -32,8 +32,8 @@ func NewAuthRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *Aut
 // Resource --------------------------------------------------------------------------------
 // Create a Resource
 func (ar *AuthRepo) CreateResource(resource *model.Resource, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO resource (id, slug, name, tag, path, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :name, :tag, :path :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+	st := `INSERT INTO resources (id, slug, tenant_id, name, description, tag, path, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :tenant_id, :name, :description, :tag, :path, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at);`
 
 	// Create a local transaction if it is not passed as argument.
 	t, local, err := ar.getTx(tx)
@@ -58,7 +58,7 @@ VALUES (:id, :slug, :name, :tag, :path :is_active, :is_deleted, :created_by_id, 
 
 // GetAllResource
 func (ar *AuthRepo) GetAllResources() (resource []model.Resource, err error) {
-	st := `SELECT * FROM resources WHERE is_deleted IS NULL OR NOT is_deleted`
+	st := `SELECT * FROM resources WHERE is_deleted IS NULL OR NOT is_deleted;`
 
 	err = ar.DB.Select(&resource, st)
 	if err != nil {
@@ -600,8 +600,8 @@ func (ar *AuthRepo) GetResourcePermissionBySlug(slug string) (resourcePermission
 	return resourcePermission, err
 }
 
-// GetResourcePermissiontByResourceID account from repo by slug.
-func (ar *AuthRepo) GetResourcePermissionByResourceID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
+// GetResourcePermissionsByResourceID account from repo by slug.
+func (ar *AuthRepo) GetResourcePermissionsByResourceID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
 	st := `SELECT * FROM resource_permissions WHERE resource_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
@@ -613,8 +613,8 @@ func (ar *AuthRepo) GetResourcePermissionByResourceID(id uuid.UUID) (resourcePer
 	return resourcePermission, err
 }
 
-// GetResourcePermissiontByRoleID account from repo by slug.
-func (ar *AuthRepo) GetResourcePermissionByPermissionID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
+// GetResourcePermissionsByPermissionID account from repo by slug.
+func (ar *AuthRepo) GetResourcePermissionsByPermissionID(id uuid.UUID) (resourcePermission []model.ResourcePermission, err error) {
 	st := `SELECT * FROM resource_permissions WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
