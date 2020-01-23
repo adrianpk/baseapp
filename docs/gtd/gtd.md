@@ -7,9 +7,6 @@
   * Resource
   * Role
   * Permission
-  * ResourcePermission
-  * AccountRole
-  * RolePermission
 
 ## Next
 
@@ -42,10 +39,10 @@
 * Implement file upload for image resource
 
 ## Someday
-  * Correct account templates
   * Implement JSON REST endpoints
+  * Implement gRPC endpoints
+  * Update translation texts under `assets/web/embed/i18n`
 
 ## Maybe
-  * Implement gRPC endpoints
 
 
