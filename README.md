@@ -246,8 +246,9 @@ $ make clean-and-run
 2020/01/24 01:09:13 Migration executed: CreateAccountsTable
 2020/01/24 01:09:13 Migration executed: CreateResourcesTable
 2020/01/24 01:09:13 Migration executed: CreateRolesTable
-2020/01/24 01:09:13 Seed step executed: CreateUsersAndAccounts
-2020/01/24 01:09:13 Seed step executed: CreateResources
+2020/01/24 01:09:14 Seed step executed: CreateUsersAndAccounts
+2020/01/24 01:09:14 Seed step executed: CreateResources
+2020/01/24 01:09:14 Seed step executed: CreateRoles
 1:09AM INF Web server initializing port=:8080
 ```
 
