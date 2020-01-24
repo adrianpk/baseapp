@@ -4,32 +4,38 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 <img src="docs/img/users_index.png" width="480">
 
-
 [More screenshots](docs/screenshots.md)
 
 ## Planned features
 
-  * Config
-  * Logging
-  * Authentication
-  * Authorization
-  * Localization (I10n)
-  * Web Endpoints
-  * JSON REST Endpoints
-  * gRPC API
+- Config
+- Logging
+- Authentication
+- Authorization
+- Localization (I10n)
+- Web Endpoints
+- JSON REST Endpoints
+- gRPC API
 
-## Routes [draft]
+## Changelog
+
+## **20200124**
+
+- Resources administration web interface.
+
+[Full changelog](docs/changelog.md)
+
+## Routes
 
 ### Auth
 
 | Method | Path          | Handler    |
-|--------|---------------|------------|
+| ------ | ------------- | ---------- |
 | GET    | /auth/signup  | InitSignUp |
 | POST   | /auth/signup  | SignUp     |
 | GET    | /auth/signin  | InitSignIn |
 | POST   | /auth/signin  | SignIn     |
 | GET    | /auth/signout | SignOut    |
-
 
 [More routes](docs/routes.md)
 
@@ -37,10 +43,9 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 After stabilizing this base app a (still not published) generator will be updated to automate most of these steps.
 
-
 ## App Description
 
-  [More info](docs/description.md)
+[More info](docs/description.md)
 
 ### Clone app
 
@@ -84,9 +89,10 @@ A database superuser bypasses all permission checks. This is a dangerous privile
 So this path is not recommended, at least in production environment.
 
 Options:
-* Remove permission after running migrations.
-* Install POSTGis manually using another allowed user and comment
-    * Comment **POSTGis** migrations steps in `internal/mig/mig.go`.
+
+- Remove permission after running migrations.
+- Install POSTGis manually using another allowed user and comment
+  - Comment **POSTGis** migrations steps in `internal/mig/mig.go`.
 
 ```go
 // GetMigrator configured.
@@ -287,17 +293,6 @@ I haven't created helm .yaml files so this command is not functional yet.
 
 Same as `make install-stage` but for production images.
 
-
-### Create resource files
-
-Follow [these steps](docs/draft/resource.md)
-
-### Update makefile
 **TODO**
 
-### Update Dockerfile
-**TODO**
-
-**Work in progress:** This draft needs to be augmented and, eventually, corrected.
-
-
+[GTD](docs/gtd/gtd.md)
