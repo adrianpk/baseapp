@@ -4,15 +4,19 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 <img src="docs/img/users_index.png" width="480">
 
-## Features
+
+[More screenshots](docs/screenshots.md)
+
+## Planned features
 
   * Config
   * Logging
   * Authentication
   * Authorization
   * Localization (I10n)
-  * Web Endpoint
-  * JSON REST Endpoint
+  * Web Endpoints
+  * JSON REST Endpoints
+  * gRPC API
 
 ## Routes [draft]
 
