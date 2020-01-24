@@ -39,4 +39,9 @@ func (s *Seeder) addSteps() {
 	st := &step{}
 	st.Config(st.CreateUsersAndAccounts)
 	s.AddSeed(st)
+
+	// Create resources
+	st = &step{}
+	st.Config(st.CreateResources)
+	s.AddSeed(st)
 }
