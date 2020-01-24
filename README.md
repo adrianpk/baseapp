@@ -2,7 +2,7 @@
 
 A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
-<img src="docs/img/users_index.png" width="480">
+<img src="docs/img/user_index.png" width="480">
 
 [More screenshots](docs/screenshots.md)
 
