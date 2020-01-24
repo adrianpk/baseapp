@@ -42,6 +42,7 @@
   * Implement JSON REST endpoints
   * Implement gRPC endpoints
   * Update translation texts under `assets/web/embed/i18n`
+  * Homogenize migrator and seeder log format with the one used by application.
 
 ## Maybe
 

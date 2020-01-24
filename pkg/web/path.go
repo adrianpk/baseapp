@@ -15,4 +15,10 @@ var pathFxs = template.FuncMap{
 	"resourcePathSlug":       ResourcePathSlug,
 	"resourcePathInitDelete": ResourcePathInitDelete,
 	"resourcePathNew":        ResourcePathNew,
+	// Role
+	"rolePath":           RolePath,
+	"rolePathEdit":       RolePathEdit,
+	"rolePathSlug":       RolePathSlug,
+	"rolePathInitDelete": RolePathInitDelete,
+	"rolePathNew":        RolePathNew,
 }

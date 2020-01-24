@@ -4,7 +4,7 @@
 
 ### Index
 
-<img src="img/users_index.png" width="480">
+<img src="img/user_index.png" width="480">
 
 ### Create
 
@@ -14,4 +14,11 @@
 
 ### Index
 
-<img src="img/resources_index.png" width="480">
+<img src="img/resource_index.png" width="480">
+
+
+## Roles
+
+### Index
+
+<img src="img/role_index.png" width="480">

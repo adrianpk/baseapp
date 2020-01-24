@@ -35,7 +35,7 @@ func NewSeeder(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) (*Seed
 // GetSeeder configured.
 func (s *Seeder) addSteps() {
 	// Seeds
-	// Create users
+	// Create user & accounts
 	st := &step{}
 	st.Config(st.CreateUsersAndAccounts)
 	s.AddSeed(st)
@@ -43,5 +43,10 @@ func (s *Seeder) addSteps() {
 	// Create resources
 	st = &step{}
 	st.Config(st.CreateResources)
+	s.AddSeed(st)
+
+	// Create roles
+	st = &step{}
+	st.Config(st.CreateRoles)
 	s.AddSeed(st)
 }

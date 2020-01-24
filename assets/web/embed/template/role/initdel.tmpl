@@ -1,0 +1,30 @@
+<!-- Head -->
+{{define "head"}}
+{{$res := "role" | .Loc.Localize}}
+{{$section := "delete" | .Loc.Localize}}
+{{$title := concat $section $res}}
+{{$title}}
+{{end}}
+<!-- Head -->
+
+<!-- Body -->
+{{define "body"}}
+{{$data := .}}
+
+<!-- Contextual bar -->
+{{template "ctxbar" .}}
+<!-- Contextual bar -->
+
+<!-- Header -->
+{{$res := "role" | .Loc.Localize}}
+{{$section := "delete" | .Loc.Localize}}
+{{$title := concat $section $res}}
+{{template "header" $title}}
+<!-- Header -->
+
+<!-- Form -->
+{{template "item" .}}
+<!-- Form -->
+
+{{end}}
+<!-- Body -->
