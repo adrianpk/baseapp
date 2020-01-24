@@ -12,7 +12,7 @@ func (s *step) CreateRolesTable() error {
 		slug VARCHAR(36) UNIQUE,
 		tenant_id VARCHAR(128),
 		name VARCHAR(32) UNIQUE,
-		description TEXT NULL,
+		description TEXT NULL
 	);`
 
 	_, err := tx.Exec(st)
