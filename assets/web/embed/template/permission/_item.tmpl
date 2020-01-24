@@ -1,40 +1,40 @@
-{{define "item"}} {{$resource := .Data}} {{$action := .Action}} {{$csrf := .CSRF}}
+{{define "item"}} {{$permission := .Data}} {{$action := .Action}} {{$csrf := .CSRF}}
     <div class="w-2/3 mx-auto">
       <div class="bg-white shadow-md px-8 py-4 mb-4 rounded">
 
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="resourcename">Name</label>
-              <label class="appearance-none w-full py-2 px-3 text-gray-900" id="resourcename"/>
-                {{$resource.Name}}
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="permissionname">Name</label>
+              <label class="appearance-none w-full py-2 px-3 text-gray-900" id="permissionname"/>
+                {{$permission.Name}}
               </label>
             </div>
 
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="description">Description</label>
               <label class="appearance-none w-full py-2 px-3 text-gray-900" id="description"/>
-                {{$resource.Description}}
+                {{$permission.Description}}
               </label>
             </div>
 
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="tag">Tag</label>
               <label class="appearance-none w-full py-2 px-3 text-gray-900" id="tag"/>
-                {{$resource.Tag}}
+                {{$permission.Tag}}
               </label>
             </div>
 
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="path">Path</label>
               <label class="appearance-none w-full py-2 px-3 text-gray-900" id="path"/>
-                {{$resource.Path}}
+                {{$permission.Path}}
               </label>
             </div>
 
             {{if eq $action.Method "DELETE"}}
-            {{if not $resource.IsNew}}
+            {{if not $permission.IsNew}}
                   <div class="mt-4 mb-4 py-2">
                     <!-- Delete -->
-                    <form class="inline" accept-charset="UTF-8" action="{{$resource | resourcePathSlug}}" method="POST">
+                    <form class="inline" accept-charset="UTF-8" action="{{$permission | permissionPathSlug}}" method="POST">
                       {{$csrf.csrfField}}
                       <input name="_method" type="hidden" value="DELETE">
                       <input class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-3 border border-red-500 hover:border-transparent rounded" type="submit" value="Are you sure you want to delete it?">

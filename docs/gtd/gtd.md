@@ -41,6 +41,7 @@
 ## Someday
   * Implement JSON REST endpoints
   * Implement gRPC endpoints
+  * Improve table format for index lists.
   * Update translation texts under `assets/web/embed/i18n`
   * Homogenize migrator and seeder log format with the one used by application.
 

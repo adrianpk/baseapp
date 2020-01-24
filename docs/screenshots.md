@@ -16,9 +16,14 @@
 
 <img src="img/resource_index.png" width="480">
 
-
 ## Roles
 
 ### Index
 
 <img src="img/role_index.png" width="480">
+
+## Permissions
+
+### Index
+
+<img src="img/permission_index.png" width="480">
