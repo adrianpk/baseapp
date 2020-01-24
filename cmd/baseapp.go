@@ -9,11 +9,10 @@ import (
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/app"
-	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 	"gitlab.com/kabestan/repo/baseapp/internal/mig"
 	repo "gitlab.com/kabestan/repo/baseapp/internal/repo/pg"
-	vrepo "gitlab.com/kabestan/repo/baseapp/internal/repo/vol"
 	"gitlab.com/kabestan/repo/baseapp/internal/seed"
+	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 )
 
 type contextKey string
@@ -68,10 +67,10 @@ func main() {
 	// Repos
 	userRepo := repo.NewUserRepo(cfg, log, "user-repo", db)
 	accountRepo := repo.NewAccountRepo(cfg, log, "account-repo", db)
-	//authRepo := repo.NewAuthRepo(cfg, log, "auth-repo", db)
+	authRepo := repo.NewAuthRepo(cfg, log, "auth-repo", db)
 
 	// Volatile Repo
-	authRepo := vrepo.NewAuthRepo(cfg, log, "auth-repo")
+	//authRepo := vrepo.NewAuthRepo(cfg, log, "auth-repo")
 
 	// Core service
 	svc := svc.NewService(cfg, log, "core-service", db)

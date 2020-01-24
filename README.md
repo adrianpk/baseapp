@@ -26,21 +26,8 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 | POST   | /auth/signin  | SignIn     |
 | GET    | /auth/signout | SignOut    |
 
-### User
 
-| Method | Path                          | Handler    |
-|--------|-------------------------------|------------|
-| GET    | /users                        | Index      |
-| GET    | /users/new                    | New        |
-| POST   | /users                        | Create     |
-| GET    | /users/{slug}                 | Show       |
-| GET    | /users/{slug}/edit            | Edit       |
-| PUT    | /users/{slug}                 | Update     |
-| PATCH  | /users/{slug}                 | Update     |
-| POST   | /users/{slug}/init-delete     | InitDelete |
-| DELETE | /users/{slug}                 | Delete     |
-| GET    | /users/{slug}/{token}/confirm | Confirm    |
-
+[More routes](docs/routes.md)
 
 ## Dev. Env. Setup [draft]
 
@@ -177,79 +164,125 @@ $ make clean-and-run
 
 ```shell
 /scripts/run.sh
-4:54PM INF Cookie store key value=hVuOOv4PNBnqTk2o13JsBMOPcPAe4p18
-4:54PM INF Reading template path=account.bak/_ctxbar.tmpl
-4:54PM INF Reading template path=account.bak/_flash.tmpl
-4:54PM INF Reading template path=account.bak/_form.tmpl
-4:54PM INF Reading template path=account.bak/_header.tmpl
-4:54PM INF Reading template path=account.bak/_item.tmpl
-4:54PM INF Reading template path=account.bak/_list.tmpl
-4:54PM INF Reading template path=account.bak/_signin.tmpl
-4:54PM INF Reading template path=account.bak/_signup.tmpl
-4:54PM INF Reading template path=account.bak/edit.tmpl
-4:54PM INF Reading template path=account.bak/index.tmpl
-4:54PM INF Reading template path=account.bak/initdel.tmpl
-4:54PM INF Reading template path=account.bak/new.tmpl
-4:54PM INF Reading template path=account.bak/show.tmpl
-4:54PM INF Reading template path=account.bak/signin.tmpl
-4:54PM INF Reading template path=account.bak/signup.tmpl
-4:54PM INF Reading template path=layout/base.tmpl
-4:54PM INF Reading template path=resource/_ctxbar.tmpl
-4:54PM INF Reading template path=resource/_flash.tmpl
-4:54PM INF Reading template path=resource/_form.tmpl
-4:54PM INF Reading template path=resource/_header.tmpl
-4:54PM INF Reading template path=resource/_item.tmpl
-4:54PM INF Reading template path=resource/_list.tmpl
-4:54PM INF Reading template path=resource/edit.tmpl
-4:54PM INF Reading template path=resource/index.tmpl
-4:54PM INF Reading template path=resource/initdel.tmpl
-4:54PM INF Reading template path=resource/new.tmpl
-4:54PM INF Reading template path=resource/show.tmpl
-4:54PM INF Reading template path=user/_ctxbar.tmpl
-4:54PM INF Reading template path=user/_flash.tmpl
-4:54PM INF Reading template path=user/_form.tmpl
-4:54PM INF Reading template path=user/_header.tmpl
-4:54PM INF Reading template path=user/_item.tmpl
-4:54PM INF Reading template path=user/_list.tmpl
-4:54PM INF Reading template path=user/_signin.tmpl
-4:54PM INF Reading template path=user/_signup.tmpl
-4:54PM INF Reading template path=user/edit.tmpl
-4:54PM INF Reading template path=user/index.tmpl
-4:54PM INF Reading template path=user/initdel.tmpl
-4:54PM INF Reading template path=user/new.tmpl
-4:54PM INF Reading template path=user/show.tmpl
-4:54PM INF Reading template path=user/signin.tmpl
-4:54PM INF Reading template path=user/signup.tmpl
-4:54PM INF Parsed template set path=user/edit.tmpl
-4:54PM INF Parsed template set path=user/initdel.tmpl
-4:54PM INF Parsed template set path=user/show.tmpl
-4:54PM INF Parsed template set path=user/new.tmpl
-4:54PM INF Parsed template set path=user/signup.tmpl
-4:54PM INF Parsed template set path=user/signin.tmpl
-4:54PM INF Parsed template set path=user/index.tmpl
-4:54PM INF Parsed template set path=account.bak/initdel.tmpl
-4:54PM INF Parsed template set path=account.bak/signup.tmpl
-4:54PM INF Parsed template set path=account.bak/index.tmpl
-4:54PM INF Parsed template set path=account.bak/signin.tmpl
-4:54PM INF Parsed template set path=account.bak/edit.tmpl
-4:54PM INF Parsed template set path=account.bak/show.tmpl
-4:54PM INF Parsed template set path=account.bak/new.tmpl
-4:54PM INF Parsed template set path=resource/edit.tmpl
-4:54PM INF Parsed template set path=resource/index.tmpl
-4:54PM INF Parsed template set path=resource/new.tmpl
-4:54PM INF Parsed template set path=resource/initdel.tmpl
-4:54PM INF Parsed template set path=resource/show.tmpl
-4:54PM INF Dialing to Postgres host="host=localhost port=5432 user=kabestan password=******** dbname=kabestan_dev sslmode=disable"
-4:54PM INF Postgres connection established
-4:54PM INF New migrator name=migrator
-4:54PM INF New seeder name=seeder
-4:54PM INF New handler name=ses-mailer
-2020/01/23 16:54:59 Migration 'enable_postgis' already applied.
-2020/01/23 16:54:59 Migration 'create_users_table' already applied.
-2020/01/23 16:54:59 Migration 'create_accounts_table' already applied.
-2020/01/23 16:54:59 Seed 'create_users_and_accounts' already applied.
-4:54PM INF Web server initializing port=:8080
+1:09AM INF Cookie store key value=hVuOOv4PNBnqTk2o13JsBMOPcPAe4p18
+1:09AM INF Reading template path=account.bak/_ctxbar.tmpl
+1:09AM INF Reading template path=account.bak/_flash.tmpl
+1:09AM INF Reading template path=account.bak/_form.tmpl
+1:09AM INF Reading template path=account.bak/_header.tmpl
+1:09AM INF Reading template path=account.bak/_item.tmpl
+1:09AM INF Reading template path=account.bak/_list.tmpl
+1:09AM INF Reading template path=account.bak/_signin.tmpl
+1:09AM INF Reading template path=account.bak/_signup.tmpl
+1:09AM INF Reading template path=account.bak/edit.tmpl
+1:09AM INF Reading template path=account.bak/index.tmpl
+1:09AM INF Reading template path=account.bak/initdel.tmpl
+1:09AM INF Reading template path=account.bak/new.tmpl
+1:09AM INF Reading template path=account.bak/show.tmpl
+1:09AM INF Reading template path=account.bak/signin.tmpl
+1:09AM INF Reading template path=account.bak/signup.tmpl
+1:09AM INF Reading template path=layout/base.tmpl
+1:09AM INF Reading template path=resource/_ctxbar.tmpl
+1:09AM INF Reading template path=resource/_flash.tmpl
+1:09AM INF Reading template path=resource/_form.tmpl
+1:09AM INF Reading template path=resource/_header.tmpl
+1:09AM INF Reading template path=resource/_item.tmpl
+1:09AM INF Reading template path=resource/_list.tmpl
+1:09AM INF Reading template path=resource/edit.tmpl
+1:09AM INF Reading template path=resource/index.tmpl
+1:09AM INF Reading template path=resource/initdel.tmpl
+1:09AM INF Reading template path=resource/new.tmpl
+1:09AM INF Reading template path=resource/show.tmpl
+1:09AM INF Reading template path=user/_ctxbar.tmpl
+1:09AM INF Reading template path=user/_flash.tmpl
+1:09AM INF Reading template path=user/_form.tmpl
+1:09AM INF Reading template path=user/_header.tmpl
+1:09AM INF Reading template path=user/_item.tmpl
+1:09AM INF Reading template path=user/_list.tmpl
+1:09AM INF Reading template path=user/_signin.tmpl
+1:09AM INF Reading template path=user/_signup.tmpl
+1:09AM INF Reading template path=user/edit.tmpl
+1:09AM INF Reading template path=user/index.tmpl
+1:09AM INF Reading template path=user/initdel.tmpl
+1:09AM INF Reading template path=user/new.tmpl
+1:09AM INF Reading template path=user/show.tmpl
+1:09AM INF Reading template path=user/signin.tmpl
+1:09AM INF Reading template path=user/signup.tmpl
+1:09AM INF Parsed template set path=account.bak/index.tmpl
+1:09AM INF Parsed template set path=account.bak/show.tmpl
+1:09AM INF Parsed template set path=account.bak/new.tmpl
+1:09AM INF Parsed template set path=account.bak/edit.tmpl
+1:09AM INF Parsed template set path=account.bak/signup.tmpl
+1:09AM INF Parsed template set path=account.bak/signin.tmpl
+1:09AM INF Parsed template set path=account.bak/initdel.tmpl
+1:09AM INF Parsed template set path=user/edit.tmpl
+1:09AM INF Parsed template set path=user/initdel.tmpl
+1:09AM INF Parsed template set path=user/signup.tmpl
+1:09AM INF Parsed template set path=user/index.tmpl
+1:09AM INF Parsed template set path=user/new.tmpl
+1:09AM INF Parsed template set path=user/show.tmpl
+1:09AM INF Parsed template set path=user/signin.tmpl
+1:09AM INF Parsed template set path=resource/index.tmpl
+1:09AM INF Parsed template set path=resource/new.tmpl
+1:09AM INF Parsed template set path=resource/edit.tmpl
+1:09AM INF Parsed template set path=resource/show.tmpl
+1:09AM INF Parsed template set path=resource/initdel.tmpl
+1:09AM INF Dialing to Postgres host="host=localhost port=5432 user=kabestan password=******** dbname=kabestan_dev sslmode=disable"
+1:09AM INF Postgres connection established
+1:09AM INF New migrator name=migrator
+1:09AM INF New seeder name=seeder
+1:09AM INF New handler name=ses-mailer
+2020/01/24 01:09:13 Migration executed: EnablePostgis
+2020/01/24 01:09:13 Migration executed: CreateUsersTable
+2020/01/24 01:09:13 Migration executed: CreateAccountsTable
+2020/01/24 01:09:13 Migration executed: CreateResourcesTable
+2020/01/24 01:09:13 Migration executed: CreateRolesTable
+2020/01/24 01:09:13 Seed step executed: CreateUsersAndAccounts
+2020/01/24 01:09:13 Seed step executed: CreateResources
+1:09AM INF Web server initializing port=:8080
 ```
+
+## Make commands
+
+A brief summary of the most used commands
+
+**make build**
+
+Builds the application
+
+**make run**
+
+Run the application through a shell script that previously sets the environment variables with required values.
+In case you need to change some envar, you can edit this script: `scripts/run.sh`.
+
+**make test**
+
+Run tests
+
+**make grc-test**
+
+Run tests with coloured output. [grc](https://github.com/garabik/grc) needs to be available in your system.
+
+**package-resources**
+
+It generates a binary representation for html templates, translations and other resources that allows compiler to embed them within the target file. `clean-and-run` runs this make task as subtask before starting the applicacion.
+
+**build-stg**
+
+Build a staging Docker image of this application and pushes it to Docker Hub.
+
+**build-prod**
+
+Same as `make build-stage` but for production images.
+
+**install-stg**
+
+Deploys app to Googke GKE usando [HELM](https://helm.sh/).
+I haven't created helm .yaml files so this command is not functional yet.
+
+**install-prod**
+
+Same as `make install-stage` but for production images.
+
 
 ### Create resource files
 
