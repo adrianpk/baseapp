@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"strings"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/backend/kabestan/db"
@@ -13,6 +14,8 @@ type (
 		kbs.Identification
 		Name        sql.NullString `db:"name" json:"name"`
 		Description sql.NullString `db:"description" json:"description"`
+		Tag         sql.NullString `db:"tag" json:"tag"`
+		Path        sql.NullString `db:"path" json:"path"`
 		IsActive    sql.NullBool   `db:"is_active" json:"isActive"`
 		IsDeleted   sql.NullBool   `db:"is_deleted" json:"isDeleted"`
 		kbs.Audit
@@ -55,7 +58,9 @@ func (permission *Permission) SetUpdateValues() error {
 func (permission *Permission) Match(tc *Permission) bool {
 	r := permission.Identification.Match(tc.Identification) &&
 		permission.Name == tc.Name &&
-		permission.Description == tc.Description
+		permission.Description == tc.Description &&
+		permission.Tag == tc.Tag &&
+		permission.Path == tc.Path
 	return r
 }
 
@@ -68,22 +73,36 @@ func (permission *Permission) Match(tc *Permission) bool {
 // the use of reflection.
 func (permission *Permission) ToForm() PermissionForm {
 	return PermissionForm{
+		Slug:        permission.Slug.String,
 		Name:        permission.Name.String,
 		Description: permission.Description.String,
+		Tag:         permission.Tag.String,
+		Path:        permission.Path.String,
 	}
 }
 
 // ToModel lets covert a form type to its associated model.
 func (permissionForm *PermissionForm) ToModel() Permission {
+	tag := strings.ToUpper(permissionForm.Tag)
+
 	return Permission{
 		Identification: kbs.Identification{
 			Slug: db.ToNullString(permissionForm.Slug),
 		},
 		Name:        db.ToNullString(permissionForm.Name),
 		Description: db.ToNullString(permissionForm.Description),
+		Tag:         db.ToNullString(tag),
+		Path:        db.ToNullString(permissionForm.Path),
 	}
 }
 
 func (permissionForm *PermissionForm) GetSlug() string {
 	return permissionForm.Slug
+}
+
+func (permission *Permission) GenTagIfEmpty() {
+	if strings.Trim(permission.Tag.String, " ") == "" {
+		permission.Tag = db.ToNullString(kbs.GenTag())
+		return
+	}
 }
