@@ -64,4 +64,9 @@ func (m *Migrator) addSteps() {
 	s = &step{}
 	s.Config(s.CreatePermissionsTable, s.DropPermissionsTable)
 	m.AddMigration(s)
+
+	// CreateUserRolesTable
+	s = &step{}
+	s.Config(s.CreateUserRolesTable, s.DropUserRolesTable)
+	m.AddMigration(s)
 }
