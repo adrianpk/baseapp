@@ -23,6 +23,7 @@ func (app *App) NewWebRouter() *kbs.Router {
 	app.addWebAuthRouter(rt)
 	app.addWebUserRouter(rt)
 	app.addWebResourceRouter(rt)
+	app.addWebRoleRouter(rt)
 	return rt
 }
 
