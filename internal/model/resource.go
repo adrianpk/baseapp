@@ -96,7 +96,7 @@ func (resourceForm *ResourceForm) ToModel() Resource {
 	}
 }
 
-func (resourceForm *ResourceForm) GetSlug() string {
+func (resourceForm ResourceForm) GetSlug() string {
 	return resourceForm.Slug
 }
 

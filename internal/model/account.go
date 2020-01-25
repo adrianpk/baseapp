@@ -126,6 +126,6 @@ func (accountForm *AccountForm) ToModel() Account {
 	}
 }
 
-func (accountForm *AccountForm) GetSlug() string {
+func (accountForm AccountForm) GetSlug() string {
 	return accountForm.Slug
 }

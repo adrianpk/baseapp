@@ -131,3 +131,18 @@ func (s *Service) GetAccountRoles(accountSlug string) (roles []model.Role, err e
 
 	return roles, nil
 }
+
+// GetNotAccountRoles
+func (s *Service) GetNotAccountRoles(accountSlug string) (roles []model.Role, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return roles, err
+	}
+
+	roles, err = repo.GetNotAccountRoles(accountSlug)
+	if err != nil {
+		return roles, err
+	}
+
+	return roles, nil
+}

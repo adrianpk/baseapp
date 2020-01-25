@@ -84,6 +84,6 @@ func (roleForm *RoleForm) ToModel() Role {
 	}
 }
 
-func (roleForm *RoleForm) GetSlug() string {
+func (roleForm RoleForm) GetSlug() string {
 	return roleForm.Slug
 }

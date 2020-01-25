@@ -12,9 +12,9 @@
 
 ## Resources
 
-### Index
+### Account Roles
 
-<img src="img/resource_index.png" width="480">
+<img src="img/account_roles.png" width="480">
 
 ## Roles
 

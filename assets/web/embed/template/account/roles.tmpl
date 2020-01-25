@@ -1,8 +1,8 @@
 <!-- Head -->
 {{define "head"}}
 {{$res := "account-roles" | .Loc.Localize}}
-{{$section := "index" | .Loc.Localize}}
-{{$title := concat $res $section }}
+{{$entity := index .Data "account"}}
+{{$title := concat (toTitle $entity.Username) $res}}
 {{$title}}
 {{end}}
 <!-- Head -->
@@ -12,13 +12,12 @@
 {{$data := .}}
 
 <!-- Contextual bar -->
-{{template "ctxbar" .}}
 <!-- Contextual bar -->
 
 <!-- Header -->
 {{$res := "account-roles" | .Loc.Localize}}
-{{$section := "index" | .Loc.Localize}}
-{{$title := concat $res $section }}
+{{$entity := index .Data "account"}}
+{{$title := concat (toTitle $entity.Username) $res}}
 {{template "header" $title}}
 <!-- Header -->
 

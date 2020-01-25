@@ -28,9 +28,9 @@
 
 ### Account
 
-| Method | Path                          | Handler    |
-|--------|-------------------------------|------------|
-| GET    | /accounts/{slug}/roles        | Edit       |
+| Method | Path                          | Handler           |
+|--------|-------------------------------|-------------------|
+| GET    | /accounts/{slug}/roles        | IndexAccountRoles |
 
 
 ### Resource

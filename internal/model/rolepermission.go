@@ -82,6 +82,6 @@ func (rolePermissionForm *RolePermissionForm) ToModel() RolePermission {
 	}
 }
 
-func (rolePermissionForm *RolePermissionForm) GetSlug() string {
+func (rolePermissionForm RolePermissionForm) GetSlug() string {
 	return rolePermissionForm.Slug
 }

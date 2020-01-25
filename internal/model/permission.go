@@ -96,7 +96,7 @@ func (permissionForm *PermissionForm) ToModel() Permission {
 	}
 }
 
-func (permissionForm *PermissionForm) GetSlug() string {
+func (permissionForm PermissionForm) GetSlug() string {
 	return permissionForm.Slug
 }
 
