@@ -30,7 +30,7 @@
 
 | Method | Path                          | Handler           |
 |--------|-------------------------------|-------------------|
-| GET    | /accounts/{slug}/roles        | IndexAccountroles |
+| GET    | /accounts/{slug}/roles        | IndexAccountRoles |
 
 
 ### Resource
