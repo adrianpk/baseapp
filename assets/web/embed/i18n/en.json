@@ -46,6 +46,9 @@
 "credentials_err_msg": "Verify username and password",
 "cannot_proc_err_msg": "It is not possible to process the request at this time",
 
+"role_appended_info_msg": "Role appended",
+"role_removed_info_msg": "Role removed",
+
 "required_err_msg": "Required",
 "min_length_err_msg": "Too short",
 "max_length_err_msg": "Too long",

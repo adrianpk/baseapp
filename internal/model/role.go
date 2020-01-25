@@ -68,6 +68,7 @@ func (role *Role) Match(tc *Role) bool {
 // the use of reflection.
 func (role *Role) ToForm() RoleForm {
 	return RoleForm{
+		Slug:        role.Slug.String,
 		Name:        role.Name.String,
 		Description: role.Description.String,
 	}

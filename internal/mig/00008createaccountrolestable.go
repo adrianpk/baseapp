@@ -28,7 +28,8 @@ func (s *step) CreateAccountRolesTable() error {
 		ADD COLUMN created_by_id UUID,
 		ADD COLUMN updated_by_id UUID,
 		ADD COLUMN created_at TIMESTAMP,
-		ADD COLUMN updated_at TIMESTAMP;`
+		ADD COLUMN updated_at TIMESTAMP,
+		ADD UNIQUE (tenant_id, account_id, role_id);`
 
 	_, err = tx.Exec(st)
 	if err != nil {

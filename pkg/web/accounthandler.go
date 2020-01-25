@@ -18,6 +18,9 @@ const (
 
 const (
 	RolesTmpl = "roles.tmpl"
+	// Info
+	RoleAppendedInfoMsg = "role_appended_info_msg"
+	RoleRemovedInfoMsg  = "role_removed_info_msg"
 )
 
 // IndexAccountRoles web endpoint.
@@ -72,6 +75,66 @@ func (ep *Endpoint) IndexAccountRoles(w http.ResponseWriter, r *http.Request) {
 		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
 		return
 	}
+}
+
+// AppendAccountRole web endpoint.
+func (ep *Endpoint) AppendAccountRole(w http.ResponseWriter, r *http.Request) {
+	accountSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	accountForm := model.AccountForm{Slug: accountSlug}
+
+	// Decode request data into a form.
+	roleForm := model.RoleForm{}
+	err = ep.FormToModel(r, &roleForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, AccountPathRoles(accountForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append role.
+	err = ep.Service.AppendAccountRole(accountSlug, roleForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, RoleAppendedInfoMsg)
+	ep.RedirectWithFlash(w, r, AccountPathRoles(accountForm), m, kbs.InfoMT)
+}
+
+// RemoveAccountRole web endpoint.
+func (ep *Endpoint) RemoveAccountRole(w http.ResponseWriter, r *http.Request) {
+	accountSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	accountForm := model.AccountForm{Slug: accountSlug}
+
+	// Decode request data into a form.
+	roleForm := model.RoleForm{}
+	err = ep.FormToModel(r, &roleForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, AccountPathRoles(accountForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append role.
+	err = ep.Service.RemoveAccountRole(accountSlug, roleForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, RoleRemovedInfoMsg)
+	ep.RedirectWithFlash(w, r, AccountPathRoles(accountForm), m, kbs.InfoMT)
 }
 
 func (ep *Endpoint) rerenderAccountForm(w http.ResponseWriter, r *http.Request, data interface{}, valErrors kbs.ValErrorSet, template string, action kbs.FormAction) {

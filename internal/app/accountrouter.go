@@ -24,6 +24,8 @@ func (app *App) addWebAccountRouter(parent chi.Router) chi.Router {
 			//uarid.Post("/init-delete", app.WebEP.InitDeleteAccount)
 			//uarid.Delete("/", app.WebEP.DeleteAccount)
 			uarid.Get("/roles", app.WebEP.IndexAccountRoles)
+			uarid.Post("/roles/append", app.WebEP.AppendAccountRole)
+			uarid.Post("/roles/remove", app.WebEP.RemoveAccountRole)
 		})
 	})
 }

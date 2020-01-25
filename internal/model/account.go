@@ -98,6 +98,7 @@ func (account *Account) Match(tc *Account) bool {
 // the use of reflection.
 func (account *Account) ToForm() AccountForm {
 	return AccountForm{
+		Slug:        account.Slug.String,
 		OwnerID:     account.OwnerID.String(),
 		ParentID:    account.ParentID.String(),
 		AccountType: account.AccountType.String,

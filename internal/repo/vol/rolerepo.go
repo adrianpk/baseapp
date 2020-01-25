@@ -150,3 +150,11 @@ func (ar *AuthRepo) GetAccountRoles(slug string) (roles []model.Role, err error)
 func (ar *AuthRepo) GetNotAccountRoles(slug string) (roles []model.Role, err error) {
 	panic("not implemented")
 }
+
+func (ar *AuthRepo) AppendAccountRole(accountSlug, roleSlug string) (err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) RemoveAccountRole(accountSlug, roleSlug string) (err error) {
+	panic("not implemented")
+}

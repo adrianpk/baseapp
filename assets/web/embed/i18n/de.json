@@ -17,10 +17,14 @@
 "permission": "Permission",
 "permissions": "Permissions",
 
+"account-role": "Account Role",
+"account-roles": "Account Roles",
+
 "index": "Index",
-"new": "Newr",
-"edit": "Editr",
+"new": "New",
+"edit": "Edit",
 "show": "Show",
+"delete": "Delete",
 "signin": "Sign In",
 "signup": "Sign Up",
 
@@ -41,6 +45,9 @@
 "sign_in_err_msg": "Sign in error",
 "credentials_err_msg": "Verify username and password",
 "cannot_proc_err_msg": "It is not possible to process the request at this time",
+
+"role_appended_info_msg": "Role appended",
+"role_removed_info_msg": "Role removed",
 
 "required_err_msg": "Required",
 "min_length_err_msg": "Too short",
