@@ -1094,6 +1094,31 @@ func (ar *AuthRepo) GetAccountRoles(accountSlug string) (roles []model.Role, err
 	return roles, err
 }
 
+func (ar *AuthRepo) GetNotAccountRoles(accountSlug string) (roles []model.Role, err error) {
+	st := `SELECT roles.* from ROLES
+					WHERE roles.id NOT IN (
+						SELECT roles.id FROM roles
+							INNER JOIN account_roles ON roles.id = account_roles.role_id
+							INNER JOIN accounts ON accounts.id = account_roles.account_id
+						WHERE accounts.slug = '%s'
+							AND (accounts.is_deleted IS NULL OR NOT accounts.is_deleted)
+							AND (accounts.is_active IS NULL OR accounts.is_active)
+							AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+							AND (roles.is_active IS NULL OR roles.is_active)
+							AND (account_roles.is_deleted IS NULL OR NOT account_roles.is_deleted)
+							AND (account_roles.is_active IS NULL OR account_roles.is_active)
+					);`
+
+	st = fmt.Sprintf(st, accountSlug)
+
+	err = ar.DB.Select(&roles, st)
+	if err != nil {
+		return roles, err
+	}
+
+	return roles, err
+}
+
 // Misc --------------------------------------------------------------------------------
 func (ar *AuthRepo) getTx(txs []*sqlx.Tx) (tx *sqlx.Tx, local bool, err error) {
 	// Create a new transaction if its no passed as argument.

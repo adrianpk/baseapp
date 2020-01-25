@@ -138,6 +138,6 @@ func (userForm *UserForm) ToModel() User {
 	}
 }
 
-func (userForm *UserForm) GetSlug() string {
+func (userForm UserForm) GetSlug() string {
 	return userForm.Slug
 }

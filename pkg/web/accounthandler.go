@@ -28,24 +28,32 @@ func (ep *Endpoint) IndexAccountRoles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Use registerd service to get account.
+	account, err := ep.Service.GetAccount(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
 	// Use registerd service to get all available roles from repo.
-	all, err := ep.Service.IndexRoles()
+	notApplied, err := ep.Service.GetNotAccountRoles(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all account associated roles from repo.
-	accountRoles, err := ep.Service.GetAccountRoles(s)
+	applied, err := ep.Service.GetAccountRoles(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Group both lists into a map
-	l := map[string][]model.RoleForm{
-		"all":     model.ToRoleFormList(all),
-		"account": model.ToRoleFormList(accountRoles),
+	l := map[string]interface{}{
+		"account":     account.ToForm(),
+		"not-applied": model.ToRoleFormList(notApplied),
+		"applied":     model.ToRoleFormList(applied),
 	}
 
 	// Wrap response
@@ -110,10 +118,4 @@ func accountSignUpAction() kbs.FormAction {
 // accountSignInAction
 func accountSignInAction() kbs.FormAction {
 	return kbs.FormAction{Target: AuthPathSignIn(), Method: "POST"}
-}
-
-func (ep *Endpoint) eErrorRedirect(w http.ResponseWriter, r *http.Request, redirPath, msgID string, err error) {
-	m := ep.Localize(r, msgID)
-	ep.RedirectWithFlash(w, r, redirPath, m, kbs.ErrorMT)
-	ep.Log.Error(err)
 }

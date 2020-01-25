@@ -57,7 +57,7 @@ func (s *Service) GetAccount(slug string) (account model.Account, err error) {
 	return account, nil
 }
 
-func (s *Service) GetAccountByAccountnamei(name string) (account model.Account, err error) {
+func (s *Service) GetAccountByName(name string) (account model.Account, err error) {
 	repo := s.AccountRepo
 	if err != nil {
 		return account, err

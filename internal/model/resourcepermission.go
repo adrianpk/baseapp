@@ -82,6 +82,6 @@ func (resourcePermissionForm *ResourcePermissionForm) ToModel() ResourcePermissi
 	}
 }
 
-func (resourcePermissionForm *ResourcePermissionForm) GetSlug() string {
+func (resourcePermissionForm ResourcePermissionForm) GetSlug() string {
 	return resourcePermissionForm.Slug
 }

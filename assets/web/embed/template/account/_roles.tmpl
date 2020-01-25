@@ -1,3 +1,52 @@
-{{define "roles"}} {{$csrf := .CSRF}}
-{{.Data}}
+{{define "roles"}} {{$csrf := .CSRF}}{{$account := index .Data "account"}}{{$notApplied := index .Data "not-applied"}}{{$applied := index .Data "applied"}}
+
+<div class="w-2/3 mx-auto">
+  <div class="flex flex-row bg-white shadow-md rounded my-6">
+
+    <table class="w-2/4 text-center border-collapse">
+      <thead>
+        <tr>
+          <th class="py-4 px-6 text-center bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">
+            Available
+          </th>
+        </tr>
+      </thead>
+      {{range $key, $r := $notApplied}}
+      <tbody>
+        <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
+          <td class="py-4 px-6 border-b border-grey-light">
+            <form class="inline" accept-charset="UTF-8" action="{{$account | accountPathAddRole}}" method="POST">
+              {{$csrf.csrfField}}
+              <button class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-3 border border-blue-500 hover:border-transparent rounded inline" type="submit" value="{{$r.Slug}}">Add '{{$r.Name}}' role ></button>
+            </form>
+          </td>
+        </tr>
+      {{end}}
+      </tbody>
+    </table>
+
+    <table class="w-2/4 text-center border-collapse">
+      <thead>
+        <tr>
+          <th class="py-4 px-6 text-center bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">
+            Applied
+          </th>
+        </tr>
+      </thead>
+      {{range $key, $r := $applied}}
+      <tbody>
+        <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
+          <td class="py-4 px-6 border-b border-grey-light">
+            <form class="inline" accept-charset="UTF-8" action="{{$account | accountPathRemoveRole}}" method="POST">
+              {{$csrf.csrfField}}
+              <button class="text-sm bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-3 border border-red-500 hover:border-transparent rounded inline" type="submit" value="{{$r.Slug}}">< Remove '{{$r.Name}}' role</button>
+            </form>
+          </td>
+        </tr>
+      {{end}}
+      </tbody>
+    </table>
+
+  </div>
+</div>
 {{end}}

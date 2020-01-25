@@ -69,5 +69,6 @@ type (
 		DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error
 		// Custom
 		GetAccountRoles(slug string) (roles []model.Role, err error)
+		GetNotAccountRoles(slug string) (roles []model.Role, err error)
 	}
 )
