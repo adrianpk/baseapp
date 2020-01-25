@@ -2,17 +2,17 @@ package mig
 
 import "log"
 
-// CreateUserRolesTable migration
-func (s *step) CreateUserRolesTable() error {
+// CreateAccountRolesTable migration
+func (s *step) CreateAccountRolesTable() error {
 	tx := s.GetTx()
 
-	st := `CREATE TABLE user_roles
+	st := `CREATE TABLE account_roles
 	(
 		id UUID PRIMARY KEY,
 		slug VARCHAR(36) UNIQUE,
 		tenant_id VARCHAR(128),
 		name VARCHAR(32) UNIQUE,
-		user_id UUID NOT NULL,
+		account_id UUID NOT NULL,
 		role_id UUID NOT NULL
 	);`
 
@@ -22,7 +22,7 @@ func (s *step) CreateUserRolesTable() error {
 	}
 
 	st = `
-		ALTER TABLE user_roles
+		ALTER TABLE account_roles
 		ADD COLUMN is_active BOOLEAN,
 		ADD COLUMN is_deleted BOOLEAN,
 		ADD COLUMN created_by_id UUID,
@@ -38,11 +38,11 @@ func (s *step) CreateUserRolesTable() error {
 	return nil
 }
 
-// DropUserRolesTable rollback
-func (s *step) DropUserRolesTable() error {
+// DropAccountRolesTable rollback
+func (s *step) DropAccountRolesTable() error {
 	tx := s.GetTx()
 
-	st := `DROP TABLE user_roles;`
+	st := `DROP TABLE account_roles;`
 
 	_, err := tx.Exec(st)
 	if err != nil {

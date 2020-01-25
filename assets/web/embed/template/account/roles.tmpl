@@ -1,0 +1,30 @@
+<!-- Head -->
+{{define "head"}}
+{{$res := "account-roles" | .Loc.Localize}}
+{{$section := "index" | .Loc.Localize}}
+{{$title := concat $res $section }}
+{{$title}}
+{{end}}
+<!-- Head -->
+
+<!-- Body -->
+{{define "body"}}
+{{$data := .}}
+
+<!-- Contextual bar -->
+{{template "ctxbar" .}}
+<!-- Contextual bar -->
+
+<!-- Header -->
+{{$res := "account-roles" | .Loc.Localize}}
+{{$section := "index" | .Loc.Localize}}
+{{$title := concat $res $section }}
+{{template "header" $title}}
+<!-- Header -->
+
+<!-- List -->
+{{template "roles" .}}
+<!-- List -->
+
+{{end}}
+<!-- Body -->

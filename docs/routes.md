@@ -26,6 +26,13 @@
 | GET    | /users/{slug}/{token}/confirm | Confirm    |
 
 
+### Account
+
+| Method | Path                          | Handler           |
+|--------|-------------------------------|-------------------|
+| GET    | /accounts/{slug}/roles        | IndexAccountroles |
+
+
 ### Resource
 
 | Method | Path                              | Handler    |

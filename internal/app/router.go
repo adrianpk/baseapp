@@ -22,6 +22,7 @@ func (app *App) NewWebRouter() *kbs.Router {
 	rt := app.makeWebHomeRouter(app.Cfg, app.Log)
 	app.addWebAuthRouter(rt)
 	app.addWebUserRouter(rt)
+	app.addWebAccountRouter(rt)
 	app.addWebResourceRouter(rt)
 	app.addWebRoleRouter(rt)
 	app.addWebPermissionRouter(rt)
