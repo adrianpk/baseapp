@@ -32,6 +32,8 @@ var (
 		newUserMap("00000000-0000-0000-0000-000000000001", "system-000000000001", "system", "system", "system@kabestan.localhost"),
 
 		newUserMap("00000000-0000-0000-0000-000000000002", "superadmin-000000000002", "superadmin", "superadmin", "superadmin@kabestan.localhost"),
+
+		newUserMap("00000000-0000-0000-0000-000000000003", "admin-000000000003", "admin", "admin", "admin@kabestan.localhost"),
 	}
 
 	accounts = []map[string]interface{}{

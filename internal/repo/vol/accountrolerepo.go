@@ -87,22 +87,22 @@ func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.Account
 	return model.AccountRole{}, nil
 }
 
-func (ar *AuthRepo) GetAccountRoleByAccountID(resourceID uuid.UUID) (accountRoles []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRolesByAccountID(accountID uuid.UUID) (accountRoles []model.AccountRole, err error) {
 	size := len(accountRolesTable)
 	accountRoles = make([]model.AccountRole, size)
 	for _, row := range accountRolesTable {
-		if resourceID == row.model.AccountID {
+		if accountID == row.model.AccountID {
 			accountRoles = append(accountRoles, row.model)
 		}
 	}
 	return accountRoles, nil
 }
 
-func (ar *AuthRepo) GetAccountRoleByRoleID(permissionID uuid.UUID) (accountRoles []model.AccountRole, err error) {
+func (ar *AuthRepo) GetAccountRolesByRoleID(roleID uuid.UUID) (accountRoles []model.AccountRole, err error) {
 	size := len(accountRolesTable)
 	accountRoles = make([]model.AccountRole, size)
 	for _, row := range accountRolesTable {
-		if permissionID == row.model.RoleID {
+		if roleID == row.model.RoleID {
 			accountRoles = append(accountRoles, row.model)
 		}
 	}

@@ -140,3 +140,9 @@ func (ar *AuthRepo) DeleteRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	}
 	return errors.New("no records deleted")
 }
+
+// Custom
+
+func (ar *AuthRepo) GetAccountRoles(slug string) (roles []model.Role, err error) {
+	panic("not implemented")
+}

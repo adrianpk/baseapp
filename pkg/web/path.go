@@ -9,7 +9,15 @@ var pathFxs = template.FuncMap{
 	"userPathSlug":       UserPathSlug,
 	"userPathInitDelete": UserPathInitDelete,
 	"userPathNew":        UserPathNew,
-	//
+	"userPathRoles":      UserPathRoles,
+	// Account
+	"accountPath":           AccountPath,
+	"accountPathEdit":       AccountPathEdit,
+	"accountPathSlug":       AccountPathSlug,
+	"accountPathInitDelete": AccountPathInitDelete,
+	"accountPathNew":        AccountPathNew,
+	"accountPathRoles":      AccountPathRoles,
+	// Resource
 	"resourcePath":           ResourcePath,
 	"resourcePathEdit":       ResourcePathEdit,
 	"resourcePathSlug":       ResourcePathSlug,

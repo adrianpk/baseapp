@@ -17,6 +17,9 @@
 "permission": "Permission",
 "permissions": "Permissions",
 
+"account-role": "Account Role",
+"account-roles": "Account Roles",
+
 "index": "Index",
 "new": "New",
 "edit": "Edit",

@@ -954,8 +954,8 @@ func (ar *AuthRepo) GetAccountRoleBySlug(slug string) (accountRole model.Account
 	return accountRole, err
 }
 
-// GetAccountRoletByAccountID account from repo by slug.
-func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
+// GetAccountRolesByAccountID.
+func (ar *AuthRepo) GetAccountRolesByAccountID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
 	st := `SELECT * FROM account_roles WHERE account_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
@@ -967,8 +967,8 @@ func (ar *AuthRepo) GetAccountRoleByAccountID(id uuid.UUID) (accountRole []model
 	return accountRole, err
 }
 
-// GetAccountRoletByRoleID account from repo by slug.
-func (ar *AuthRepo) GetAccountRoleByRoleID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
+// GetAccountRolesByRoleID.
+func (ar *AuthRepo) GetAccountRolesByRoleID(id uuid.UUID) (accountRole []model.AccountRole, err error) {
 	st := `SELECT * FROM account_roles WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
@@ -1066,6 +1066,32 @@ func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	}
 
 	return err
+}
+
+// Custom
+
+// GetAccountRoles
+func (ar *AuthRepo) GetAccountRoles(accountSlug string) (roles []model.Role, err error) {
+	st := `SELECT roles.* FROM roles
+					INNER JOIN account_roles ON roles.id = account_roles.role_id
+					INNER JOIN accounts ON accounts.id = account_roles.account_id
+					WHERE accounts.slug = '%s'
+						AND (accounts.is_deleted IS NULL OR NOT accounts.is_deleted)
+						AND (accounts.is_active IS NULL OR accounts.is_active)
+						AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+						AND (roles.is_active IS NULL OR roles.is_active)
+						AND (account_roles.is_deleted IS NULL OR NOT account_roles.is_deleted)
+						AND (account_roles.is_active IS NULL OR account_roles.is_active)
+					ORDER BY roles.name ASC;`
+
+	st = fmt.Sprintf(st, accountSlug)
+
+	err = ar.DB.Select(&roles, st)
+	if err != nil {
+		return roles, err
+	}
+
+	return roles, err
 }
 
 // Misc --------------------------------------------------------------------------------

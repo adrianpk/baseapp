@@ -62,10 +62,12 @@ type (
 		GetAllAccountRoles() (auth []model.AccountRole, err error)
 		GetAccountRole(id uuid.UUID) (auth model.AccountRole, err error)
 		GetAccountRoleBySlug(slug string) (auth model.AccountRole, err error)
-		GetAccountRoleByAccountID(uuid.UUID) ([]model.AccountRole, error)
-		GetAccountRoleByRoleID(uuid.UUID) ([]model.AccountRole, error)
+		GetAccountRolesByAccountID(uuid.UUID) ([]model.AccountRole, error)
+		GetAccountRolesByRoleID(uuid.UUID) ([]model.AccountRole, error)
 		UpdateAccountRole(auth *model.AccountRole, tx ...*sqlx.Tx) error
 		DeleteAccountRole(id uuid.UUID, tx ...*sqlx.Tx) error
 		DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error
+		// Custom
+		GetAccountRoles(slug string) (roles []model.Role, err error)
 	}
 )
