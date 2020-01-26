@@ -16,8 +16,7 @@ var pathFxs = template.FuncMap{
 	"accountPathInitDelete": AccountPathInitDelete,
 	"accountPathNew":        AccountPathNew,
 	"accountPathRoles":      AccountPathRoles,
-	"accountPathAppendRole": AccountPathAppendRole,
-	"accountPathRemoveRole": AccountPathRemoveRole,
+	"accountPathRole":       AccountPathRole,
 	// Resource
 	"resourcePath":           ResourcePath,
 	"resourcePathEdit":       ResourcePathEdit,

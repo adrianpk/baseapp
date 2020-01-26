@@ -15,7 +15,7 @@
       <tbody>
         <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
           <td class="py-4 px-6 border-b border-grey-light">
-            <form class="inline" accept-charset="UTF-8" action="{{$account | accountPathAppendRole}}" method="POST">
+            <form class="inline" accept-charset="UTF-8" action="{{$account | accountPathRoles}}" method="POST">
               {{$csrf.csrfField}}
               <button class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-3 border border-blue-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">Add '{{$r.Name}}' role ></button>
             </form>
@@ -37,7 +37,8 @@
       <tbody>
         <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
           <td class="py-4 px-6 border-b border-grey-light">
-            <form class="inline" accept-charset="UTF-8" action="{{$account | accountPathRemoveRole}}" method="POST">
+            <form class="inline" accept-charset="UTF-8" action="{{accountPathRole $account $r}}" method="POST">
+              <input name="_method" type="hidden" value="DELETE">
               {{$csrf.csrfField}}
               <button class="text-sm bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-3 border border-red-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">< Remove '{{$r.Name}}' role</button>
             </form>

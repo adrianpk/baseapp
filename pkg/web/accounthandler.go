@@ -134,6 +134,7 @@ func (ep *Endpoint) RemoveAccountRole(w http.ResponseWriter, r *http.Request) {
 	// Localize Ok info message, put it into a flash message
 	// and redirect to index.
 	m := ep.Localize(r, RoleRemovedInfoMsg)
+
 	ep.RedirectWithFlash(w, r, AccountPathRoles(accountForm), m, kbs.InfoMT)
 }
 
