@@ -153,3 +153,7 @@ func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	}
 	return errors.New("no records deleted")
 }
+
+func (ar *AuthRepo) DeleteAccountRoleBySlugs(accountSlug, roleSlug string, tx ...*sqlx.Tx) error {
+	panic("not implemented")
+}

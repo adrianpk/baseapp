@@ -44,8 +44,8 @@ func AccountPathRoles(res kbs.Identifiable) string {
 	return fmt.Sprintf("%s/roles", kbs.ResPathSlug(AccountRoot, res))
 }
 
-func AccountPathAddRole(res kbs.Identifiable) string {
-	return fmt.Sprintf("%s/roles/add", kbs.ResPathSlug(AccountRoot, res))
+func AccountPathAppendRole(res kbs.Identifiable) string {
+	return fmt.Sprintf("%s/roles/append", kbs.ResPathSlug(AccountRoot, res))
 }
 
 func AccountPathRemoveRole(res kbs.Identifiable) string {

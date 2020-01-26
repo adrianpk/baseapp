@@ -12,10 +12,11 @@ type (
 	// AccountRole model
 	AccountRole struct {
 		kbs.Identification
-		AccountID uuid.UUID    `db:"resource_id" json:"resourceID"`
-		RoleID    uuid.UUID    `db:"permission_id" json:"permissionID"`
-		IsActive  sql.NullBool `db:"is_active" json:"isActive"`
-		IsDeleted sql.NullBool `db:"is_deleted" json:"isDeleted"`
+		Name      sql.NullString `db:"name" json:"name"`
+		AccountID uuid.UUID      `db:"account_id" json:"accountID"`
+		RoleID    uuid.UUID      `db:"role_id" json:"roleID"`
+		IsActive  sql.NullBool   `db:"is_active" json:"isActive"`
+		IsDeleted sql.NullBool   `db:"is_deleted" json:"isDeleted"`
 		kbs.Audit
 	}
 )
@@ -23,8 +24,9 @@ type (
 type (
 	AccountRoleForm struct {
 		Slug      string `json:"slug" schema:"slug"`
-		AccountID string `json:"resourceID" schema:"resource-id"`
-		RoleID    string `json:"permissionID" schema:"permission-id"`
+		Name      string `json:"name" schema:"name"`
+		AccountID string `json:"accountID" schema:"account-id"`
+		RoleID    string `json:"roleID" schema:"role-id"`
 	}
 )
 
@@ -37,7 +39,7 @@ func ToAccountRoleFormList(accountRoles []AccountRole) (fs []AccountRoleForm) {
 
 // SetCreateValues sets de ID, slug and audit values.
 func (accountRole *AccountRole) SetCreateValues() error {
-	pfx := "resourcepermission"
+	pfx := accountRole.Name.String
 	accountRole.Identification.SetCreateValues(pfx)
 	accountRole.Audit.SetCreateValues()
 	return nil
@@ -52,6 +54,7 @@ func (accountRole *AccountRole) SetUpdateValues() error {
 // Match condition for
 func (accountRole *AccountRole) Match(tc *AccountRole) bool {
 	r := accountRole.Identification.Match(tc.Identification) &&
+		accountRole.Name == tc.Name &&
 		accountRole.AccountID == tc.AccountID &&
 		accountRole.RoleID == tc.RoleID
 	return r
@@ -66,6 +69,7 @@ func (accountRole *AccountRole) Match(tc *AccountRole) bool {
 // the use of reflection.
 func (accountRole *AccountRole) ToForm() AccountRoleForm {
 	return AccountRoleForm{
+		Name:      accountRole.Name.String,
 		AccountID: accountRole.AccountID.String(),
 		RoleID:    accountRole.RoleID.String(),
 	}
@@ -77,6 +81,7 @@ func (accountRoleForm *AccountRoleForm) ToModel() AccountRole {
 		Identification: kbs.Identification{
 			Slug: db.ToNullString(accountRoleForm.Slug),
 		},
+		Name:      db.ToNullString(accountRoleForm.Name),
 		AccountID: kbs.ToUUID(accountRoleForm.AccountID),
 		RoleID:    kbs.ToUUID(accountRoleForm.RoleID),
 	}

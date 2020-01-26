@@ -894,7 +894,7 @@ func (ar *AuthRepo) DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) erro
 // AccountRole --------------------------------------------------------------------------------
 // Create an AccountRole
 func (ar *AuthRepo) CreateAccountRole(accountRole *model.AccountRole, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO account_role (id, slug, account_id, role_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+	st := `INSERT INTO account_roles (id, slug, account_id, role_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
 VALUES (:id, :slug, :account_id, :role_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
@@ -1068,6 +1068,43 @@ func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	return err
 }
 
+func (ar *AuthRepo) DeleteAccountRoleBySlugs(accountSlug, roleSlug string, tx ...*sqlx.Tx) error {
+	st := `DELETE from account_roles
+					WHERE account_roles.id IN (
+						SELECT account_roles.id FROM account_roles
+           		INNER JOIN accounts ON accounts.id = account_roles.account_id
+          	  INNER JOIN roles ON roles.id = account_roles.role_id
+           	WHERE accounts.slug = '%s'
+					 		AND roles.slug = '%s'
+             	AND (accounts.is_deleted IS NULL OR NOT accounts.is_deleted)
+             	AND (accounts.is_active IS NULL OR accounts.is_active)
+             	AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+             	AND (roles.is_active IS NULL OR roles.is_active)
+             	AND (account_roles.is_deleted IS NULL OR NOT account_roles.is_deleted)
+             	AND (account_roles.is_active IS NULL OR account_roles.is_active)
+					);`
+
+	st = fmt.Sprintf(st, accountSlug, roleSlug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		ar.Log.Error(err)
+		return err
+	}
+
+	_, err = t.Exec(st)
+	if err != nil {
+		return err
+	}
+
+	if local {
+		err := t.Commit()
+		return err
+	}
+
+	return err
+}
+
 // Custom
 
 // GetAccountRoles
@@ -1117,6 +1154,10 @@ func (ar *AuthRepo) GetNotAccountRoles(accountSlug string) (roles []model.Role, 
 	}
 
 	return roles, err
+}
+
+func (ar *AuthRepo) RemoveAccountRole(accountSlug, roleSlug string) (err error) {
+	panic("not implemented")
 }
 
 // Misc --------------------------------------------------------------------------------

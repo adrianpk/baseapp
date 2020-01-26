@@ -67,6 +67,7 @@ type (
 		UpdateAccountRole(auth *model.AccountRole, tx ...*sqlx.Tx) error
 		DeleteAccountRole(id uuid.UUID, tx ...*sqlx.Tx) error
 		DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error
+		DeleteAccountRoleBySlugs(accountSlug, roleSlug string, tx ...*sqlx.Tx) error
 		// Custom
 		GetAccountRoles(slug string) (roles []model.Role, err error)
 		GetNotAccountRoles(slug string) (roles []model.Role, err error)

@@ -1,7 +1,10 @@
 package svc
 
 import (
+	"fmt"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
+	"gitlab.com/kabestan/backend/kabestan/db"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
@@ -117,5 +120,92 @@ func (s *Service) DeleteAccount(slug string) error {
 	}
 
 	// Output
+	return nil
+}
+
+// Custom
+
+// GetAccountRoles
+func (s *Service) GetAccountRoles(accountSlug string) (roles []model.Role, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return roles, err
+	}
+
+	roles, err = repo.GetAccountRoles(accountSlug)
+	if err != nil {
+		return roles, err
+	}
+
+	return roles, nil
+}
+
+// GetNotAccountRoles
+func (s *Service) GetNotAccountRoles(accountSlug string) (roles []model.Role, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return roles, err
+	}
+
+	roles, err = repo.GetNotAccountRoles(accountSlug)
+	if err != nil {
+		return roles, err
+	}
+
+	return roles, nil
+}
+
+// AppendAccountRole
+func (s *Service) AppendAccountRole(accountSlug, roleSlug string) (err error) {
+	accountRepo := s.AccountRepo
+	if err != nil {
+		return err
+	}
+
+	account, err := accountRepo.GetBySlug(accountSlug)
+	if err != nil {
+		return err
+	}
+
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	role, err := authRepo.GetRoleBySlug(roleSlug)
+	if err != nil {
+		return err
+	}
+
+	// FIX: work in progress; quick and dirty AccountRole generation.
+	// Move to a model struct method.
+	name := fmt.Sprintf("%s-%s", account.Username.String, role.Name.String)
+
+	accountRole := model.AccountRole{
+		Name:      db.ToNullString(name),
+		AccountID: account.ID,
+		RoleID:    role.ID,
+	}
+
+	err = authRepo.CreateAccountRole(&accountRole)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AppendAccountRole
+func (s *Service) RemoveAccountRole(accountSlug, roleSlug string) (err error) {
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	err = authRepo.DeleteAccountRoleBySlugs(accountSlug, roleSlug)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

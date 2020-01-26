@@ -114,35 +114,3 @@ func (s *Service) DeleteRole(slug string) error {
 	// Output
 	return nil
 }
-
-// Custom
-
-// GetAccountRoles
-func (s *Service) GetAccountRoles(accountSlug string) (roles []model.Role, err error) {
-	repo := s.AuthRepo
-	if err != nil {
-		return roles, err
-	}
-
-	roles, err = repo.GetAccountRoles(accountSlug)
-	if err != nil {
-		return roles, err
-	}
-
-	return roles, nil
-}
-
-// GetNotAccountRoles
-func (s *Service) GetNotAccountRoles(accountSlug string) (roles []model.Role, err error) {
-	repo := s.AuthRepo
-	if err != nil {
-		return roles, err
-	}
-
-	roles, err = repo.GetNotAccountRoles(accountSlug)
-	if err != nil {
-		return roles, err
-	}
-
-	return roles, nil
-}

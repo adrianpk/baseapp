@@ -28,9 +28,11 @@
 
 ### Account
 
-| Method | Path                          | Handler           |
-|--------|-------------------------------|-------------------|
-| GET    | /accounts/{slug}/roles        | IndexAccountRoles |
+| Method | Path                            | Handler            |
+|--------|---------------------------------|--------------------|
+| GET    | /accounts/{slug}/roles          | IndexAccountRoles  |
+| POST   | /accounts/{slug}/roles/append   | AppendAccoutRole   |
+| POST   | /accounts/{slug}/roles/remove   | RemoveAccountRole  |
 
 
 ### Resource
