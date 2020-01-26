@@ -31,8 +31,8 @@
 | Method | Path                                    | Handler           |
 |--------|-----------------------------------------|-------------------|
 | GET    | /accounts/{slug}/roles                  | IndexAccountRoles |
-| POST   | /accounts/{slug}/accountroles           | AppendAccountRole |
-| DELETE | /accounts/{slug}/accountroles/{subslug} | RemoveAccountRole |
+| POST   | /accounts/{slug}/roles                  | AppendAccountRole |
+| DELETE | /accounts/{slug}/roles/{subslug}        | RemoveAccountRole |
 
 
 ### Resource

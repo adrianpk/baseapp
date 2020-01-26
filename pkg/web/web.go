@@ -90,33 +90,22 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
+	ctx := r.Context()
+	slug, ok := ctx.Value(SlugCtxKey).(string)
+	if !ok {
+		err := errors.New("no slug provided")
+		return "", err
+	}
+
+	return slug, nil
+}
+
 func (ep *Endpoint) getSubSlug(r *http.Request) (slug string, err error) {
 	ctx := r.Context()
 	slug, ok := ctx.Value(SubSlugCtxKey).(string)
 	if !ok {
 		err := errors.New("no subslug provided")
-		return "", err
-	}
-
-	return slug, nil
-}
-
-func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
-	ctx := r.Context()
-	slug, ok := ctx.Value(SlugCtxKey).(string)
-	if !ok {
-		err := errors.New("no slug provided")
-		return "", err
-	}
-
-	return slug, nil
-}
-
-func (ep *Endpoint) getSlug(r *http.Request) (slug string, err error) {
-	ctx := r.Context()
-	slug, ok := ctx.Value(SlugCtxKey).(string)
-	if !ok {
-		err := errors.New("no slug provided")
 		return "", err
 	}
 
