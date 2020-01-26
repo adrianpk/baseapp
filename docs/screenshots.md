@@ -10,9 +10,7 @@
 
 <img src="img/new_user.png" width="480">
 
-## Resources
-
-### Account Roles
+## Account Roles
 
 **Pre**
 
@@ -21,6 +19,12 @@
 **Post**
 
 <img src="img/account_roles_2.png" width="480">
+
+## Resources
+
+### Index
+
+<img src="img/resource_index.png" width="480">
 
 ## Roles
 
