@@ -23,9 +23,9 @@ func (app *App) addWebAccountRouter(parent chi.Router) chi.Router {
 			//subChild.Put("/", app.WebEP.UpdateAccount)
 			//subChild.Post("/init-delete", app.WebEP.InitDeleteAccount)
 			//subChild.Delete("/", app.WebEP.DeleteAccount)
-			subChild.Get("/accountroles", app.WebEP.IndexAccountRoles)
-			subChild.Post("/accountroles", app.WebEP.AppendAccountRole)
-			subChild.Route("/accountroles/{subSlug}", func(subSubChild chi.Router) {
+			subChild.Get("/roles", app.WebEP.IndexAccountRoles)
+			subChild.Post("/roles", app.WebEP.AppendAccountRole)
+			subChild.Route("/roles/{subSlug}", func(subSubChild chi.Router) {
 				subSubChild.Use(accountRoleCtx)
 				subSubChild.Delete("/", app.WebEP.RemoveAccountRole)
 			})
