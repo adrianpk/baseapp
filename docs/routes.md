@@ -52,17 +52,20 @@
 
 ### Role
 
-| Method | Path                     | Handler    |
-|--------|--------------------------|------------|
-| GET    | /role                    | Index      |
-| GET    | /role/new                | New        |
-| POST   | /role                    | Create     |
-| GET    | /role/{slug}             | Show       |
-| GET    | /role/{slug}/edit        | Edit       |
-| PUT    | /role/{slug}             | Update     |
-| PATCH  | /role/{slug}             | Update     |
-| POST   | /role/{slug}/init-delete | InitDelete |
-| DELETE | /role/{slug}             | Delete     |
+| Method | Path                              | Handler              |
+|--------|-----------------------------------|----------------------|
+| GET    | /role                             | Index                |
+| GET    | /role/new                         | New                  |
+| POST   | /role                             | Create               |
+| GET    | /role/{slug}                      | Show                 |
+| GET    | /role/{slug}/edit                 | Edit                 |
+| PUT    | /role/{slug}                      | Update               |
+| PATCH  | /role/{slug}                      | Update               |
+| POST   | /role/{slug}/init-delete          | InitDelete           |
+| DELETE | /role/{slug}                      | Delete               |
+| GET    | /role/{slug}/roles                | IndexRolePermissions |
+| POST   | /role/{slug}/roles                | AppendRolePermission |
+| DELETE | /role/{slug}/roles/{subslug}      | RemoveRolePermission |
 
 
 ### Permission

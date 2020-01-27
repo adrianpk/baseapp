@@ -52,11 +52,12 @@ type (
 		GetAllRolePermissions() (rolePermissions []model.RolePermission, err error)
 		GetRolePermission(id uuid.UUID) (rolePermission model.RolePermission, err error)
 		GetRolePermissionBySlug(slug string) (rolePermission model.RolePermission, err error)
-		GetRolePermissionByRoleID(uuid.UUID) ([]model.RolePermission, error)
-		GetRolePermissionByPermissionID(uuid.UUID) ([]model.RolePermission, error)
+		GetRolePermissionsByRoleID(uuid.UUID) ([]model.RolePermission, error)
+		GetRolePermissionsByPermissionID(uuid.UUID) ([]model.RolePermission, error)
 		UpdateRolePermission(rolePermission *model.RolePermission, tx ...*sqlx.Tx) error
 		DeleteRolePermission(id uuid.UUID, tx ...*sqlx.Tx) error
 		DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) error
+		DeleteRolePermissionsBySlugs(roleSlug, permissionSlug string, tx ...*sqlx.Tx) error
 		// AccountRole
 		CreateAccountRole(u *model.AccountRole, tx ...*sqlx.Tx) error
 		GetAllAccountRoles() (auth []model.AccountRole, err error)
@@ -71,5 +72,7 @@ type (
 		// Custom
 		GetAccountRoles(slug string) (roles []model.Role, err error)
 		GetNotAccountRoles(slug string) (roles []model.Role, err error)
+		GetRolePermissions(slug string) (permissions []model.Permission, err error)
+		GetNotRolePermissions(slug string) (permissions []model.Permission, err error)
 	}
 )

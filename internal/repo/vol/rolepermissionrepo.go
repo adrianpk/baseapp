@@ -153,3 +153,21 @@ func (ar *AuthRepo) DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) erro
 	}
 	return errors.New("no records deleted")
 }
+
+// Custom
+
+func (ar *AuthRepo) GetRolePermissions(slug string) (permissions []model.Permission, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) GetNotRolePermissions(slug string) (permissions []model.Permission, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) AppendRolePermission(roleSlug, permissionSlug string) (err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) RemoveRolePermission(roleSlug, permissionSlug string) (err error) {
+	panic("not implemented")
+}

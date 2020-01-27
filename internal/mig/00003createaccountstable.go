@@ -9,7 +9,7 @@ func (s *step) CreateAccountsTable() error {
 	st := `CREATE TABLE accounts
 		(
 		id UUID PRIMARY KEY,
-		slug VARCHAR(36) UNIQUE,
+		slug VARCHAR(64) UNIQUE,
 		tenant_id VARCHAR(128),
 		owner_id UUID,
 		parent_id UUID,

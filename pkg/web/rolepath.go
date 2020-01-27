@@ -1,6 +1,8 @@
 package web
 
 import (
+	"fmt"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
 )
 
@@ -33,4 +35,15 @@ func RolePathInitDelete(res kbs.Identifiable) string {
 // RolePathSlug
 func RolePathSlug(res kbs.Identifiable) string {
 	return kbs.ResPathSlug(RoleRoot, res)
+}
+
+// Custom
+
+// RolePathPermissions
+func RolePathPermissions(res kbs.Identifiable) string {
+	return fmt.Sprintf("%s/permissions", kbs.ResPathSlug(RoleRoot, res))
+}
+
+func RolePathPermission(res kbs.Identifiable, subRes kbs.Identifiable) string {
+	return fmt.Sprintf("%s/permissions/%s", kbs.ResPathSlug(RoleRoot, res), subRes.GetSlug())
 }

@@ -20,6 +20,9 @@
 "account-role": "Account Role",
 "account-roles": "Account Roles",
 
+"role-permission": "Role Permission",
+"role-permissions": "Role Permission",
+
 "index": "Index",
 "new": "New",
 "edit": "Edit",
@@ -48,6 +51,8 @@
 
 "role_appended_info_msg": "Role appended",
 "role_removed_info_msg": "Role removed",
+"permission_appended_info_msg": "Permission appended",
+"permission_removed_info_msg": "Permission removed",
 
 "required_err_msg": "Required",
 "min_length_err_msg": "Too short",

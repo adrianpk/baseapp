@@ -17,6 +17,13 @@ const (
 	roleResPl = "roles"
 )
 
+const (
+	PermissionsTmpl = "permissions.tmpl"
+	// Info
+	PermissionAppendedInfoMsg = "permission_appended_info_msg"
+	PermissionRemovedInfoMsg  = "permission_removed_info_msg"
+)
+
 // IndexRoles web endpoint.
 func (ep *Endpoint) IndexRoles(w http.ResponseWriter, r *http.Request) {
 	// Get roles list from registered service
@@ -268,6 +275,121 @@ func (ep *Endpoint) DeleteRole(w http.ResponseWriter, r *http.Request) {
 
 	m := ep.Localize(r, DeletedInfoMsg)
 	ep.RedirectWithFlash(w, r, RolePath(), m, kbs.InfoMT)
+}
+
+// IndexRolePermissions web endpoint.
+func (ep *Endpoint) IndexRolePermissions(w http.ResponseWriter, r *http.Request) {
+	s, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get role.
+	role, err := ep.Service.GetRole(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get all available permissions from repo.
+	notApplied, err := ep.Service.GetNotRolePermissions(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get all role associated permissions from repo.
+	applied, err := ep.Service.GetRolePermissions(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Group both lists into a map
+	l := map[string]interface{}{
+		"role":        role.ToForm(),
+		"not-applied": model.ToPermissionFormList(notApplied),
+		"applied":     model.ToPermissionFormList(applied),
+	}
+
+	// Wrap response
+	wr := ep.WrapRes(w, r, l, nil)
+
+	// Get template to render from cache.
+	ts, err := ep.TemplateFor(roleRes, PermissionsTmpl)
+	if err != nil {
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
+		return
+	}
+
+	// Execute it and redirect if error.
+	err = ts.Execute(w, wr)
+	if err != nil {
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
+		return
+	}
+}
+
+// AppendRolePermission web endpoint.
+func (ep *Endpoint) AppendRolePermission(w http.ResponseWriter, r *http.Request) {
+	roleSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	roleForm := model.RoleForm{Slug: roleSlug}
+
+	// Decode request data into a form.
+	permissionForm := model.PermissionForm{}
+	err = ep.FormToModel(r, &permissionForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, RolePathPermissions(roleForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append permission.
+	err = ep.Service.AppendRolePermission(roleSlug, permissionForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, PermissionAppendedInfoMsg)
+	ep.RedirectWithFlash(w, r, RolePathPermissions(roleForm), m, kbs.InfoMT)
+}
+
+// RemoveRolePermission web endpoint.
+func (ep *Endpoint) RemoveRolePermission(w http.ResponseWriter, r *http.Request) {
+	roleSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	roleForm := model.RoleForm{Slug: roleSlug}
+
+	// Decode request data into a form.
+	permissionForm := model.PermissionForm{}
+	err = ep.FormToModel(r, &permissionForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, RolePathPermissions(roleForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append permission.
+	err = ep.Service.RemoveRolePermission(roleSlug, permissionForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, PermissionRemovedInfoMsg)
+
+	ep.RedirectWithFlash(w, r, RolePathPermissions(roleForm), m, kbs.InfoMT)
 }
 
 func (ep *Endpoint) rerenderRoleForm(w http.ResponseWriter, r *http.Request, data interface{}, valErrors kbs.ValErrorSet, template string, action kbs.FormAction) {

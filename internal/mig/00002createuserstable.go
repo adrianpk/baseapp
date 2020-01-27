@@ -9,7 +9,7 @@ func (s *step) CreateUsersTable() error {
 	st := `CREATE TABLE users
 	(
 		id UUID PRIMARY KEY,
-		slug VARCHAR(36) UNIQUE,
+		slug VARCHAR(64) UNIQUE,
 		tenant_id VARCHAR(128),
 		username VARCHAR(32) UNIQUE,
 		password_digest CHAR(128),
