@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	userRoles = []map[string]interface{}{
+	accountRoles = []map[string]interface{}{
 		newAccountRoleMap("00000000-0000-0000-0000-000000000001", "system-system-000000000001", "system-system", "00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000001"),
 
 		newAccountRoleMap("00000000-0000-0000-0000-000000000002", "superadmin-superadmin-000000000002", "superadmin-superadmin", "00000000-0000-0000-0000-000000000002", "00000000-0000-0000-0000-000000000002"),
@@ -22,7 +22,7 @@ func (s *step) CreateAccountRoles() error {
 	st := `INSERT INTO account_roles (id, slug, tenant_id, name, account_id, role_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
 VALUES (:id, :slug, :tenant_id, :name, :account_id, :role_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at);`
 
-	for _, ur := range userRoles {
+	for _, ur := range accountRoles {
 		_, err := tx.NamedExec(st, ur)
 		if err != nil {
 			log.Fatal(err)

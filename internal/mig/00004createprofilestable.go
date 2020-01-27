@@ -11,7 +11,7 @@ func (s *step) CreateProfilesTable() error {
 	(
 		id UUID PRIMARY KEY,
 		tenant_id VARCHAR(128),
-		slug VARCHAR(36) UNIQUE,
+		slug VARCHAR(64) UNIQUE,
 		owner_id UUID REFERENCES,
 	  account_type VARCHAR(36),
 		name VARCHAR(64),

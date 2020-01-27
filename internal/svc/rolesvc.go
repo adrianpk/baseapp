@@ -1,7 +1,10 @@
 package svc
 
 import (
+	"fmt"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
+	"gitlab.com/kabestan/backend/kabestan/db"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
@@ -112,5 +115,87 @@ func (s *Service) DeleteRole(slug string) error {
 	}
 
 	// Output
+	return nil
+}
+
+// Custom
+
+// GetRolePermissions
+func (s *Service) GetRolePermissions(roleSlug string) (permissions []model.Permission, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return permissions, err
+	}
+
+	permissions, err = repo.GetRolePermissions(roleSlug)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+// GetNotRolePermissions
+func (s *Service) GetNotRolePermissions(roleSlug string) (permissions []model.Permission, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return permissions, err
+	}
+
+	permissions, err = repo.GetNotRolePermissions(roleSlug)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+// AppendRolePermission
+func (s *Service) AppendRolePermission(roleSlug, permissionSlug string) (err error) {
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	role, err := authRepo.GetRoleBySlug(roleSlug)
+	if err != nil {
+		return err
+	}
+
+	permission, err := authRepo.GetPermissionBySlug(permissionSlug)
+	if err != nil {
+		return err
+	}
+
+	// FIX: work in progress; quick and dirty RolePermission generation.
+	// Move to a model struct method.
+	name := fmt.Sprintf("%s-%s", role.Name.String, permission.Name.String)
+
+	rolePermission := model.RolePermission{
+		Name:         db.ToNullString(name),
+		RoleID:       role.ID,
+		PermissionID: permission.ID,
+	}
+
+	err = authRepo.CreateRolePermission(&rolePermission)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AppendRolePermission
+func (s *Service) RemoveRolePermission(roleSlug, permissionSlug string) (err error) {
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	err = authRepo.DeleteRolePermissionsBySlugs(roleSlug, permissionSlug)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

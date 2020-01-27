@@ -1,0 +1,29 @@
+<!-- Head -->
+{{define "head"}}
+{{$res := "role-permissions" | .Loc.Localize}}
+{{$entity := index .Data "role"}}
+{{$title := concat (toTitle $entity.Name) $res}}
+{{$title}}
+{{end}}
+<!-- Head -->
+
+<!-- Body -->
+{{define "body"}}
+{{$data := .}}
+
+<!-- Contextual bar -->
+<!-- Contextual bar -->
+
+<!-- Header -->
+{{$res := "role-permissions" | .Loc.Localize}}
+{{$entity := index .Data "role"}}
+{{$title := concat (toTitle $entity.Name) $res}}
+{{template "header" $title}}
+<!-- Header -->
+
+<!-- List -->
+{{template "roles" .}}
+<!-- List -->
+
+{{end}}
+<!-- Body -->

@@ -777,8 +777,8 @@ func (ar *AuthRepo) GetRolePermissionBySlug(slug string) (resourcePermission mod
 	return resourcePermission, err
 }
 
-// GetRolePermissiontByRoleID account from repo by slug.
-func (ar *AuthRepo) GetRolePermissionByRoleID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
+// GetRolePermissiosByRoleID account from repo by slug.
+func (ar *AuthRepo) GetRolePermissionsByRoleID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
 	st := `SELECT * FROM role_permissions WHERE role_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
@@ -790,8 +790,8 @@ func (ar *AuthRepo) GetRolePermissionByRoleID(id uuid.UUID) (resourcePermission 
 	return resourcePermission, err
 }
 
-// GetRolePermissiontByRoleID account from repo by slug.
-func (ar *AuthRepo) GetRolePermissionByPermissionID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
+// GetRolePermissionsByRoleID account from repo by slug.
+func (ar *AuthRepo) GetRolePermissionsByPermissionID(id uuid.UUID) (resourcePermission []model.RolePermission, err error) {
 	st := `SELECT * FROM role_permissions WHERE permission_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
@@ -886,6 +886,43 @@ func (ar *AuthRepo) DeleteRolePermissionBySlug(slug string, tx ...*sqlx.Tx) erro
 
 	if local {
 		return t.Commit()
+	}
+
+	return err
+}
+
+func (ar *AuthRepo) DeleteRolePermissionsBySlugs(roleSlug, permissionSlug string, tx ...*sqlx.Tx) error {
+	st := `DELETE from role_permissions
+					WHERE role_permissions.id IN (
+						SELECT role_permissions.id FROM role_permissions
+           		INNER JOIN roles ON roles.id = role_permissions.role_id
+          	  INNER JOIN permissions ON permissions.id = role_permissions.permission_id
+           	WHERE roles.slug = '%s'
+					 		AND permissions.slug = '%s'
+             	AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+             	AND (roles.is_active IS NULL OR roles.is_active)
+             	AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+             	AND (permissions.is_active IS NULL OR permissions.is_active)
+             	AND (role_permissions.is_deleted IS NULL OR NOT role_permissions.is_deleted)
+             	AND (role_permissions.is_active IS NULL OR role_permissions.is_active)
+					);`
+
+	st = fmt.Sprintf(st, roleSlug, permissionSlug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		ar.Log.Error(err)
+		return err
+	}
+
+	_, err = t.Exec(st)
+	if err != nil {
+		return err
+	}
+
+	if local {
+		err := t.Commit()
+		return err
 	}
 
 	return err
@@ -1049,7 +1086,7 @@ func (ar *AuthRepo) DeleteAccountRole(id uuid.UUID, tx ...*sqlx.Tx) error {
 	return err
 }
 
-// DeleteBySlug:w account from repo by slug.
+// DeleteAccountByRoleSlug
 func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 	st := `DELETE FROM account_roles WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
@@ -1132,7 +1169,7 @@ func (ar *AuthRepo) GetAccountRoles(accountSlug string) (roles []model.Role, err
 }
 
 func (ar *AuthRepo) GetNotAccountRoles(accountSlug string) (roles []model.Role, err error) {
-	st := `SELECT roles.* from ROLES
+	st := `SELECT roles.* FROM roles
 					WHERE roles.id NOT IN (
 						SELECT roles.id FROM roles
 							INNER JOIN account_roles ON roles.id = account_roles.role_id
@@ -1156,8 +1193,53 @@ func (ar *AuthRepo) GetNotAccountRoles(accountSlug string) (roles []model.Role, 
 	return roles, err
 }
 
-func (ar *AuthRepo) RemoveAccountRole(accountSlug, roleSlug string) (err error) {
-	panic("not implemented")
+// GetRolePermissions
+func (ar *AuthRepo) GetRolePermissions(roleSlug string) (permissions []model.Permission, err error) {
+	st := `SELECT permissions.* FROM permissions
+					INNER JOIN role_permissions ON permissions.id = role_permissions.permission_id
+					INNER JOIN roles ON roles.id = role_permissions.role_id
+					WHERE roles.slug = '%s'
+						AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+						AND (roles.is_active IS NULL OR roles.is_active)
+						AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+						AND (permissions.is_active IS NULL OR permissions.is_active)
+						AND (role_permissions.is_deleted IS NULL OR NOT role_permissions.is_deleted)
+						AND (role_permissions.is_active IS NULL OR role_permissions.is_active)
+					ORDER BY permissions.name ASC;`
+
+	st = fmt.Sprintf(st, roleSlug)
+
+	err = ar.DB.Select(&permissions, st)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, err
+}
+
+func (ar *AuthRepo) GetNotRolePermissions(roleSlug string) (permissions []model.Permission, err error) {
+	st := `SELECT permissions.* FROM permissions
+					WHERE permissions.id NOT IN (
+						SELECT permissions.id FROM permissions
+							INNER JOIN role_permissions ON permissions.id = role_permissions.permission_id
+							INNER JOIN roles ON roles.id = role_permissions.role_id
+						WHERE roles.slug = '%s'
+							AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+							AND (roles.is_active IS NULL OR roles.is_active)
+							AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+							AND (permissions.is_active IS NULL OR permissions.is_active)
+							AND (role_permissions.is_deleted IS NULL OR NOT role_permissions.is_deleted)
+							AND (role_permissions.is_active IS NULL OR role_permissions.is_active)
+					);`
+
+	st = fmt.Sprintf(st, roleSlug)
+
+	err = ar.DB.Select(&permissions, st)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, err
 }
 
 // Misc --------------------------------------------------------------------------------

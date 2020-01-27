@@ -157,3 +157,21 @@ func (ar *AuthRepo) DeleteAccountRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 func (ar *AuthRepo) DeleteAccountRoleBySlugs(accountSlug, roleSlug string, tx ...*sqlx.Tx) error {
 	panic("not implemented")
 }
+
+// Custom
+
+func (ar *AuthRepo) GetAccountRoles(slug string) (roles []model.Role, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) GetNotAccountRoles(slug string) (roles []model.Role, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) AppendAccountRole(accountSlug, roleSlug string) (err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) RemoveAccountRole(accountSlug, roleSlug string) (err error) {
+	panic("not implemented")
+}

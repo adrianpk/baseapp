@@ -12,10 +12,11 @@ type (
 	// RolePermission model
 	RolePermission struct {
 		kbs.Identification
-		RoleID       uuid.UUID    `db:"resource_id" json:"resourceID"`
-		PermissionID uuid.UUID    `db:"permission_id" json:"permissionID"`
-		IsActive     sql.NullBool `db:"is_active" json:"isActive"`
-		IsDeleted    sql.NullBool `db:"is_deleted" json:"isDeleted"`
+		Name         sql.NullString `db:"name" json:"name"`
+		RoleID       uuid.UUID      `db:"role_id" json:"roleID"`
+		PermissionID uuid.UUID      `db:"permission_id" json:"permissionID"`
+		IsActive     sql.NullBool   `db:"is_active" json:"isActive"`
+		IsDeleted    sql.NullBool   `db:"is_deleted" json:"isDeleted"`
 		kbs.Audit
 	}
 )
@@ -23,7 +24,8 @@ type (
 type (
 	RolePermissionForm struct {
 		Slug         string `json:"slug" schema:"slug"`
-		RoleID       string `json:"resourceID" schema:"resource-id"`
+		Name         string `json:"name" schema:"name"`
+		RoleID       string `json:"roleID" schema:"role-id"`
 		PermissionID string `json:"permissionID" schema:"permission-id"`
 	}
 )
@@ -37,7 +39,7 @@ func ToRolePermissionFormList(rolePermissions []RolePermission) (fs []RolePermis
 
 // SetCreateValues sets de ID, slug and audit values.
 func (rolePermission *RolePermission) SetCreateValues() error {
-	pfx := "resourcepermission"
+	pfx := rolePermission.Name.String
 	rolePermission.Identification.SetCreateValues(pfx)
 	rolePermission.Audit.SetCreateValues()
 	return nil
@@ -52,6 +54,7 @@ func (rolePermission *RolePermission) SetUpdateValues() error {
 // Match condition for
 func (rolePermission *RolePermission) Match(tc *RolePermission) bool {
 	r := rolePermission.Identification.Match(tc.Identification) &&
+		rolePermission.Name == tc.Name &&
 		rolePermission.RoleID == tc.RoleID &&
 		rolePermission.PermissionID == tc.PermissionID
 	return r
@@ -66,6 +69,7 @@ func (rolePermission *RolePermission) Match(tc *RolePermission) bool {
 // the use of reflection.
 func (rolePermission *RolePermission) ToForm() RolePermissionForm {
 	return RolePermissionForm{
+		Name:         rolePermission.Name.String,
 		RoleID:       rolePermission.RoleID.String(),
 		PermissionID: rolePermission.PermissionID.String(),
 	}
@@ -77,6 +81,7 @@ func (rolePermissionForm *RolePermissionForm) ToModel() RolePermission {
 		Identification: kbs.Identification{
 			Slug: db.ToNullString(rolePermissionForm.Slug),
 		},
+		Name:         db.ToNullString(rolePermissionForm.Name),
 		RoleID:       kbs.ToUUID(rolePermissionForm.RoleID),
 		PermissionID: kbs.ToUUID(rolePermissionForm.PermissionID),
 	}
