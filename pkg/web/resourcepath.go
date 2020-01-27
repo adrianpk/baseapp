@@ -1,6 +1,8 @@
 package web
 
 import (
+	"fmt"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
 )
 
@@ -33,4 +35,15 @@ func ResourcePathInitDelete(res kbs.Identifiable) string {
 // ResourcePathSlug
 func ResourcePathSlug(res kbs.Identifiable) string {
 	return kbs.ResPathSlug(ResourceRoot, res)
+}
+
+// Custom
+
+// ResourcePathPermissions
+func ResourcePathPermissions(res kbs.Identifiable) string {
+	return fmt.Sprintf("%s/permissions", kbs.ResPathSlug(ResourceRoot, res))
+}
+
+func ResourcePathPermission(res kbs.Identifiable, subRes kbs.Identifiable) string {
+	return fmt.Sprintf("%s/permissions/%s", kbs.ResPathSlug(ResourceRoot, res), subRes.GetSlug())
 }

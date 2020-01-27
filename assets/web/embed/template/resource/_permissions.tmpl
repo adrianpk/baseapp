@@ -1,4 +1,4 @@
-{{define "permissions"}} {{$csrf := .CSRF}} {{$role := index .Data "role"}} {{$notApplied := index .Data "not-applied"}} {{$applied := index .Data "applied"}}
+{{define "permissions"}} {{$csrf := .CSRF}} {{$resource := index .Data "resource"}} {{$notApplied := index .Data "not-applied"}} {{$applied := index .Data "applied"}}
 
 <div class="w-2/3 mx-auto">
   <div class="flex flex-row bg-white shadow-md rounded my-6">
@@ -15,9 +15,9 @@
       <tbody>
         <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
           <td class="py-4 px-6 border-b border-grey-light">
-            <form class="inline" accept-charset="UTF-8" action="{{$role | rolePathPermissions}}" method="POST">
+            <form class="inline" accept-charset="UTF-8" action="{{$resource | resourcePathPermissions}}" method="POST">
               {{$csrf.csrfField}}
-              <button class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-3 border border-blue-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">Add '{{$r.Name}}' role ></button>
+              <button class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-3 border border-blue-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">Add '{{$r.Name}}' resource ></button>
             </form>
           </td>
         </tr>
@@ -37,10 +37,10 @@
       <tbody>
         <tr id="{{$r.Slug}}" class="hover:bg-grey-lighter">
           <td class="py-4 px-6 border-b border-grey-light">
-            <form class="inline" accept-charset="UTF-8" action="{{rolePathPermission $role $r}}" method="POST">
+            <form class="inline" accept-charset="UTF-8" action="{{resourcePathPermission $resource $r}}" method="POST">
               <input name="_method" type="hidden" value="DELETE">
               {{$csrf.csrfField}}
-              <button class="text-sm bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-3 border border-red-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">< Remove '{{$r.Name}}' role</button>
+              <button class="text-sm bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-3 border border-red-500 hover:border-transparent rounded inline" id="slug" name="slug" type="submit" value="{{$r.Slug}}">< Remove '{{$r.Name}}' resource</button>
             </form>
           </td>
         </tr>

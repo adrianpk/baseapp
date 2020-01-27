@@ -270,6 +270,121 @@ func (ep *Endpoint) DeleteResource(w http.ResponseWriter, r *http.Request) {
 	ep.RedirectWithFlash(w, r, ResourcePath(), m, kbs.InfoMT)
 }
 
+// IndexResourcePermissions web endpoint.
+func (ep *Endpoint) IndexResourcePermissions(w http.ResponseWriter, r *http.Request) {
+	s, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get resource.
+	resource, err := ep.Service.GetResource(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get all available permissions from repo.
+	notApplied, err := ep.Service.GetNotResourcePermissions(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Use registerd service to get all resource associated permissions from repo.
+	applied, err := ep.Service.GetResourcePermissions(s)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+
+	// Group both lists into a map
+	l := map[string]interface{}{
+		"resource":    resource.ToForm(),
+		"not-applied": model.ToPermissionFormList(notApplied),
+		"applied":     model.ToPermissionFormList(applied),
+	}
+
+	// Wrap response
+	wr := ep.WrapRes(w, r, l, nil)
+
+	// Get template to render from cache.
+	ts, err := ep.TemplateFor(resourceRes, PermissionsTmpl)
+	if err != nil {
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
+		return
+	}
+
+	// Execute it and redirect if error.
+	err = ts.Execute(w, wr)
+	if err != nil {
+		ep.ErrorRedirect(w, r, "/", CannotProcErrMsg, err)
+		return
+	}
+}
+
+// AppendResourcePermission web endpoint.
+func (ep *Endpoint) AppendResourcePermission(w http.ResponseWriter, r *http.Request) {
+	resourceSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	resourceForm := model.ResourceForm{Slug: resourceSlug}
+
+	// Decode request data into a form.
+	permissionForm := model.PermissionForm{}
+	err = ep.FormToModel(r, &permissionForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, ResourcePathPermissions(resourceForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append permission.
+	err = ep.Service.AppendResourcePermission(resourceSlug, permissionForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, PermissionAppendedInfoMsg)
+	ep.RedirectWithFlash(w, r, ResourcePathPermissions(resourceForm), m, kbs.InfoMT)
+}
+
+// RemoveResourcePermission web endpoint.
+func (ep *Endpoint) RemoveResourcePermission(w http.ResponseWriter, r *http.Request) {
+	resourceSlug, err := ep.getSlug(r)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), CannotProcErrMsg, err)
+		return
+	}
+
+	resourceForm := model.ResourceForm{Slug: resourceSlug}
+
+	// Decode request data into a form.
+	permissionForm := model.PermissionForm{}
+	err = ep.FormToModel(r, &permissionForm)
+	if err != nil {
+		ep.ErrorRedirect(w, r, ResourcePathPermissions(resourceForm), CannotProcErrMsg, err)
+		return
+	}
+
+	// Use registerd service to append permission.
+	err = ep.Service.RemoveResourcePermission(resourceSlug, permissionForm.Slug)
+	if err != nil {
+		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
+		return
+	}
+	// Localize Ok info message, put it into a flash message
+	// and redirect to index.
+	m := ep.Localize(r, PermissionRemovedInfoMsg)
+
+	ep.RedirectWithFlash(w, r, ResourcePathPermissions(resourceForm), m, kbs.InfoMT)
+}
+
 func (ep *Endpoint) rerenderResourceForm(w http.ResponseWriter, r *http.Request, data interface{}, valErrors kbs.ValErrorSet, template string, action kbs.FormAction) {
 	wr := ep.WrapRes(w, r, data, valErrors)
 	wr.AddErrorFlash(InputValuesErrMsg)
