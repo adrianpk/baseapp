@@ -37,17 +37,20 @@
 
 ### Resource
 
-| Method | Path                          | Handler    |
-|--------|-------------------------------|------------|
-| GET    | /resources                    | Index      |
-| GET    | /resources/new                | New        |
-| POST   | /resources                    | Create     |
-| GET    | /resources/{slug}             | Show       |
-| GET    | /resources/{slug}/edit        | Edit       |
-| PUT    | /resources/{slug}             | Update     |
-| PATCH  | /resources/{slug}             | Update     |
-| POST   | /resources/{slug}/init-delete | InitDelete |
-| DELETE | /resources/{slug}             | Delete     |
+| Method | Path                                    | Handler                  |
+|--------|-----------------------------------------|--------------------------|
+| GET    | /resources                              | Index                    |
+| GET    | /resources/new                          | New                      |
+| POST   | /resources                              | Create                   |
+| GET    | /resources/{slug}                       | Show                     |
+| GET    | /resources/{slug}/edit                  | Edit                     |
+| PUT    | /resources/{slug}                       | Update                   |
+| PATCH  | /resources/{slug}                       | Update                   |
+| POST   | /resources/{slug}/init-delete           | InitDelete               |
+| DELETE | /resources/{slug}                       | Delete                   |
+| GET    | /resources/{slug}/permissions           | IndexResourcePermissions |
+| POST   | /resources/{slug}/permissions           | AppendResourcePermission |
+| DELETE | /resources/{slug}/permissions/{subslug} | RemoveResourcePermission |
 
 
 ### Role

@@ -21,7 +21,7 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 ## **20200124**
 
-- Resources administration web interface.
+- RBAC administration.
 
 [Full changelog](docs/changelog.md)
 

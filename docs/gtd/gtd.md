@@ -2,11 +2,12 @@
 
 ## Inbox
 
-* Implement RBAC resources
-
-  * Resource
-  * Role
-  * Permission
+  * Update authentication middleware
+    * Read user permissions tags from cookie / bearer token.
+    * Compare to those required to access a resource (path)
+    * Allow / deny access.
+    * Implement a cache to avoid rereading resource required permissions from persistence on each request.
+    * Implement a cookie refresh mechanism to update user permissions without having to go through the sigin process.
 
 ## Next
 
