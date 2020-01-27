@@ -540,8 +540,8 @@ func (ar *AuthRepo) DeleteRoleBySlug(slug string, tx ...*sqlx.Tx) error {
 // ResourcePermission --------------------------------------------------------------------------------
 // Create a ResourcePermission
 func (ar *AuthRepo) CreateResourcePermission(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error {
-	st := `INSERT INTO resource_permission (id, slug, resource_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :resource_id, :permission_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+	st := `INSERT INTO resource_permissions (id, slug, name, resource_id, permission_id, is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
+VALUES (:id, :slug, :name, :resource_id, :permission_id, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
 	t, local, err := ar.getTx(tx)
@@ -709,6 +709,43 @@ func (ar *AuthRepo) DeleteResourcePermissionBySlug(slug string, tx ...*sqlx.Tx) 
 
 	if local {
 		return t.Commit()
+	}
+
+	return err
+}
+
+func (ar *AuthRepo) DeleteResourcePermissionsBySlugs(resourceSlug, permissionSlug string, tx ...*sqlx.Tx) error {
+	st := `DELETE from resource_permissions
+					WHERE resource_permissions.id IN (
+						SELECT resource_permissions.id FROM resource_permissions
+           		INNER JOIN resources ON resources.id = resource_permissions.resource_id
+          	  INNER JOIN permissions ON permissions.id = resource_permissions.permission_id
+           	WHERE resources.slug = '%s'
+					 		AND permissions.slug = '%s'
+             	AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
+             	AND (resources.is_active IS NULL OR resources.is_active)
+             	AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+             	AND (permissions.is_active IS NULL OR permissions.is_active)
+             	AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
+             	AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
+					);`
+
+	st = fmt.Sprintf(st, resourceSlug, permissionSlug)
+
+	t, local, err := ar.getTx(tx)
+	if err != nil {
+		ar.Log.Error(err)
+		return err
+	}
+
+	_, err = t.Exec(st)
+	if err != nil {
+		return err
+	}
+
+	if local {
+		err := t.Commit()
+		return err
 	}
 
 	return err
@@ -1233,6 +1270,55 @@ func (ar *AuthRepo) GetNotRolePermissions(roleSlug string) (permissions []model.
 					);`
 
 	st = fmt.Sprintf(st, roleSlug)
+
+	err = ar.DB.Select(&permissions, st)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, err
+}
+
+// GetResourcePermissions
+func (ar *AuthRepo) GetResourcePermissions(resourceSlug string) (permissions []model.Permission, err error) {
+	st := `SELECT permissions.* FROM permissions
+					INNER JOIN resource_permissions ON permissions.id = resource_permissions.permission_id
+					INNER JOIN resources ON resources.id = resource_permissions.resource_id
+					WHERE resources.slug = '%s'
+						AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
+						AND (resources.is_active IS NULL OR resources.is_active)
+						AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+						AND (permissions.is_active IS NULL OR permissions.is_active)
+						AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
+						AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
+					ORDER BY permissions.name ASC;`
+
+	st = fmt.Sprintf(st, resourceSlug)
+
+	err = ar.DB.Select(&permissions, st)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, err
+}
+
+func (ar *AuthRepo) GetNotResourcePermissions(resourceSlug string) (permissions []model.Permission, err error) {
+	st := `SELECT permissions.* FROM permissions
+					WHERE permissions.id NOT IN (
+						SELECT permissions.id FROM permissions
+							INNER JOIN resource_permissions ON permissions.id = resource_permissions.permission_id
+							INNER JOIN resources ON resources.id = resource_permissions.resource_id
+						WHERE resources.slug = '%s'
+							AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
+							AND (resources.is_active IS NULL OR resources.is_active)
+							AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+							AND (permissions.is_active IS NULL OR permissions.is_active)
+							AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
+							AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
+					);`
+
+	st = fmt.Sprintf(st, resourceSlug)
 
 	err = ar.DB.Select(&permissions, st)
 	if err != nil {

@@ -47,6 +47,7 @@ type (
 		UpdateResourcePermission(resourcePermission *model.ResourcePermission, tx ...*sqlx.Tx) error
 		DeleteResourcePermission(id uuid.UUID, tx ...*sqlx.Tx) error
 		DeleteResourcePermissionBySlug(slug string, tx ...*sqlx.Tx) error
+		DeleteResourcePermissionsBySlugs(resourceSlug, permissionSlug string, tx ...*sqlx.Tx) error
 		// RolePermission
 		CreateRolePermission(u *model.RolePermission, tx ...*sqlx.Tx) error
 		GetAllRolePermissions() (rolePermissions []model.RolePermission, err error)
@@ -74,5 +75,7 @@ type (
 		GetNotAccountRoles(slug string) (roles []model.Role, err error)
 		GetRolePermissions(slug string) (permissions []model.Permission, err error)
 		GetNotRolePermissions(slug string) (permissions []model.Permission, err error)
+		GetResourcePermissions(slug string) (permissions []model.Permission, err error)
+		GetNotResourcePermissions(slug string) (permissions []model.Permission, err error)
 	}
 )

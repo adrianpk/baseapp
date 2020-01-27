@@ -64,4 +64,9 @@ func (s *Seeder) addSteps() {
 	st = &step{}
 	st.Config(st.CreateRolePermissions)
 	s.AddSeed(st)
+
+	// Create resource-permissions
+	st = &step{}
+	st.Config(st.CreateResourcePermissions)
+	s.AddSeed(st)
 }

@@ -1,7 +1,7 @@
 <!-- Head -->
 {{define "head"}}
-{{$res := "role-permissions" | .Loc.Localize}}
-{{$entity := index .Data "role"}}
+{{$res := "resource-permissions" | .Loc.Localize}}
+{{$entity := index .Data "resource"}}
 {{$title := concat (toTitle $entity.Name) $res}}
 {{$title}}
 {{end}}
@@ -15,8 +15,8 @@
 <!-- Contextual bar -->
 
 <!-- Header -->
-{{$res := "role-permissions" | .Loc.Localize}}
-{{$entity := index .Data "role"}}
+{{$res := "resource-permissions" | .Loc.Localize}}
+{{$entity := index .Data "resource"}}
 {{$title := concat (toTitle $entity.Name) $res}}
 {{template "header" $title}}
 <!-- Header -->

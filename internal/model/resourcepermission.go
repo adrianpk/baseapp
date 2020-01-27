@@ -12,10 +12,11 @@ type (
 	// ResourcePermission model
 	ResourcePermission struct {
 		kbs.Identification
-		ResourceID   uuid.UUID    `db:"resource_id" json:"resourceID"`
-		PermissionID uuid.UUID    `db:"permission_id" json:"permissionID"`
-		IsActive     sql.NullBool `db:"is_active" json:"isActive"`
-		IsDeleted    sql.NullBool `db:"is_deleted" json:"isDeleted"`
+		Name         sql.NullString `db:"name" json:"name"`
+		ResourceID   uuid.UUID      `db:"resource_id" json:"resourceID"`
+		PermissionID uuid.UUID      `db:"permission_id" json:"permissionID"`
+		IsActive     sql.NullBool   `db:"is_active" json:"isActive"`
+		IsDeleted    sql.NullBool   `db:"is_deleted" json:"isDeleted"`
 		kbs.Audit
 	}
 )
@@ -23,6 +24,7 @@ type (
 type (
 	ResourcePermissionForm struct {
 		Slug         string `json:"slug" schema:"slug"`
+		Name         string `json:"name" schema:"name"`
 		ResourceID   string `json:"resourceID" schema:"resource-id"`
 		PermissionID string `json:"permissionID" schema:"permission-id"`
 	}
@@ -52,6 +54,7 @@ func (resourcePermission *ResourcePermission) SetUpdateValues() error {
 // Match condition for
 func (resourcePermission *ResourcePermission) Match(tc *ResourcePermission) bool {
 	r := resourcePermission.Identification.Match(tc.Identification) &&
+		resourcePermission.Name == tc.Name &&
 		resourcePermission.ResourceID == tc.ResourceID &&
 		resourcePermission.PermissionID == tc.PermissionID
 	return r
@@ -66,6 +69,7 @@ func (resourcePermission *ResourcePermission) Match(tc *ResourcePermission) bool
 // the use of reflection.
 func (resourcePermission *ResourcePermission) ToForm() ResourcePermissionForm {
 	return ResourcePermissionForm{
+		Name:         resourcePermission.Name.String,
 		ResourceID:   resourcePermission.ResourceID.String(),
 		PermissionID: resourcePermission.PermissionID.String(),
 	}
@@ -77,6 +81,7 @@ func (resourcePermissionForm *ResourcePermissionForm) ToModel() ResourcePermissi
 		Identification: kbs.Identification{
 			Slug: db.ToNullString(resourcePermissionForm.Slug),
 		},
+		Name:         db.ToNullString(resourcePermissionForm.Name),
 		ResourceID:   kbs.ToUUID(resourcePermissionForm.ResourceID),
 		PermissionID: kbs.ToUUID(resourcePermissionForm.PermissionID),
 	}

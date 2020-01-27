@@ -1,7 +1,10 @@
 package svc
 
 import (
+	"fmt"
+
 	kbs "gitlab.com/kabestan/backend/kabestan"
+	"gitlab.com/kabestan/backend/kabestan/db"
 	"gitlab.com/kabestan/repo/baseapp/internal/model"
 )
 
@@ -143,5 +146,87 @@ func (s *Service) DeleteResource(slug string) error {
 	}
 
 	// Output
+	return nil
+}
+
+// Custom
+
+// GetResourcePermissions
+func (s *Service) GetResourcePermissions(resourceSlug string) (permissions []model.Permission, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return permissions, err
+	}
+
+	permissions, err = repo.GetResourcePermissions(resourceSlug)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+// GetNotResourcePermissions
+func (s *Service) GetNotResourcePermissions(resourceSlug string) (permissions []model.Permission, err error) {
+	repo := s.AuthRepo
+	if err != nil {
+		return permissions, err
+	}
+
+	permissions, err = repo.GetNotResourcePermissions(resourceSlug)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+// AppendResourcePermission
+func (s *Service) AppendResourcePermission(resourceSlug, permissionSlug string) (err error) {
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	resource, err := authRepo.GetResourceBySlug(resourceSlug)
+	if err != nil {
+		return err
+	}
+
+	permission, err := authRepo.GetPermissionBySlug(permissionSlug)
+	if err != nil {
+		return err
+	}
+
+	// FIX: work in progress; quick and dirty ResourcePermission generation.
+	// Move to a model struct method.
+	name := fmt.Sprintf("%s-%s", resource.Name.String, permission.Name.String)
+
+	resourcePermission := model.ResourcePermission{
+		Name:         db.ToNullString(name),
+		ResourceID:   resource.ID,
+		PermissionID: permission.ID,
+	}
+
+	err = authRepo.CreateResourcePermission(&resourcePermission)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AppendResourcePermission
+func (s *Service) RemoveResourcePermission(resourceSlug, permissionSlug string) (err error) {
+	authRepo := s.AuthRepo
+	if err != nil {
+		return err
+	}
+
+	err = authRepo.DeleteResourcePermissionsBySlugs(resourceSlug, permissionSlug)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

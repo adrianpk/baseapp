@@ -153,3 +153,21 @@ func (ar *AuthRepo) DeleteResourcePermissionBySlug(slug string, tx ...*sqlx.Tx) 
 	}
 	return errors.New("no records deleted")
 }
+
+// Custom
+
+func (ar *AuthRepo) GetResourcePermissions(slug string) (permissions []model.Permission, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) GetNotResourcePermissions(slug string) (permissions []model.Permission, err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) AppendResourcePermission(resourceSlug, permissionSlug string) (err error) {
+	panic("not implemented")
+}
+
+func (ar *AuthRepo) RemoveResourcePermission(resourceSlug, permissionSlug string) (err error) {
+	panic("not implemented")
+}
