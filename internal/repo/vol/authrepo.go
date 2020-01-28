@@ -19,3 +19,7 @@ func NewAuthRepo(cfg *kbs.Config, log kbs.Logger, name string) *AuthRepo {
 		Name: name,
 	}
 }
+
+func (ar *AuthRepo) GetResourcePermissionTagsByPath(path string) (tags []string, err error) {
+	panic("not implemented")
+}

@@ -10,6 +10,7 @@
     * Implement a cookie refresh mechanism to update user permissions without having to go through the sigin process.
 
   * Update SQL queries so all of them takes care of `is_active` and `is_deleted` columns.
+  * Update SQL queries so all of them takes care of `tenant_id` column.
 
 ## Next
 

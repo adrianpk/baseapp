@@ -7,10 +7,12 @@
 - Geolocation
   - Used mainly to detect suspicious logins from unusual locations.
 
-### Profile
+## Long names on receiver method names
+  * I would like to avoid them but in this case I prefer to avoid ambiguity or have to rename them with longer names later to avoid collisions. If a better approach becomes apparent we will change the strategy later.
 
-- Geolocation
-  - Used to set the physical address of the account associated with the profile.
+    * i.e.: GetResourcePermissionTagsByPath
+
+
 
 ### SQL
 

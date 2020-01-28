@@ -271,7 +271,7 @@ func (ur *UserRepo) ConfirmUser(slug, token string, tx ...*sqlx.Tx) (err error) 
 func (ur *UserRepo) SignIn(username, password string) (*model.Auth, error) {
 	u := model.Auth{}
 
-	st := `SELECT users.*, array_to_string(array_agg(DISTINCT permissions.tag), ', ') as permission_tags FROM users
+	st := `SELECT users.*, array_to_string(array_agg(DISTINCT permissions.tag), ',') as permission_tags FROM users
 	INNER JOIN accounts ON accounts.owner_id = users.id
 	INNER JOIN account_roles ON account_roles.account_id = accounts.id
 	INNER JOIN roles ON roles.id = account_roles.role_id
