@@ -9,6 +9,8 @@
     * Implement a cache to avoid rereading resource required permissions from persistence on each request.
     * Implement a cookie refresh mechanism to update user permissions without having to go through the sigin process.
 
+  * Update SQL queries so all of them takes care of `is_active` and `is_deleted` columns.
+
 ## Next
 
 * Implement an authentication middleware

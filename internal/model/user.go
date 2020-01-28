@@ -29,6 +29,13 @@ type (
 		IsDeleted         sql.NullBool   `db:"is_deleted" json:"-" schema:"-"`
 		kbs.Audit
 	}
+
+	// NOTE: WIP, Initially to avoid polluting the User model.
+	// We will see later if this stays here.
+	Auth struct {
+		User
+		PermissionTags sql.NullString `db:"permission_tags" json:"-" schema:"-"`
+	}
 )
 
 type (

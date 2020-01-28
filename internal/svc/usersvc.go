@@ -264,7 +264,7 @@ func (s *Service) ConfirmUser(slug, token string) error {
 	return nil
 }
 
-func (s *Service) SignInUser(username, password string) (user model.User, err error) {
+func (s *Service) SignInUser(username, password string) (user *model.Auth, err error) {
 	repo := s.UserRepo
 	if repo == nil {
 		return user, NoRepoErr

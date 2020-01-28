@@ -21,7 +21,10 @@
 "account-roles": "Account Roles",
 
 "role-permission": "Role Permission",
-"role-permissions": "Role Permission",
+"role-permissions": "Role Permissions",
+
+"role-permission": "Resource Permission",
+"resource-permissions": "Resource Permissions",
 
 "index": "Index",
 "new": "New",
