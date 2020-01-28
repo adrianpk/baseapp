@@ -401,9 +401,9 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 
 	// Register user data in secure session cookie.
 	userData := map[string]string{
-		"slug":     user.Slug.String,
-		"username": user.Username.String,
-		//"role":     user.Role.String,
+		"slug":        user.Slug.String,
+		"username":    user.Username.String,
+		"permissions": user.PermissionTags.String,
 	}
 	ep.SignIn(w, r, userData)
 	ep.Log.Debug("User signed in", "user", user.Username.String)

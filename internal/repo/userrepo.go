@@ -19,6 +19,6 @@ type (
 		DeleteByUsername(username string, tx ...*sqlx.Tx) error
 		GetBySlugAndToken(slug, token string) (model.User, error)
 		ConfirmUser(slug, token string, tx ...*sqlx.Tx) (err error)
-		SignIn(username, password string) (model.User, error)
+		SignIn(username, password string) (*model.Auth, error)
 	}
 )

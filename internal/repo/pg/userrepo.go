@@ -268,22 +268,45 @@ func (ur *UserRepo) ConfirmUser(slug, token string, tx ...*sqlx.Tx) (err error) 
 }
 
 // SignIn user
-func (ur *UserRepo) SignIn(username, password string) (model.User, error) {
-	var u model.User
+func (ur *UserRepo) SignIn(username, password string) (*model.Auth, error) {
+	u := model.Auth{}
 
-	st := `SELECT * FROM users WHERE username = '%s' OR email = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT users.*, array_to_string(array_agg(DISTINCT permissions.tag), ', ') as permission_tags FROM users
+	INNER JOIN accounts ON accounts.owner_id = users.id
+	INNER JOIN account_roles ON account_roles.account_id = accounts.id
+	INNER JOIN roles ON roles.id = account_roles.role_id
+	INNER JOIN role_permissions ON role_permissions.role_id = roles.id
+	INNER JOIN permissions ON permissions.id = role_permissions.permission_id
+	WHERE users.username = 'superadmin' OR users.email = 'superadmin'
+	AND (users.is_deleted IS NULL OR NOT users.is_deleted)
+	AND (accounts.is_deleted IS NULL OR NOT accounts.is_deleted)
+	AND (account_roles.is_deleted IS NULL OR NOT account_roles.is_deleted)
+	AND (roles.is_deleted IS NULL OR NOT roles.is_deleted)
+	AND (role_permissions.is_deleted IS NULL OR NOT role_permissions.is_deleted)
+	AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+	AND (users.is_active IS NULL OR users.is_active)
+	AND (accounts.is_active IS NULL OR accounts.is_active)
+	AND (account_roles.is_active IS NULL OR account_roles.is_active)
+	AND (roles.is_active IS NULL OR roles.is_active)
+	AND (role_permissions.is_active IS NULL OR role_permissions.is_active)
+	AND (permissions.is_active IS NULL OR permissions.is_active)
+	AND users.username = '%s' or users.email = '%s'
+	GROUP BY users.ID;`
 
 	st = fmt.Sprintf(st, username, username)
+
+	//ur.Log.Info(st)
 
 	err := ur.DB.Get(&u, st)
 
 	// Validate password
 	err = bcrypt.CompareHashAndPassword([]byte(u.PasswordDigest.String), []byte(password))
 	if err != nil {
-		return u, err
+		ur.Log.Error(err)
+		return &u, err
 	}
 
-	return u, nil
+	return &u, nil
 }
 
 func (ur *UserRepo) newTx() (tx *sqlx.Tx, err error) {
