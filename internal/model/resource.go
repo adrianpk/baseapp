@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"path/filepath"
 	"strings"
 
 	kbs "gitlab.com/kabestan/backend/kabestan"
@@ -84,6 +85,7 @@ func (resource *Resource) ToForm() ResourceForm {
 // ToModel lets covert a form type to its associated model.
 func (resourceForm *ResourceForm) ToModel() Resource {
 	tag := strings.ToUpper(resourceForm.Tag)
+	path := filepath.Clean(resourceForm.Path)
 
 	return Resource{
 		Identification: kbs.Identification{
@@ -92,7 +94,7 @@ func (resourceForm *ResourceForm) ToModel() Resource {
 		Name:        db.ToNullString(resourceForm.Name),
 		Description: db.ToNullString(resourceForm.Description),
 		Tag:         db.ToNullString(tag),
-		Path:        db.ToNullString(resourceForm.Path),
+		Path:        db.ToNullString(path),
 	}
 }
 
