@@ -5,7 +5,10 @@ import (
 
 	"errors"
 	"net/http"
+	"path/filepath"
+	"strings"
 
+	"github.com/davecgh/go-spew/spew"
 	kbs "gitlab.com/kabestan/backend/kabestan"
 	"gitlab.com/kabestan/repo/baseapp/internal/svc"
 )
@@ -80,11 +83,69 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 			return
 		}
 
+		// NOTE: WIP, This is a non-optimized implementation
+		// of logic that allows you to allow/restrict access
+		// resourcers. A more stright access to persistence
+		// can be implemented if required.
+		// A cache layer can also be helpful.
+		username, ok0 := s["username"]
+		slug, ok1 := s["slug"]
+
+		// If superadmin don't ask for other permissions
+		if ok0 && ok1 &&
+			username == "superadmin" &&
+			slug == "superadmin-000000000002" {
+
+			w.Header().Add("Cache-Control", "no-store")
+
+			ep.Log.Debug("User superadm authenticated")
+
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		userTags, ok := s["permissions"]
+		if !ok {
+			ep.Log.Debug("User not authenticated")
+			http.Redirect(w, r, AuthPathSignIn(), 302)
+			return
+		}
+
+		// Get user permissions
+		ep.Log.Info("User permission", "tags", spew.Sdump(userTags))
+
+		// Get request path (resource)
+		path := filepath.Clean(r.URL.Path)
+		ep.Log.Info("Request", "path", path)
+
+		// Get required permissions to access this path (resource)
+		reqTags, err := ep.Service.ResourcePermissionTagsByPath(path)
+		if err != nil {
+			ep.Log.Debug("User not authorized")
+			ep.Log.Error(err, "Cannot get required resource permission tags")
+			http.Redirect(w, r, AuthPathSignIn(), 302)
+			return
+		}
+
+		ep.Log.Info("Resource", "required-permission-tags", spew.Sdump(reqTags))
+
+		// Verify that user has all the required permissions
+		for _, t := range reqTags {
+			if !strings.Contains(userTags, t) {
+				ep.Log.Info("User not authorized", "required-not-found", t)
+				ep.Log.Error(err, "Cannot get required resource permission tags")
+				http.Redirect(w, r, AuthPathSignIn(), 302)
+				return
+			}
+		}
+
+		// User is authorized
 		w.Header().Add("Cache-Control", "no-store")
 
 		ep.Log.Debug("User authenticated", "slug", s)
 
 		next.ServeHTTP(w, r)
+
 	}
 
 	return http.HandlerFunc(fn)

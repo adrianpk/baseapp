@@ -77,5 +77,6 @@ type (
 		GetNotRolePermissions(slug string) (permissions []model.Permission, err error)
 		GetResourcePermissions(slug string) (permissions []model.Permission, err error)
 		GetNotResourcePermissions(slug string) (permissions []model.Permission, err error)
+		GetResourcePermissionTagsByPath(path string) (tags []string, err error)
 	}
 )

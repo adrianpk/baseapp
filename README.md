@@ -19,7 +19,11 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 ## Changelog
 
-## **20200124**
+## **20200128**
+
+- Authorization middleware.
+
+## **20200127**
 
 - RBAC administration.
 

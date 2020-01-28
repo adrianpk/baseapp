@@ -1328,6 +1328,42 @@ func (ar *AuthRepo) GetNotResourcePermissions(resourceSlug string) (permissions 
 	return permissions, err
 }
 
+func (ar *AuthRepo) GetResourcePermissionTagsByPath(path string) (tags []string, err error) {
+	var tagsStr string
+
+	// NOTE: Again, array_agg returns an array, which is what I prefer but then sqlx (I think) doesn't allow
+	// to scan the value stright to an array of strings. For now I do the conversion in Go in the repo itself.
+	st := `SELECT array_to_string(array_agg(DISTINCT permissions.tag), ',') as permission_tags FROM permissions
+	INNER JOIN resource_permissions ON permissions.id = resource_permissions.permission_id
+	INNER JOIN resources ON resources.id = resource_permissions.resource_id
+	WHERE resources.path = '%s'
+	AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+	AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
+	AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
+	AND (permissions.is_active IS NULL OR permissions.is_active)
+	AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
+	AND (resources.is_active IS NULL OR resources.is_active)
+	GROUP BY permissions.ID;`
+
+	st = fmt.Sprintf(st, path)
+
+	//ar.Log.Info(st)
+
+	err = ar.DB.Get(&tagsStr, st)
+	if err != nil {
+		return tags, err
+	}
+
+	// Here the conversion
+	tags = []string{}
+	spl := strings.Split(tagsStr, ",")
+	for _, tag := range spl {
+		tags = append(tags, tag)
+	}
+
+	return tags, nil
+}
+
 // Misc --------------------------------------------------------------------------------
 func (ar *AuthRepo) getTx(txs []*sqlx.Tx) (tx *sqlx.Tx, local bool, err error) {
 	// Create a new transaction if its no passed as argument.
