@@ -98,7 +98,7 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 
 			w.Header().Add("Cache-Control", "no-store")
 
-			ep.Log.Debug("User superadm authenticated")
+			ep.Log.Debug("User superadmin authenticated")
 
 			next.ServeHTTP(w, r)
 			return
