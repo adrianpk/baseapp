@@ -16,7 +16,8 @@ import (
 type (
 	Endpoint struct {
 		*kbs.WebEndpoint
-		Service *svc.Service
+		service   *svc.Service
+		authCache AuthCache
 	}
 )
 
@@ -62,6 +63,7 @@ func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error
 
 	return &Endpoint{
 		WebEndpoint: wep,
+		authCache:   NewCache(),
 	}, nil
 }
 
@@ -70,6 +72,15 @@ func registerGobTypes() {
 	// gob.Register(CustomType1{})
 	// gob.Register(CustomType2{})
 	// gob.Register(CustomType3{})
+}
+
+func (ep *Endpoint) Service() *svc.Service {
+	return ep.service
+}
+
+func (ep *Endpoint) SetService(s *svc.Service) {
+	ep.service = s
+	ep.authCache.SetService(s)
 }
 
 // Middlewares
@@ -119,7 +130,7 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 		ep.Log.Info("Request", "path", path)
 
 		// Get required permissions to access this path (resource)
-		reqTags, err := ep.Service.ResourcePermissionTagsByPath(path)
+		reqTags, err := ep.authCache.PathPermissionTags(path)
 		if err != nil {
 			ep.Log.Debug("User not authorized")
 			ep.Log.Error(err, "Cannot get required resource permission tags")

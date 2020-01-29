@@ -84,7 +84,7 @@ func main() {
 	// App dependencies
 	a.Migrator = mg
 	a.Seeder = sd
-	a.WebEP.Service = svc
+	a.WebEP.SetService(svc)
 
 	// Init service
 	a.Init()

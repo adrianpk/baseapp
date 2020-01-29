@@ -27,7 +27,7 @@ const (
 // IndexRoles web endpoint.
 func (ep *Endpoint) IndexRoles(w http.ResponseWriter, r *http.Request) {
 	// Get roles list from registered service
-	roles, err := ep.Service.IndexRoles()
+	roles, err := ep.Service().IndexRoles()
 	if err != nil {
 		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
@@ -92,7 +92,7 @@ func (ep *Endpoint) CreateRole(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to role creation.
-	ves, err := ep.Service.CreateRole(&role)
+	ves, err := ep.Service().CreateRole(&role)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -124,7 +124,7 @@ func (ep *Endpoint) ShowRole(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to role creation.
-	role, err := ep.Service.GetRole(s)
+	role, err := ep.Service().GetRole(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, RolePath(), GetErrMsg, err)
 		return
@@ -157,7 +157,7 @@ func (ep *Endpoint) EditRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the role from repo.
-	role, err := ep.Service.GetRole(s)
+	role, err := ep.Service().GetRole(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, RolePath(), GetErrMsg, err)
 		return
@@ -204,7 +204,7 @@ func (ep *Endpoint) UpdateRole(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to role update.
-	ves, err := ep.Service.UpdateRole(s, &role)
+	ves, err := ep.Service().UpdateRole(s, &role)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -232,7 +232,7 @@ func (ep *Endpoint) InitDeleteRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the role from repo.
-	role, err := ep.Service.GetRole(s)
+	role, err := ep.Service().GetRole(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, RolePath(), GetErrMsg, err)
 		return
@@ -267,7 +267,7 @@ func (ep *Endpoint) DeleteRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service
-	err = ep.Service.DeleteRole(s)
+	err = ep.Service().DeleteRole(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, RolePath(), GetErrMsg, err)
 		return
@@ -286,21 +286,21 @@ func (ep *Endpoint) IndexRolePermissions(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Use registerd service to get role.
-	role, err := ep.Service.GetRole(s)
+	role, err := ep.Service().GetRole(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all available permissions from repo.
-	notApplied, err := ep.Service.GetNotRolePermissions(s)
+	notApplied, err := ep.Service().GetNotRolePermissions(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all role associated permissions from repo.
-	applied, err := ep.Service.GetRolePermissions(s)
+	applied, err := ep.Service().GetRolePermissions(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -350,7 +350,7 @@ func (ep *Endpoint) AppendRolePermission(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Use registerd service to append permission.
-	err = ep.Service.AppendRolePermission(roleSlug, permissionForm.Slug)
+	err = ep.Service().AppendRolePermission(roleSlug, permissionForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -380,7 +380,7 @@ func (ep *Endpoint) RemoveRolePermission(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Use registerd service to append permission.
-	err = ep.Service.RemoveRolePermission(roleSlug, permissionForm.Slug)
+	err = ep.Service().RemoveRolePermission(roleSlug, permissionForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return

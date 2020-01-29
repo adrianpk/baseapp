@@ -20,7 +20,7 @@ const (
 // IndexPermissions web endpoint.
 func (ep *Endpoint) IndexPermissions(w http.ResponseWriter, r *http.Request) {
 	// Get permissions list from registered service
-	permissions, err := ep.Service.IndexPermissions()
+	permissions, err := ep.Service().IndexPermissions()
 	if err != nil {
 		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
@@ -85,7 +85,7 @@ func (ep *Endpoint) CreatePermission(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to permission creation.
-	ves, err := ep.Service.CreatePermission(&permission)
+	ves, err := ep.Service().CreatePermission(&permission)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -117,7 +117,7 @@ func (ep *Endpoint) ShowPermission(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to permission creation.
-	permission, err := ep.Service.GetPermission(s)
+	permission, err := ep.Service().GetPermission(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, PermissionPath(), GetErrMsg, err)
 		return
@@ -150,7 +150,7 @@ func (ep *Endpoint) EditPermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the permission from repo.
-	permission, err := ep.Service.GetPermission(s)
+	permission, err := ep.Service().GetPermission(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, PermissionPath(), GetErrMsg, err)
 		return
@@ -197,7 +197,7 @@ func (ep *Endpoint) UpdatePermission(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to permission update.
-	ves, err := ep.Service.UpdatePermission(s, &permission)
+	ves, err := ep.Service().UpdatePermission(s, &permission)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -225,7 +225,7 @@ func (ep *Endpoint) InitDeletePermission(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Use registerd service to get the permission from repo.
-	permission, err := ep.Service.GetPermission(s)
+	permission, err := ep.Service().GetPermission(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, PermissionPath(), GetErrMsg, err)
 		return
@@ -260,7 +260,7 @@ func (ep *Endpoint) DeletePermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service
-	err = ep.Service.DeletePermission(s)
+	err = ep.Service().DeletePermission(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, PermissionPath(), GetErrMsg, err)
 		return
