@@ -32,21 +32,21 @@ func (ep *Endpoint) IndexAccountRoles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get account.
-	account, err := ep.Service.GetAccount(s)
+	account, err := ep.Service().GetAccount(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all available roles from repo.
-	notApplied, err := ep.Service.GetNotAccountRoles(s)
+	notApplied, err := ep.Service().GetNotAccountRoles(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all account associated roles from repo.
-	applied, err := ep.Service.GetAccountRoles(s)
+	applied, err := ep.Service().GetAccountRoles(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -96,7 +96,7 @@ func (ep *Endpoint) AppendAccountRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to append role.
-	err = ep.Service.AppendAccountRole(accountSlug, roleForm.Slug)
+	err = ep.Service().AppendAccountRole(accountSlug, roleForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -126,7 +126,7 @@ func (ep *Endpoint) RemoveAccountRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to append role.
-	err = ep.Service.RemoveAccountRole(accountSlug, roleForm.Slug)
+	err = ep.Service().RemoveAccountRole(accountSlug, roleForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return

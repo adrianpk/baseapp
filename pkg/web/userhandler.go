@@ -33,7 +33,7 @@ const (
 // IndexUsers web endpoint.
 func (ep *Endpoint) IndexUsers(w http.ResponseWriter, r *http.Request) {
 	// Get users list from registered service
-	users, err := ep.Service.IndexUsers()
+	users, err := ep.Service().IndexUsers()
 	if err != nil {
 		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
@@ -98,7 +98,7 @@ func (ep *Endpoint) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to user creation.
-	ves, err := ep.Service.CreateUser(&user)
+	ves, err := ep.Service().CreateUser(&user)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -130,7 +130,7 @@ func (ep *Endpoint) ShowUser(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to user creation.
-	user, err := ep.Service.GetUser(s)
+	user, err := ep.Service().GetUser(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -163,7 +163,7 @@ func (ep *Endpoint) EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the user from repo.
-	user, err := ep.Service.GetUser(s)
+	user, err := ep.Service().GetUser(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -210,7 +210,7 @@ func (ep *Endpoint) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to user update.
-	ves, err := ep.Service.UpdateUser(s, &user)
+	ves, err := ep.Service().UpdateUser(s, &user)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -238,7 +238,7 @@ func (ep *Endpoint) InitDeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the user from repo.
-	user, err := ep.Service.GetUser(s)
+	user, err := ep.Service().GetUser(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -273,7 +273,7 @@ func (ep *Endpoint) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service
-	err = ep.Service.DeleteUser(s)
+	err = ep.Service().DeleteUser(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -324,7 +324,7 @@ func (ep *Endpoint) SignUpUser(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to user creation.
-	ves, err := ep.Service.SignUpUser(&user)
+	ves, err := ep.Service().SignUpUser(&user)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -382,8 +382,8 @@ func (ep *Endpoint) SignInUser(w http.ResponseWriter, r *http.Request) {
 	// ip := db.ToNullString("0.0.0.0/24")
 	// TODO: Provide IP to the service in order to register last IP
 	// Can be used to detect spurious logins.
-	// user, err := ep.Service.SignInUser(userForm.Username, userForm.Password, ip)
-	user, err := ep.Service.SignInUser(userForm.Username, userForm.Password)
+	// user, err := ep.Service().SignInUser(userForm.Username, userForm.Password, ip)
+	user, err := ep.Service().SignInUser(userForm.Username, userForm.Password)
 
 	if err != nil {
 		msgID := SignInErrMsg
@@ -441,7 +441,7 @@ func (ep *Endpoint) ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service
-	err = ep.Service.ConfirmUser(s, t)
+	err = ep.Service().ConfirmUser(s, t)
 	if err != nil {
 		msgID := ConfirmErrMsg
 

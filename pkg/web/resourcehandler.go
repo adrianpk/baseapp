@@ -20,7 +20,7 @@ const (
 // IndexResources web endpoint.
 func (ep *Endpoint) IndexResources(w http.ResponseWriter, r *http.Request) {
 	// Get resources list from registered service
-	resources, err := ep.Service.IndexResources()
+	resources, err := ep.Service().IndexResources()
 	if err != nil {
 		ep.ErrorRedirect(w, r, "/", IndexErrMsg, err)
 		return
@@ -85,7 +85,7 @@ func (ep *Endpoint) CreateResource(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to resource creation.
-	ves, err := ep.Service.CreateResource(&resource)
+	ves, err := ep.Service().CreateResource(&resource)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -117,7 +117,7 @@ func (ep *Endpoint) ShowResource(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to resource creation.
-	resource, err := ep.Service.GetResource(s)
+	resource, err := ep.Service().GetResource(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
@@ -150,7 +150,7 @@ func (ep *Endpoint) EditResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the resource from repo.
-	resource, err := ep.Service.GetResource(s)
+	resource, err := ep.Service().GetResource(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
@@ -197,7 +197,7 @@ func (ep *Endpoint) UpdateResource(w http.ResponseWriter, r *http.Request) {
 
 	// Use registered service to do everything related
 	// to resource update.
-	ves, err := ep.Service.UpdateResource(s, &resource)
+	ves, err := ep.Service().UpdateResource(s, &resource)
 
 	// First take care of service validation errors.
 	if !ves.IsEmpty() {
@@ -225,7 +225,7 @@ func (ep *Endpoint) InitDeleteResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use registerd service to get the resource from repo.
-	resource, err := ep.Service.GetResource(s)
+	resource, err := ep.Service().GetResource(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
@@ -260,7 +260,7 @@ func (ep *Endpoint) DeleteResource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service
-	err = ep.Service.DeleteResource(s)
+	err = ep.Service().DeleteResource(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, ResourcePath(), GetErrMsg, err)
 		return
@@ -279,21 +279,21 @@ func (ep *Endpoint) IndexResourcePermissions(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Use registerd service to get resource.
-	resource, err := ep.Service.GetResource(s)
+	resource, err := ep.Service().GetResource(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all available permissions from repo.
-	notApplied, err := ep.Service.GetNotResourcePermissions(s)
+	notApplied, err := ep.Service().GetNotResourcePermissions(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
 	}
 
 	// Use registerd service to get all resource associated permissions from repo.
-	applied, err := ep.Service.GetResourcePermissions(s)
+	applied, err := ep.Service().GetResourcePermissions(s)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -343,7 +343,7 @@ func (ep *Endpoint) AppendResourcePermission(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Use registerd service to append permission.
-	err = ep.Service.AppendResourcePermission(resourceSlug, permissionForm.Slug)
+	err = ep.Service().AppendResourcePermission(resourceSlug, permissionForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
@@ -373,7 +373,7 @@ func (ep *Endpoint) RemoveResourcePermission(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Use registerd service to append permission.
-	err = ep.Service.RemoveResourcePermission(resourceSlug, permissionForm.Slug)
+	err = ep.Service().RemoveResourcePermission(resourceSlug, permissionForm.Slug)
 	if err != nil {
 		ep.ErrorRedirect(w, r, UserPath(), GetErrMsg, err)
 		return
