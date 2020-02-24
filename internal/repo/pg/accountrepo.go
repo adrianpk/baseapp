@@ -32,7 +32,7 @@ func NewAccountRepo(cfg *kbs.Config, log kbs.Logger, name string, db *sqlx.DB) *
 // Create a account
 func (ur *AccountRepo) Create(account *model.Account, tx ...*sqlx.Tx) error {
 	st := `INSERT INTO accounts (id, slug, tenant_id,  owner_id, parent_id, account_type, username, email, given_name, middle_names, family_name, locale, base_tz, current_tz,is_active, is_deleted, created_by_id, updated_by_id, created_at, updated_at)
-VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :username, :email, :given_name, :middle_names, :family_name, :locale, :base_tz, :current_tz, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
+						VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :username, :email, :given_name, :middle_names, :family_name, :locale, :base_tz, :current_tz, :is_active, :is_deleted, :created_by_id, :updated_by_id, :created_at, :updated_at)`
 
 	// Create a local transaction if it is not passed as argument.
 	t, local, err := ur.getTx(tx)
@@ -57,7 +57,8 @@ VALUES (:id, :slug, :tenant_id, :owner_id, :parent_id, :account_type, :username,
 
 // GetAll accounts from
 func (ur *AccountRepo) GetAll() (accounts []model.Account, err error) {
-	st := `SELECT * FROM accounts WHERE is_deleted IS NULL OR NOT is_deleted`
+	st := `SELECT * FROM accounts
+						WHERE is_deleted IS NULL OR NOT is_deleted`
 
 	err = ur.DB.Select(&accounts, st)
 	if err != nil {
@@ -69,7 +70,8 @@ func (ur *AccountRepo) GetAll() (accounts []model.Account, err error) {
 
 // Get account by ID.
 func (ur *AccountRepo) Get(id uuid.UUID) (account model.Account, err error) {
-	st := `SELECT * FROM accounts WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM accounts
+						WHERE id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
 	st = fmt.Sprintf(st, id.String())
 
 	err = ur.DB.Get(&account, st)
@@ -92,7 +94,10 @@ func (ur *AccountRepo) GetBySlug(slug string) (account model.Account, err error)
 
 // GetByOwnerID account from repo by slug.
 func (ur *AccountRepo) GetByOwnerID(id uuid.UUID) (account model.Account, err error) {
-	st := `SELECT * FROM accounts WHERE owner_id = '%s' AND (is_deleted IS NULL OR NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM accounts
+						WHERE owner_id = '%s'
+						AND (is_deleted IS NULL OR NOT is_deleted)
+						LIMIT 1;`
 	st = fmt.Sprintf(st, id)
 
 	err = ur.DB.Get(&account, st)
@@ -104,7 +109,10 @@ func (ur *AccountRepo) GetByOwnerID(id uuid.UUID) (account model.Account, err er
 func (ur *AccountRepo) GetByName(name string) (model.Account, error) {
 	var account model.Account
 
-	st := `SELECT * FROM accounts WHERE name = '%s' AND (is_deleted IS NULL or NOT is_deleted) LIMIT 1;`
+	st := `SELECT * FROM accounts
+						WHERE name = '%s'
+						AND (is_deleted IS NULL or NOT is_deleted)
+						LIMIT 1;`
 	st = fmt.Sprintf(st, name)
 
 	err := ur.DB.Get(&account, st)
@@ -194,7 +202,9 @@ func (ur *AccountRepo) Update(account *model.Account, tx ...*sqlx.Tx) error {
 
 // Delete account from repo by ID.
 func (ur *AccountRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE id = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM accounts
+						WHERE id = '%s'
+						AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, id)
 
 	t, local, err := ur.getTx(tx)
@@ -213,7 +223,9 @@ func (ur *AccountRepo) Delete(id uuid.UUID, tx ...*sqlx.Tx) error {
 
 // DeleteBySlug:w account from repo by slug.
 func (ur *AccountRepo) DeleteBySlug(slug string, tx ...*sqlx.Tx) error {
-	st := `DELETE FROM accounts WHERE slug = '%s' AND (is_deleted IS NULL or NOT is_deleted);`
+	st := `DELETE FROM accounts
+						WHERE slug = '%s'
+						AND (is_deleted IS NULL or NOT is_deleted);`
 	st = fmt.Sprintf(st, slug)
 
 	t, local, err := ur.getTx(tx)
