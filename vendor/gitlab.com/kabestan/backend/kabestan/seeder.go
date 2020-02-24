@@ -47,7 +47,7 @@ type (
 	seedRecord struct {
 		ID        uuid.UUID `db:"id" json:"id"`
 		Name      string    `db:"name" json:"name"`
-		Fx        string    `db:"up_fx" json:"upFx"`
+		Fx        string    `db:"fx" json:"fx"`
 		IsApplied bool      `db:"is_applied" json:"isApplied"`
 		CreatedAt time.Time `db:"created_at" json:"createdAt"`
 	}
@@ -211,8 +211,6 @@ func (s *Seeder) Seed() error {
 	s.PreSetup()
 
 	for _, sd := range s.seeds {
-		fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaa")
-		fmt.Printf("%+v/n/n", *sd)
 		exec := sd.Executor
 		fn := getFxName(exec.GetSeed())
 		name := seedName(fn)
@@ -234,21 +232,20 @@ func (s *Seeder) Seed() error {
 		// Read error
 		err, ok := values[0].Interface().(error)
 		if !ok && err != nil {
-			log.Printf("Seed step not executed: %s\n", fn) // TODO: Remove log
-			log.Printf("Err  %+v' of type %T\n", err, err) // TODO: Remove log.
+			fmt.Printf("Seed step not executed: %s\n", fn) // TODO: Remove log
+			fmt.Printf("Err  %+v' of type %T\n", err, err) // TODO: Remove log.
 			msg := fmt.Sprintf("cannot run seeding '%s': %s", fn, err.Error())
 			tx.Rollback()
 			return errors.New(msg)
 		}
-		fmt.Println("aaaaaaaaaaaaaaaa")
+
 		// Register seed
 		err = s.recSeed(exec)
-		fmt.Println("bbbbbbbbbbbbbbbb")
 
 		err = tx.Commit()
 		if err != nil {
 			msg := fmt.Sprintf("Commit error: %s\n", err.Error())
-			log.Printf("Commit error: %s", msg)
+			fmt.Printf("Commit error: %s\n", msg)
 			tx.Rollback()
 			return errors.New(msg)
 		}
@@ -283,11 +280,9 @@ func (s *Seeder) canApplySeed(name string) bool {
 }
 
 func (s *Seeder) recSeed(e SeedExec) error {
-	log.Println("1:----------------------------")
 	st := fmt.Sprintf(pgRecSeederSt, s.schema, pgSeederTable)
 	fx := getFxName(e.GetSeed())
 	name := seedName(fx)
-	log.Printf("%+s", fx)
 
 	_, err := e.GetTx().NamedExec(st, seedRecord{
 		ID:        uuid.NewV4(),
@@ -298,12 +293,11 @@ func (s *Seeder) recSeed(e SeedExec) error {
 	})
 
 	if err != nil {
-		log.Println("2:----------------------------")
+		fmt.Println(err)
 		msg := fmt.Sprintf("Cannot update seeder table: %s\n", err.Error())
 		return errors.New(msg)
 	}
 
-	log.Println("3:----------------------------")
 	return nil
 }
 

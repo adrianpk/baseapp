@@ -87,6 +87,14 @@ func (i *Identification) genSlug(prefix string) (slug string, err error) {
 	return strings.ToLower(fmt.Sprintf("%s-%s", prefix, l)), nil
 }
 
+// GenTag generates a
+func GenTag() string {
+	s := strings.Split(uuid.NewV4().String(), "-")
+	l := s[len(s)-1]
+
+	return strings.ToUpper(l[4:12])
+}
+
 func (i *Identification) IsNew() bool {
 	return i.ID == uuid.UUID{}
 }

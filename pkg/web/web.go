@@ -87,20 +87,15 @@ func (ep *Endpoint) SetService(s *svc.Service) {
 // ReqAuth require user authentication middleware.
 func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		s, ok := ep.IsAuthenticated(r)
+		ad, ok := ep.IsAuthenticated(r)
 		if !ok {
 			ep.Log.Debug("User not authenticated")
 			http.Redirect(w, r, AuthPathSignIn(), 302)
 			return
 		}
 
-		// NOTE: WIP, This is a non-optimized implementation
-		// of logic that allows you to allow/restrict access
-		// resourcers. A more stright access to persistence
-		// can be implemented if required.
-		// A cache layer can also be helpful.
-		username, ok0 := s["username"]
-		slug, ok1 := s["slug"]
+		username, ok0 := ad["username"]
+		slug, ok1 := ad["slug"]
 
 		// If superadmin don't ask for other permissions
 		if ok0 && ok1 &&
@@ -110,12 +105,11 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 			w.Header().Add("Cache-Control", "no-store")
 
 			ep.Log.Debug("User superadmin authenticated")
-
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		userTags, ok := s["permissions"]
+		userTags, ok := ad["permissions"]
 		if !ok {
 			ep.Log.Debug("User not authenticated")
 			http.Redirect(w, r, AuthPathSignIn(), 302)
@@ -153,7 +147,7 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 		// User is authorized
 		w.Header().Add("Cache-Control", "no-store")
 
-		ep.Log.Debug("User authenticated", "slug", s)
+		ep.Log.Debug("User authenticated", "slug", ad)
 
 		next.ServeHTTP(w, r)
 

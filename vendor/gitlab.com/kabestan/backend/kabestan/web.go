@@ -194,7 +194,27 @@ func registerGobTypes() {
 }
 
 func addBaseTemplateFxs(userFxs template.FuncMap) {
+	userFxs["toTitle"] = ToTitle
+	userFxs["concat"] = Concat
 	userFxs["hasRole"] = HasRole
+}
+
+func ToTitle(str string) string {
+	words := strings.Fields(str)
+	dont := " a an on the to "
+
+	for i, w := range words {
+		if strings.Contains(dont, " "+w+" ") {
+			words[i] = w
+		} else {
+			words[i] = strings.Title(w)
+		}
+	}
+	return strings.Join(words, " ")
+}
+
+func Concat(strs ...string) string {
+	return strings.Trim(strings.Join(strs, " "), " ")
 }
 
 func HasRole(role string, in ...string) bool {

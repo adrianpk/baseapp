@@ -19,6 +19,11 @@ A base webapp based on [kabestan](https://gitlab.com/kabestan/backend/kabestan)
 
 ## Changelog
 
+
+## **20200129**
+
+- Authorization middleware cache.
+
 ## **20200128**
 
 - Authorization middleware.
@@ -177,103 +182,112 @@ $ make clean-and-run
 **You should see something like this**
 
 ```shell
-./scripts/run.sh
-2:29AM INF Cookie store key value=hVuOOv4PNBnqTk2o13JsBMOPcPAe4p18
-2:29AM INF Reading template path=account/_ctxbar.tmpl
-2:29AM INF Reading template path=account/_flash.tmpl
-2:29AM INF Reading template path=account/_header.tmpl
-2:29AM INF Reading template path=account/_roles.tmpl
-2:29AM INF Reading template path=account/roles.tmpl
-2:29AM INF Reading template path=layout/base.tmpl
-2:29AM INF Reading template path=permission/_ctxbar.tmpl
-2:29AM INF Reading template path=permission/_flash.tmpl
-2:29AM INF Reading template path=permission/_form.tmpl
-2:29AM INF Reading template path=permission/_header.tmpl
-2:29AM INF Reading template path=permission/_item.tmpl
-2:29AM INF Reading template path=permission/_list.tmpl
-2:29AM INF Reading template path=permission/edit.tmpl
-2:29AM INF Reading template path=permission/index.tmpl
-2:29AM INF Reading template path=permission/initdel.tmpl
-2:29AM INF Reading template path=permission/new.tmpl
-2:29AM INF Reading template path=permission/show.tmpl
-2:29AM INF Reading template path=resource/_ctxbar.tmpl
-2:29AM INF Reading template path=resource/_flash.tmpl
-2:29AM INF Reading template path=resource/_form.tmpl
-2:29AM INF Reading template path=resource/_header.tmpl
-2:29AM INF Reading template path=resource/_item.tmpl
-2:29AM INF Reading template path=resource/_list.tmpl
-2:29AM INF Reading template path=resource/edit.tmpl
-2:29AM INF Reading template path=resource/index.tmpl
-2:29AM INF Reading template path=resource/initdel.tmpl
-2:29AM INF Reading template path=resource/new.tmpl
-2:29AM INF Reading template path=resource/show.tmpl
-2:29AM INF Reading template path=role/_ctxbar.tmpl
-2:29AM INF Reading template path=role/_flash.tmpl
-2:29AM INF Reading template path=role/_form.tmpl
-2:29AM INF Reading template path=role/_header.tmpl
-2:29AM INF Reading template path=role/_item.tmpl
-2:29AM INF Reading template path=role/_list.tmpl
-2:29AM INF Reading template path=role/edit.tmpl
-2:29AM INF Reading template path=role/index.tmpl
-2:29AM INF Reading template path=role/initdel.tmpl
-2:29AM INF Reading template path=role/new.tmpl
-2:29AM INF Reading template path=role/show.tmpl
-2:29AM INF Reading template path=user/_ctxbar.tmpl
-2:29AM INF Reading template path=user/_flash.tmpl
-2:29AM INF Reading template path=user/_form.tmpl
-2:29AM INF Reading template path=user/_header.tmpl
-2:29AM INF Reading template path=user/_item.tmpl
-2:29AM INF Reading template path=user/_list.tmpl
-2:29AM INF Reading template path=user/_signin.tmpl
-2:29AM INF Reading template path=user/_signup.tmpl
-2:29AM INF Reading template path=user/edit.tmpl
-2:29AM INF Reading template path=user/index.tmpl
-2:29AM INF Reading template path=user/initdel.tmpl
-2:29AM INF Reading template path=user/new.tmpl
-2:29AM INF Reading template path=user/show.tmpl
-2:29AM INF Reading template path=user/signin.tmpl
-2:29AM INF Reading template path=user/signup.tmpl
-2:29AM INF Parsed template set path=resource/initdel.tmpl
-2:29AM INF Parsed template set path=resource/show.tmpl
-2:29AM INF Parsed template set path=resource/edit.tmpl
-2:29AM INF Parsed template set path=resource/index.tmpl
-2:29AM INF Parsed template set path=resource/new.tmpl
-2:29AM INF Parsed template set path=permission/show.tmpl
-2:29AM INF Parsed template set path=permission/new.tmpl
-2:29AM INF Parsed template set path=permission/index.tmpl
-2:29AM INF Parsed template set path=permission/edit.tmpl
-2:29AM INF Parsed template set path=permission/initdel.tmpl
-2:29AM INF Parsed template set path=user/edit.tmpl
-2:29AM INF Parsed template set path=user/new.tmpl
-2:29AM INF Parsed template set path=user/signup.tmpl
-2:29AM INF Parsed template set path=user/index.tmpl
-2:29AM INF Parsed template set path=user/initdel.tmpl
-2:29AM INF Parsed template set path=user/signin.tmpl
-2:29AM INF Parsed template set path=user/show.tmpl
-2:29AM INF Parsed template set path=account/roles.tmpl
-2:29AM INF Parsed template set path=role/edit.tmpl
-2:29AM INF Parsed template set path=role/new.tmpl
-2:29AM INF Parsed template set path=role/index.tmpl
-2:29AM INF Parsed template set path=role/initdel.tmpl
-2:29AM INF Parsed template set path=role/show.tmpl
-2:29AM INF Dialing to Postgres host="host=localhost port=5432 user=kabestan password=kabestan dbname=kabestan_dev sslmode=disable"
-2:29AM INF Postgres connection established
-2:29AM INF New migrator name=migrator
-2:29AM INF New seeder name=seeder
-2:29AM INF New handler name=ses-mailer
-2020/01/25 02:29:26 Migration executed: EnablePostgis
-2020/01/25 02:29:27 Migration executed: CreateUsersTable
-2020/01/25 02:29:27 Migration executed: CreateAccountsTable
-2020/01/25 02:29:27 Migration executed: CreateResourcesTable
-2020/01/25 02:29:27 Migration executed: CreateRolesTable
-2020/01/25 02:29:27 Migration executed: CreatePermissionsTable
-2020/01/25 02:29:27 Migration executed: CreateAccountRolesTable
-2020/01/25 02:29:27 Seed step executed: CreateUsersAndAccounts
-2020/01/25 02:29:27 Seed step executed: CreateResources
-2020/01/25 02:29:27 Seed step executed: CreateRoles
-2020/01/25 02:29:27 Seed step executed: CreatePermissions
-2020/01/25 02:29:27 Seed step executed: CreateAccountRoles
-2:29AM INF Web server initializing port=:8080
+1:39PM INF Cookie store key value=hVuOOv5PNBnqTk2o13JsCgOPcIAe4p19
+1:39PM INF Reading template path=account/_ctxbar.tmpl
+1:39PM INF Reading template path=account/_flash.tmpl
+1:39PM INF Reading template path=account/_header.tmpl
+1:39PM INF Reading template path=account/_roles.tmpl
+1:39PM INF Reading template path=account/roles.tmpl
+1:39PM INF Reading template path=layout/base.tmpl
+1:39PM INF Reading template path=permission/_ctxbar.tmpl
+1:39PM INF Reading template path=permission/_flash.tmpl
+1:39PM INF Reading template path=permission/_form.tmpl
+1:39PM INF Reading template path=permission/_header.tmpl
+1:39PM INF Reading template path=permission/_item.tmpl
+1:39PM INF Reading template path=permission/_list.tmpl
+1:39PM INF Reading template path=permission/edit.tmpl
+1:39PM INF Reading template path=permission/index.tmpl
+1:39PM INF Reading template path=permission/initdel.tmpl
+1:39PM INF Reading template path=permission/new.tmpl
+1:39PM INF Reading template path=permission/show.tmpl
+1:39PM INF Reading template path=resource/_ctxbar.tmpl
+1:39PM INF Reading template path=resource/_flash.tmpl
+1:39PM INF Reading template path=resource/_form.tmpl
+1:39PM INF Reading template path=resource/_header.tmpl
+1:39PM INF Reading template path=resource/_item.tmpl
+1:39PM INF Reading template path=resource/_list.tmpl
+1:39PM INF Reading template path=resource/_permissions.tmpl
+1:39PM INF Reading template path=resource/edit.tmpl
+1:39PM INF Reading template path=resource/index.tmpl
+1:39PM INF Reading template path=resource/initdel.tmpl
+1:39PM INF Reading template path=resource/new.tmpl
+1:39PM INF Reading template path=resource/permissions.tmpl
+1:39PM INF Reading template path=resource/show.tmpl
+1:39PM INF Reading template path=role/_ctxbar.tmpl
+1:39PM INF Reading template path=role/_flash.tmpl
+1:39PM INF Reading template path=role/_form.tmpl
+1:39PM INF Reading template path=role/_header.tmpl
+1:39PM INF Reading template path=role/_item.tmpl
+1:39PM INF Reading template path=role/_list.tmpl
+1:39PM INF Reading template path=role/_permissions.tmpl
+1:39PM INF Reading template path=role/edit.tmpl
+1:39PM INF Reading template path=role/index.tmpl
+1:39PM INF Reading template path=role/initdel.tmpl
+1:39PM INF Reading template path=role/new.tmpl
+1:39PM INF Reading template path=role/permissions.tmpl
+1:39PM INF Reading template path=role/show.tmpl
+1:39PM INF Reading template path=user/_ctxbar.tmpl
+1:39PM INF Reading template path=user/_flash.tmpl
+1:39PM INF Reading template path=user/_form.tmpl
+1:39PM INF Reading template path=user/_header.tmpl
+1:39PM INF Reading template path=user/_item.tmpl
+1:39PM INF Reading template path=user/_list.tmpl
+1:39PM INF Reading template path=user/_signin.tmpl
+1:39PM INF Reading template path=user/_signup.tmpl
+1:39PM INF Reading template path=user/edit.tmpl
+1:39PM INF Reading template path=user/index.tmpl
+1:39PM INF Reading template path=user/initdel.tmpl
+1:39PM INF Reading template path=user/new.tmpl
+1:39PM INF Reading template path=user/show.tmpl
+1:39PM INF Reading template path=user/signin.tmpl
+1:39PM INF Reading template path=user/signup.tmpl
+1:39PM INF Parsed template set path=account/roles.tmpl
+1:39PM INF Parsed template set path=permission/new.tmpl
+1:39PM INF Parsed template set path=permission/show.tmpl
+1:39PM INF Parsed template set path=permission/edit.tmpl
+1:39PM INF Parsed template set path=permission/index.tmpl
+1:39PM INF Parsed template set path=permission/initdel.tmpl
+1:39PM INF Parsed template set path=resource/show.tmpl
+1:39PM INF Parsed template set path=resource/new.tmpl
+1:39PM INF Parsed template set path=resource/initdel.tmpl
+1:39PM INF Parsed template set path=resource/edit.tmpl
+1:39PM INF Parsed template set path=resource/permissions.tmpl
+1:39PM INF Parsed template set path=resource/index.tmpl
+1:39PM INF Parsed template set path=role/new.tmpl
+1:39PM INF Parsed template set path=role/show.tmpl
+1:39PM INF Parsed template set path=role/index.tmpl
+1:39PM INF Parsed template set path=role/edit.tmpl
+1:39PM INF Parsed template set path=role/initdel.tmpl
+1:39PM INF Parsed template set path=role/permissions.tmpl
+1:39PM INF Parsed template set path=user/edit.tmpl
+1:39PM INF Parsed template set path=user/new.tmpl
+1:39PM INF Parsed template set path=user/index.tmpl
+1:39PM INF Parsed template set path=user/show.tmpl
+1:39PM INF Parsed template set path=user/initdel.tmpl
+1:39PM INF Parsed template set path=user/signin.tmpl
+1:39PM INF Parsed template set path=user/signup.tmpl
+1:39PM INF Dialing to Postgres host="host=localhost port=5432 user=kabestan password=kabestan dbname=kabestan_dev sslmode=disable"
+1:39PM INF Postgres connection established
+1:39PM INF New migrator name=migrator
+1:39PM INF New seeder name=seeder
+1:39PM INF New handler name=ses-mailer
+1:39PM INF Migration already applied name=enable_postgis
+1:39PM INF Migration already applied name=create_users_table
+1:39PM INF Migration already applied name=create_accounts_table
+1:39PM INF Migration already applied name=create_resources_table
+1:39PM INF Migration already applied name=create_roles_table
+1:39PM INF Migration already applied name=create_permissions_table
+1:39PM INF Migration already applied name=create_account_roles_table
+1:39PM INF Migration already applied name=create_role_permissions_table
+1:39PM INF Migration already applied name=create_resource_permissions_table
+1:39PM INF Seed already applied name=create_users_and_accounts
+1:39PM INF Seed already applied name=create_resources
+1:39PM INF Seed already applied name=create_roles
+1:39PM INF Seed already applied name=create_permissions
+1:39PM INF Seed already applied name=create_account_roles
+1:39PM INF Seed already applied name=create_role_permissions
+1:39PM INF Seed already applied name=create_resource_permissions
+1:39PM INF Web server initializing port=:8080
 ```
 
 ## Make commands
