@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"runtime"
 	"strings"
@@ -107,13 +106,13 @@ func NewMigrator(cfg *Config, log Logger, name string, db *sqlx.DB) *Migrator {
 func (m *Migrator) pgConnect() error {
 	db, err := sqlx.Open("postgres", m.pgDbURL())
 	if err != nil {
-		log.Printf("Connection error: %s\n", err.Error())
+		m.Log.Info("Connection error: %s\n", err.Error())
 		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Printf("Connection error: %s", err.Error())
+		m.Log.Info("Connection error: %s", err.Error())
 		return err
 	}
 
@@ -147,7 +146,7 @@ func (m *Migrator) dbExists() bool {
 
 	r, err := m.DB.Query(st)
 	if err != nil {
-		log.Printf("Error checking database: %s\n", err.Error())
+		m.Log.Info("Error checking database: %s\n", err.Error())
 		return false
 	}
 
@@ -155,7 +154,7 @@ func (m *Migrator) dbExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			log.Printf("Cannot read query result: %s\n", err.Error())
+			m.Log.Info("Cannot read query result: %s\n", err.Error())
 			return false
 		}
 		return exists.Bool
@@ -176,7 +175,7 @@ func (m *Migrator) migTableExists() bool {
 
 	r, err := m.DB.Query(st)
 	if err != nil {
-		log.Printf("Error checking database: %s\n", err.Error())
+		m.Log.Info("Error checking database: %s\n", err.Error())
 		return false
 	}
 
@@ -184,7 +183,7 @@ func (m *Migrator) migTableExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			log.Printf("Cannot read query result: %s\n", err.Error())
+			m.Log.Info("Cannot read query result: %s\n", err.Error())
 			return false
 		}
 
@@ -254,15 +253,13 @@ func (m *Migrator) Migrate() error {
 	m.PreSetup()
 
 	for _, mg := range m.migs {
-		fmt.Println("0000000000000000000000000")
-		fmt.Printf("%+v/n/n", *mg)
 		exec := mg.Executor
 		fn := getFxName(exec.GetUp())
 		name := migName(fn)
 
 		// Continue if already applied
 		if !m.canApplyMigration(name) {
-			log.Printf("Migration '%s' already applied.", name)
+			m.Log.Info("Migration '%s' already applied.", name)
 			continue
 		}
 
@@ -277,8 +274,8 @@ func (m *Migrator) Migrate() error {
 		// Read error
 		err, ok := values[0].Interface().(error)
 		if !ok && err != nil {
-			log.Printf("Migration not executed: %s\n", fn) // TODO: Remove log
-			log.Printf("Err  %+v' of type %T\n", err, err) // TODO: Remove log.
+			m.Log.Info("Migration not executed: %s\n", fn) // TODO: Remove log
+			m.Log.Info("Err  %+v' of type %T\n", err, err) // TODO: Remove log.
 			msg := fmt.Sprintf("cannot run migration '%s': %s", fn, err.Error())
 			tx.Rollback()
 			return errors.New(msg)
@@ -290,12 +287,12 @@ func (m *Migrator) Migrate() error {
 		err = tx.Commit()
 		if err != nil {
 			msg := fmt.Sprintf("Cannot update migrations table: %s\n", err.Error())
-			log.Printf("Commit error: %s", msg)
+			m.Log.Info("Commit error: %s", msg)
 			tx.Rollback()
 			return errors.New(msg)
 		}
 
-		log.Printf("Migration executed: %s\n", fn)
+		m.Log.Info("Migration executed: %s\n", fn)
 	}
 
 	return nil
@@ -337,7 +334,7 @@ func (m *Migrator) rollback(steps int) error {
 
 		// Continue if already not rolledback
 		if m.cancelRollback(name) {
-			log.Printf("Rollback '%s' already executed.", name)
+			m.Log.Info("Rollback '%s' already executed.", name)
 			continue
 		}
 
@@ -352,8 +349,8 @@ func (m *Migrator) rollback(steps int) error {
 		// Read error
 		err, ok := values[0].Interface().(error)
 		if !ok && err != nil {
-			log.Printf("Rollback not executed: %s\n", fn)
-			log.Printf("Err '%+v' of type %T", err, err)
+			m.Log.Info("Rollback not executed: %s\n", fn)
+			m.Log.Info("Err '%+v' of type %T", err, err)
 		}
 
 		// Remove migration record.
@@ -362,12 +359,12 @@ func (m *Migrator) rollback(steps int) error {
 		err = tx.Commit()
 		if err != nil {
 			msg := fmt.Sprintf("Cannot update migrations table: %s\n", err.Error())
-			log.Printf("Commit error: %s", msg)
+			m.Log.Info("Commit error: %s", msg)
 			tx.Rollback()
 			return errors.New(msg)
 		}
 
-		log.Printf("Rollback executed: %s\n", fn)
+		m.Log.Info("Rollback executed: %s\n", fn)
 	}
 
 	return nil
@@ -376,13 +373,13 @@ func (m *Migrator) rollback(steps int) error {
 func (m *Migrator) SoftReset() error {
 	err := m.RollbackAll()
 	if err != nil {
-		log.Printf("Cannot rollback database: %s", err.Error())
+		m.Log.Info("Cannot rollback database: %s", err.Error())
 		return err
 	}
 
 	err = m.Migrate()
 	if err != nil {
-		log.Printf("Cannot migrate database: %s", err.Error())
+		m.Log.Info("Cannot migrate database: %s", err.Error())
 		return err
 	}
 
@@ -392,19 +389,19 @@ func (m *Migrator) SoftReset() error {
 func (m *Migrator) Reset() error {
 	_, err := m.DropDb()
 	if err != nil {
-		log.Printf("Drop database error: %s", err.Error())
+		m.Log.Info("Drop database error: %s", err.Error())
 		// Don't return maybe it was not created before.
 	}
 
 	_, err = m.CreateDb()
 	if err != nil {
-		log.Printf("Create database error: %s", err.Error())
+		m.Log.Info("Create database error: %s", err.Error())
 		return err
 	}
 
 	err = m.Migrate()
 	if err != nil {
-		log.Printf("Drop database error: %s", err.Error())
+		m.Log.Info("Drop database error: %s", err.Error())
 		return err
 	}
 
@@ -416,7 +413,6 @@ func (m *Migrator) recMigration(e Exec) error {
 	upFx := getFxName(e.GetUp())
 	downFx := getFxName(e.GetDown())
 	name := migName(upFx)
-	log.Printf("%+s", upFx)
 
 	_, err := e.GetTx().NamedExec(st, migRecord{
 		ID:        uuid.NewV4(),
@@ -440,7 +436,7 @@ func (m *Migrator) cancelRollback(name string) bool {
 	r, err := m.DB.Query(st)
 
 	if err != nil {
-		log.Printf("Cannot determine rollback status: %s\n", err.Error())
+		m.Log.Info("Cannot determine rollback status: %s\n", err.Error())
 		return true
 	}
 
@@ -448,7 +444,7 @@ func (m *Migrator) cancelRollback(name string) bool {
 		var applied sql.NullBool
 		err = r.Scan(&applied)
 		if err != nil {
-			log.Printf("Cannot determine migration status: %s\n", err.Error())
+			m.Log.Info("Cannot determine migration status: %s\n", err.Error())
 			return true
 		}
 
@@ -463,7 +459,7 @@ func (m *Migrator) canApplyMigration(name string) bool {
 	r, err := m.DB.Query(st)
 
 	if err != nil {
-		log.Printf("Cannot determine migration status: %s\n", err.Error())
+		m.Log.Info("Cannot determine migration status: %s\n", err.Error())
 		return false
 	}
 
@@ -471,7 +467,7 @@ func (m *Migrator) canApplyMigration(name string) bool {
 		var applied sql.NullBool
 		err = r.Scan(&applied)
 		if err != nil {
-			log.Printf("Cannot determine migration status: %s\n", err.Error())
+			m.Log.Info("Cannot determine migration status: %s\n", err.Error())
 			return false
 		}
 
