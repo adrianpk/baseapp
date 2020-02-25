@@ -10,19 +10,19 @@ import (
 
 // These handlers require authorization
 func (app *App) addWebPermissionRouter(parent chi.Router) chi.Router {
-	return parent.Route("/permissions", func(uar chi.Router) {
-		uar.Use(app.WebEP.ReqAuth)
-		uar.Get("/", app.WebEP.IndexPermissions)
-		uar.Get("/new", app.WebEP.NewPermission)
-		uar.Post("/", app.WebEP.CreatePermission)
-		uar.Route("/{slug}", func(uarid chi.Router) {
-			uarid.Use(permissionCtx)
-			uarid.Get("/", app.WebEP.ShowPermission)
-			uarid.Get("/edit", app.WebEP.EditPermission)
-			uarid.Patch("/", app.WebEP.UpdatePermission)
-			uarid.Put("/", app.WebEP.UpdatePermission)
-			uarid.Post("/init-delete", app.WebEP.InitDeletePermission)
-			uarid.Delete("/", app.WebEP.DeletePermission)
+	return parent.Route("/permissions", func(child chi.Router) {
+		child.Use(app.WebEP.ReqAuth)
+		child.Get("/", app.WebEP.IndexPermissions)
+		child.Get("/new", app.WebEP.NewPermission)
+		child.Post("/", app.WebEP.CreatePermission)
+		child.Route("/{slug}", func(subChild chi.Router) {
+			subChild.Use(permissionCtx)
+			subChild.Get("/", app.WebEP.ShowPermission)
+			subChild.Get("/edit", app.WebEP.EditPermission)
+			subChild.Patch("/", app.WebEP.UpdatePermission)
+			subChild.Put("/", app.WebEP.UpdatePermission)
+			subChild.Post("/init-delete", app.WebEP.InitDeletePermission)
+			subChild.Delete("/", app.WebEP.DeletePermission)
 		})
 	})
 }

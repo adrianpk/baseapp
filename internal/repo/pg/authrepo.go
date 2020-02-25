@@ -770,13 +770,13 @@ func (ar *AuthRepo) DeleteResourcePermissionsBySlugs(resourceSlug, permissionSlu
 								INNER JOIN resources ON resources.id = resource_permissions.resource_id
 								INNER JOIN permissions ON permissions.id = resource_permissions.permission_id
 										WHERE resources.slug = '%s'
-												AND permissions.slug = '%s'
-												AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
-												AND (resources.is_active IS NULL OR resources.is_active)
-												AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
-												AND (permissions.is_active IS NULL OR permissions.is_active)
-												AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
-												AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
+										AND permissions.slug = '%s'
+										AND (resources.is_deleted IS NULL OR NOT resources.is_deleted)
+										AND (resources.is_active IS NULL OR resources.is_active)
+										AND (permissions.is_deleted IS NULL OR NOT permissions.is_deleted)
+										AND (permissions.is_active IS NULL OR permissions.is_active)
+										AND (resource_permissions.is_deleted IS NULL OR NOT resource_permissions.is_deleted)
+										AND (resource_permissions.is_active IS NULL OR resource_permissions.is_active)
 					);`
 
 	st = fmt.Sprintf(st, resourceSlug, permissionSlug)
