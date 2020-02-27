@@ -15,6 +15,9 @@ build:
 build-linux:
 	CGOENABLED=0 GOOS=linux GOARCH=amd64; go build -o ./bin/$(BINARY_UNIX) ./cmd/$(BINARY_NAME).go
 
+build-tests:
+	go test -c pkg/web/user_test.go pkg/web/base_test.go
+
 test:
 	make -f makefile.test test-selected
 
