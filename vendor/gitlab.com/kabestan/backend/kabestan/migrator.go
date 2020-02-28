@@ -106,13 +106,13 @@ func NewMigrator(cfg *Config, log Logger, name string, db *sqlx.DB) *Migrator {
 func (m *Migrator) pgConnect() error {
 	db, err := sqlx.Open("postgres", m.pgDbURL())
 	if err != nil {
-		m.Log.Info("Connection error: %s\n", err.Error())
+		m.Log.Error(err, "Connection error")
 		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		m.Log.Info("Connection error: %s", err.Error())
+		m.Log.Error(err, "Connection error")
 		return err
 	}
 
@@ -146,7 +146,7 @@ func (m *Migrator) dbExists() bool {
 
 	r, err := m.DB.Query(st)
 	if err != nil {
-		m.Log.Info("Error checking database: %s\n", err.Error())
+		m.Log.Error(err, "Error checking database")
 		return false
 	}
 
@@ -154,7 +154,7 @@ func (m *Migrator) dbExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			m.Log.Info("Cannot read query result: %s\n", err.Error())
+			m.Log.Error(err, "Cannot read query result")
 			return false
 		}
 		return exists.Bool
@@ -175,7 +175,7 @@ func (m *Migrator) migTableExists() bool {
 
 	r, err := m.DB.Query(st)
 	if err != nil {
-		m.Log.Info("Error checking database: %s\n", err.Error())
+		m.Log.Error(err, "Error checking database")
 		return false
 	}
 
@@ -183,7 +183,7 @@ func (m *Migrator) migTableExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			m.Log.Info("Cannot read query result: %s\n", err.Error())
+			m.Log.Error(err, "Cannot read query result: %s\n")
 			return false
 		}
 
@@ -259,7 +259,7 @@ func (m *Migrator) Migrate() error {
 
 		// Continue if already applied
 		if !m.canApplyMigration(name) {
-			m.Log.Info("Migration '%s' already applied.", name)
+			m.Log.Info("Migration already applied", "name", name)
 			continue
 		}
 
@@ -274,8 +274,8 @@ func (m *Migrator) Migrate() error {
 		// Read error
 		err, ok := values[0].Interface().(error)
 		if !ok && err != nil {
-			m.Log.Info("Migration not executed: %s\n", fn) // TODO: Remove log
-			m.Log.Info("Err  %+v' of type %T\n", err, err) // TODO: Remove log.
+			m.Log.Info("Migration not executed", "name", fn)  // TODO: Remove log
+			m.Log.Error(err, "type", fmt.Sprintf("%+v", err)) // TODO: Remove log.
 			msg := fmt.Sprintf("cannot run migration '%s': %s", fn, err.Error())
 			tx.Rollback()
 			return errors.New(msg)

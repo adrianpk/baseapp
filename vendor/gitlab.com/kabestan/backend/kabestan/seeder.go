@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"time"
 
@@ -88,20 +87,20 @@ func NewSeeder(cfg *Config, log Logger, name string, db *sqlx.DB) *Seeder {
 
 // pgConnect to postgre database
 // mainly user to create and drop app database.
-func (m *Seeder) pgConnect() error {
-	db, err := sqlx.Open("postgres", m.pgDbURL())
+func (s *Seeder) pgConnect() error {
+	db, err := sqlx.Open("postgres", s.pgDbURL())
 	if err != nil {
-		log.Printf("Connection error: %s\n", err.Error())
+		s.Log.Error(err, "Connection error")
 		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Printf("Connection error: %s", err.Error())
+		s.Log.Error(err, "Connection error")
 		return err
 	}
 
-	m.DB = db
+	s.DB = db
 	return nil
 }
 
@@ -131,7 +130,7 @@ func (s *Seeder) dbExists() bool {
 
 	r, err := s.DB.Query(st)
 	if err != nil {
-		log.Printf("Error checking database: %s\n", err.Error())
+		s.Log.Error(err, "Error checking database")
 		return false
 	}
 
@@ -139,7 +138,7 @@ func (s *Seeder) dbExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			log.Printf("Cannot read query result: %s\n", err.Error())
+			s.Log.Error(err, "Cannot read query result")
 			return false
 		}
 		return exists.Bool
@@ -160,7 +159,7 @@ func (s *Seeder) seedTableExists() bool {
 
 	r, err := s.DB.Query(st)
 	if err != nil {
-		log.Printf("Error checking database: %s\n", err.Error())
+		s.Log.Error(err, "Error checking database")
 		return false
 	}
 
@@ -168,7 +167,7 @@ func (s *Seeder) seedTableExists() bool {
 		var exists sql.NullBool
 		err = r.Scan(&exists)
 		if err != nil {
-			log.Printf("Cannot read query result: %s\n", err.Error())
+			s.Log.Error(err, "Cannot read query result")
 			return false
 		}
 
@@ -217,7 +216,7 @@ func (s *Seeder) Seed() error {
 
 		// Continue if already applied
 		if !s.canApplySeed(name) {
-			log.Printf("Seed '%s' already applied.", name)
+			s.Log.Info("Seed already applied", "name", name)
 			continue
 		}
 
@@ -250,7 +249,7 @@ func (s *Seeder) Seed() error {
 			return errors.New(msg)
 		}
 
-		log.Printf("Seed step executed: %s\n", fn)
+		s.Log.Info("Seed step executed", "name", fn)
 	}
 
 	return nil
@@ -261,7 +260,7 @@ func (s *Seeder) canApplySeed(name string) bool {
 	r, err := s.DB.Query(st)
 
 	if err != nil {
-		log.Printf("Cannot determine seeder status: %s\n", err.Error())
+		s.Log.Error(err, "Cannot determine seeder status")
 		return false
 	}
 
@@ -269,7 +268,7 @@ func (s *Seeder) canApplySeed(name string) bool {
 		var applied sql.NullBool
 		err = r.Scan(&applied)
 		if err != nil {
-			log.Printf("Cannot determine seeder status: %s\n", err.Error())
+			s.Log.Error(err, "Cannot determine seeder status")
 			return false
 		}
 

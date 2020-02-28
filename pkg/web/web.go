@@ -55,7 +55,6 @@ const (
 
 func NewEndpoint(cfg *kbs.Config, log kbs.Logger, name string) (*Endpoint, error) {
 	//registerGobTypes()
-
 	wep, err := kbs.MakeWebEndpoint(cfg, log, pathFxs)
 	if err != nil {
 		return nil, err
@@ -88,12 +87,15 @@ func (ep *Endpoint) SetService(s *svc.Service) {
 func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ad, ok := ep.IsAuthenticated(r)
+
+		// Not authenticated
 		if !ok {
 			ep.Log.Debug("User not authenticated")
 			http.Redirect(w, r, AuthPathSignIn(), 302)
 			return
 		}
 
+		// Authenticated
 		username, ok0 := ad["username"]
 		slug, ok1 := ad["slug"]
 
@@ -105,40 +107,44 @@ func (ep *Endpoint) ReqAuth(next http.Handler) http.Handler {
 			w.Header().Add("Cache-Control", "no-store")
 
 			ep.Log.Debug("User superadmin authenticated")
+
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		userTags, ok := ad["permissions"]
+
+		// Cannot get associated permissions
 		if !ok {
-			ep.Log.Debug("User not authenticated")
+			ep.Log.Debug("Cannot get user account permissions")
+
 			http.Redirect(w, r, AuthPathSignIn(), 302)
 			return
 		}
 
 		// Get user permissions
-		ep.Log.Info("User permission", "tags", spew.Sdump(userTags))
+		ep.Log.Debug("Account permissionis", "tags", spew.Sdump(userTags))
 
 		// Get request path (resource)
 		path := filepath.Clean(r.URL.Path)
-		ep.Log.Info("Request", "path", path)
+		ep.Log.Debug("Request", "path", path)
 
 		// Get required permissions to access this path (resource)
 		reqTags, err := ep.authCache.PathPermissionTags(path)
 		if err != nil {
-			ep.Log.Debug("User not authorized")
 			ep.Log.Error(err, "Cannot get required resource permission tags")
+			ep.Log.Warn("Account not authorized", "username", username, "path", path)
 			http.Redirect(w, r, AuthPathSignIn(), 302)
 			return
 		}
 
-		ep.Log.Info("Resource", "required-permission-tags", spew.Sdump(reqTags))
+		ep.Log.Debug("Resource", "required-permission-tags", spew.Sdump(reqTags))
 
 		// Verify that user has all the required permissions
 		for _, t := range reqTags {
 			if !strings.Contains(userTags, t) {
-				ep.Log.Info("User not authorized", "required-not-found", t)
 				ep.Log.Error(err, "Cannot get required resource permission tags")
+				ep.Log.Info("Account not authorized", "required", t)
 				http.Redirect(w, r, AuthPathSignIn(), 302)
 				return
 			}

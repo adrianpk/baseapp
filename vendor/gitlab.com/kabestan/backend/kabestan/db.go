@@ -90,6 +90,7 @@ func (pm *pgManager) dbURL() string {
 	db := pm.Cfg.ValOrDef("pg.database", "")
 	user := pm.Cfg.ValOrDef("pg.user", "")
 	pass := pm.Cfg.ValOrDef("pg.password", "")
+	// return fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", user, pass, host, port, db)
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, pass, db)
 }
 
