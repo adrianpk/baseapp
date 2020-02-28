@@ -51,6 +51,7 @@ var (
 
 // TestCreateUser tests user creation.
 func TestCreateUser(t *testing.T) {
+	t.Log("TestCreateUser init")
 	// Make request
 	userURL := buildURL(web.UserRoot)
 
@@ -80,4 +81,5 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	t.Logf("%+v", b)
+	t.Log("TestCreateUser end")
 }

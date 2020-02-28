@@ -247,12 +247,12 @@ func newTestSetup() (ts *testSetup, err error) {
 func testConfig() *kbs.Config {
 	cfg := &kbs.Config{}
 	values := map[string]string{
-		"pg.host":               "localhost",
+		"pg.host":               "postgres",
 		"pg.port":               "5432",
 		"pg.schema":             "public",
-		"pg.database":           "kabestan_test",
-		"pg.user":               "kabestan",
-		"pg.password":           "kabestan",
+		"pg.database":           "baseapp_test",
+		"pg.user":               "baseapp",
+		"pg.password":           "baseapp",
 		"pg.backoff.maxentries": "3",
 	}
 

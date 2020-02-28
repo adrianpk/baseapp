@@ -15,15 +15,6 @@ build:
 build-linux:
 	CGOENABLED=0 GOOS=linux GOARCH=amd64; go build -o ./bin/$(BINARY_UNIX) ./cmd/$(BINARY_NAME).go
 
-build-tests:
-	go test -c pkg/web/user_test.go pkg/web/base_test.go
-
-test:
-	make -f makefile.test test-selected
-
-grc-test:
-	grc make -f makefile.test test-selected
-
 clean:
 	go clean
 	rm -f ./bin/$(BINARY_NAME)
@@ -94,6 +85,20 @@ deploy-prod:
 	make connect-prod
 	make delete-prod
 	make install-prod
+
+## Testing
+test:
+	make -f makefile.test test-selected
+
+grc-test:
+	grc make -f makefile.test test-selected
+
+build-tests:
+	go test -c pkg/web/user_test.go pkg/web/base_test.go
+
+build-test-compose:
+	#docker-compose rm postgres
+	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit --remove-orphans
 
 ## Misc
 custom-build:
