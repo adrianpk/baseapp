@@ -98,7 +98,7 @@ build-tests:
 
 build-test-compose:
 	#docker-compose rm postgres
-	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit --remove-orphans
+	docker-compose -f ./deployments/docker/docker-compose.test.yml up --build --abort-on-container-exit --remove-orphans
 
 ## Misc
 custom-build:
