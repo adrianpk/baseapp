@@ -65,21 +65,12 @@ func TestCreateUser(t *testing.T) {
 		"familyName":        []string{userDataValid["familyName"]},
 	}
 
-	req, err := makeFormPostReq(userURL, userForm)
+	clt := ts.Client
+	body, err := clt.Post(userURL, userForm)
 	if err != nil {
-		t.Errorf("Cannot create request")
+		t.Error(err)
 	}
 
-	res, err := executeRequest(req)
-	if err != nil {
-		t.Errorf("Cannot execute request")
-	}
-
-	b, err := extractBody(res)
-	if err != nil {
-		t.Errorf("Cannot read response body")
-	}
-
-	t.Logf("%+v", b)
+	t.Logf("%+v", body)
 	t.Log("TestCreateUser end")
 }

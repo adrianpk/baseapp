@@ -31,7 +31,12 @@ type (
 		DB       *sqlx.DB
 		UserRepo repo.UserRepo
 		Svc      *svc.Service
+		Client   *testClient
 	}
+)
+
+type (
+	testClient struct{}
 )
 
 // RequestMethod - Valid request methods
@@ -51,7 +56,7 @@ const (
 )
 
 var (
-	ts         testSetup
+	ts         *testSetup
 	currentEnv = "test"
 	ctHeader   = "Content-Type"
 )
@@ -186,13 +191,11 @@ func extractBody(r *http.Response) (body string, err error) {
 
 // Setupt & Teardown
 func setup() {
-	ts, err := newTestSetup()
+	var err error
+	ts, err = newTestSetup()
 	if err != nil {
-
+		os.Exit(1)
 	}
-	// ts.App.Migrator.Reset()
-	// ts.App.Migrator.RollbackAll()
-	ts.App.Migrator.Migrate()
 }
 
 func teardown() {
@@ -200,6 +203,12 @@ func teardown() {
 }
 
 func newTestSetup() (ts *testSetup, err error) {
+	return &testSetup{
+		Client: &testClient{},
+	}, nil
+}
+
+func newTestSetupDeprecated() (ts *testSetup, err error) {
 	cfg := testConfig()
 	log := kbs.NewLogger(cfg)
 
@@ -247,13 +256,13 @@ func newTestSetup() (ts *testSetup, err error) {
 func testConfig() *kbs.Config {
 	cfg := &kbs.Config{}
 	values := map[string]string{
-		"pg.host":               "postgres",
+		"pg.host":               "172.18.0.2",
 		"pg.port":               "5432",
 		"pg.schema":             "public",
 		"pg.database":           "baseapp_test",
 		"pg.user":               "baseapp",
 		"pg.password":           "baseapp",
-		"pg.backoff.maxentries": "3",
+		"pg.backoff.maxentries": "8",
 	}
 
 	cfg.SetNamespace("kbs")
@@ -265,4 +274,23 @@ func testConfig() *kbs.Config {
 func (ts *testSetup) GetWebServerAddress() string {
 	p := ts.Cfg.ValOrDef("web.server.port", "")
 	return fmt.Sprintf("%s:%s", "localhost", p)
+}
+
+func (clt *testClient) Post(url string, form url.Values) (resBody string, err error) {
+	req, err := makeFormPostReq(url, form)
+	if err != nil {
+		return resBody, err
+	}
+
+	res, err := executeRequest(req)
+	if err != nil {
+		return resBody, err
+	}
+
+	b, err := extractBody(res)
+	if err != nil {
+		return resBody, err
+	}
+
+	return b, nil
 }
