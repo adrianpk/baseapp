@@ -1,0 +1,52 @@
+version: '3'
+
+# networks:
+#   internal:
+#     driver: bridge
+
+services:
+  pg:
+    #image: postgres:11.1
+    image: postgis/postgis
+    # networks:
+    #   internal:
+    ports:
+      - "5432:5432"
+    # expose:
+    #   - "5432"
+    environment:
+      - POSTGRES_USER=baseapp
+      - POSTGRES_PASSWORD=baseapp
+      - POSTGRES_DB=baseapp_test
+    # volumes:
+    #   - ./data/postgres:/var/lib/postgresql/data
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    restart: on-failure
+
+  baseapp:
+    build:
+      context: ../../
+      dockerfile: ./deployments/docker/app.test/Dockerfile
+    env_file:
+    - ./app.test/container.env
+    volumes:
+      - $PWD:/go/src/gitlab.com/kabestan/repo/baseapp
+    # hostname: baseapp
+    # networks:
+    #   internal:
+    depends_on:
+      - pg
+
+  integration_tests:
+    build:
+      context: ../../
+      dockerfile: ./deployments/docker/test/Dockerfile
+    volumes:
+      - $PWD:/go/src/gitlab.com/kabestan/repo/baseapp
+    hostname: integration_tests
+    # networks:
+    #   internal:
+    depends_on:
+      - baseapp
+      - pg
